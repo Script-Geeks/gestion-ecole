@@ -34,7 +34,12 @@ class EtudiantType extends AbstractType
             ])
             ->add('filiere', EntityType::class, [
                 'class' => Filiere::class,
-                'choice_label' => 'nom'
+                'choice_label' => function (Filiere $filiere) {
+                    return $filiere->getNom();
+            
+                    // or better, move this logic to Customer, and return:
+                    // return $customer->getFullname();
+                },
             ])
             ->add('niveau', EntityType::class, [
                 'class' => Niveau::class,

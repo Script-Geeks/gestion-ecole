@@ -1,0 +1,33 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Profil{% endblock %}
+{% block body %}
+
+<div class="m-5 d-flex flex-wrap justify-content-center">
+<div class="m-5 card border-light mb-3 rounded text-center" style="width: 50rem;">
+        <h3 class="card-header">Informations</h3>
+            <ul class="list-group list-group-flush text-center" style="width: 50rem">
+            <li class="list-group-item text-muted">Nom Complet : {{ etudiant.nom ~ ' ' ~ etudiant.prenom }}</li>
+            <li class="list-group-item text-muted">Niveau : {{ etudiant.dateNaissAt | date('d/m/Y')}}</li>
+            <li class="list-group-item text-muted">CNE : {{ etudiant.cne}}</li>
+            <li class="list-group-item text-muted">CIN : {{ etudiant.cin}}</li>
+            <li class="list-group-item text-muted">Nom du pére : {{ etudiant.nomCompletpere}}</li>
+            <li class="list-group-item text-muted">Tel du pére : {{ etudiant.telpere}}</li>
+            <li class="list-group-item text-muted">Cycle : {{ etudiant.cycle.nom}}</li>
+            <li class="list-group-item text-muted">Filiere : {{ etudiant.filiere.nom}}</li>
+            <li class="list-group-item text-muted">Niveau : {{ etudiant.niveau.nom}}</li>
+            </ul>
+        <div class="card-body form-inline justify-content-center">
+
+                <a class="nav-link text-success " href="{{ path('etudiant_update' , { 'id': etudiant.id}) }}}">Modifier</a>
+                <a class="nav-link text-danger " href="#">Supprimer</a>
+        </div>
+    
+    </div>
+        </div>
+
+
+</div>
+
+
+{% endblock %}
