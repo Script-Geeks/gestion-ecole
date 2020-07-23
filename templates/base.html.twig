@@ -22,11 +22,12 @@
             <div class="collapse navbar-collapse" id="navbarColor03">
                 <ul class="navbar-nav mr-auto">
                 <li class="nav-item">
-                    <a class="nav-link" href="{{ path('etudiant_accueil', { 'id': etudiant.id}) }}">Accueil</a>
+                 {% if app.user %}
+
+                    <a class="nav-link" href="{{ path('etudiant_accueil', { 'id': app.user.etudiant.id}) }}">Accueil</a>
                 </li>
-                {% if app.user.etudiant.id == 1 %}
                 <li class="nav-item">
-                    <a class="nav-link" href="{{ path('etudiant_profil', { 'id': etudiant.id}) }}">Profil</a>
+                    <a class="nav-link" href="{{ path('etudiant_profil', { 'id': app.user.etudiant.id}) }}">Profil</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="#">Scolarité</a>

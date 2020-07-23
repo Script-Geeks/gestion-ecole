@@ -7,6 +7,7 @@ use App\Entity\Etudiant;
 use App\Form\EtudiantType;
 use App\Entity\Filiere;
 use App\Repository\UserRepository;
+use App\Controller\SecurityController;
 use App\Repository\EtudiantRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -15,10 +16,12 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class EtudiantController extends AbstractController
 {
+    
+
     /**
      * @Route("/etudiant/{id}", name="etudiant_accueil")
      */
-    public function index(Etudiant $etudiant)
+    public function home(Etudiant $etudiant)
     {
         return $this->render('etudiant/accueil.html.twig', [
             'etudiant' => $etudiant ]);
@@ -30,7 +33,7 @@ class EtudiantController extends AbstractController
     public function profil(Etudiant $etudiant)
     {
         return $this->render('etudiant/profil.html.twig', [
-            'etudiant' => $etudiant ]);
+            'etudiant' => $etudiant ,   'age' => date_diff(date_create($etudiant->getDateNaissAt()->format('d-m-Y')), date_create('today'))->y]);
     }
 
     /**
@@ -61,4 +64,21 @@ class EtudiantController extends AbstractController
         ]);
     }
     }
+    
+
+     /**
+     * @Route("/delete/{id}", name="etudiant_delete", requirements={"id":"\d+"})
+     */
+    public function supprimer(EntityManagerInterface $manager, User $user, Etudiant $etudiant)
+    {
+      $usrRepo = $manager->getRepository(User::class);
+
+      $duser = $usrRepo->find($user->getEtudiant()->getId());
+      $manager->remove($duser);
+      $manager->flush();
+
+      return $this->forward('App\Controller\SecurityController::index');
+
+    }
+    
 }
