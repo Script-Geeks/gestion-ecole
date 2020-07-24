@@ -2,16 +2,28 @@
 
 namespace App\Controller;
 
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use App\Repository\EtudiantRepository;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class EtudiantController extends AbstractController
 {
     /**
-     * @Route("/etudiant", name="etudiant_accueil")
+     * @Route("/etudiant/{id}", name="etudiant_accueil")
      */
-    public function index()
+    public function profil($id = null, EtudiantRepository $repo)
     {
-        return $this->render('etudiant/accueil.html.twig');
+        if($id === null || $id < 1)
+        {
+            return $this->render('etudiant/accueil.html.twig');
+        }
+        else
+        {
+            $etudiant = $repo->find($id);
+
+            return $this->render('etudiant/etudiant.html.twig', [
+                'etudiant' => $etudiant
+            ]);
+        }
     }
 }

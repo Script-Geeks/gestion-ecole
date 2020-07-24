@@ -15,7 +15,7 @@
         <hr class="my-4">
         {{ form_row(form_etudiant.nom, {'attr': {'placeholder': 'Entrer votre nom ...', 'autofocus': ''}}) }}    
         {{ form_row(form_etudiant.prenom, {'attr': {'placeholder': 'Entrer votre prénom ...'}}) }}    
-        {{ form_row(form_etudiant.dateNaissAt, {'attr': {'label': 'Date de naissance'}})}}    
+        {{ form_row(form_etudiant.dateNaissAt, {'attr': {'label': 'Date de naissance', 'type': 'date'}})}}    
         {{ form_row(form_etudiant.cne, {'label': 'Code national d\'étudiant', 'attr': {'placeholder': 'Entrer votre CNE ...'}}) }}    
         {{ form_row(form_etudiant.cin, {'label': 'Code d\'identité national', 'attr': {'placeholder': 'Entrer votre CIN ...'}}) }}    
         {{ form_row(form_etudiant.nomComplet_pere, {'label': 'Nom complet du père', 'attr': {'placeholder': 'Entrer le nom de votre père ...'}}) }}    
