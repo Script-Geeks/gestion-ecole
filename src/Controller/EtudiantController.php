@@ -17,6 +17,13 @@ use Symfony\Component\Routing\Annotation\Route;
 class EtudiantController extends AbstractController
 {
     
+    /**
+     * @Route("/deleted", name="out")
+     */
+    public function out()
+    {
+        return $this->render('etudiant/deleted.html.twig');
+    }
 
     /**
      * @Route("/etudiant/{id}", name="etudiant_accueil")
@@ -67,7 +74,7 @@ class EtudiantController extends AbstractController
     
 
      /**
-     * @Route("/delete/{id}", name="etudiant_delete", requirements={"id":"\d+"})
+     * @Route("/delete/{id}", name="etudiant_delete")
      */
     public function supprimer(EntityManagerInterface $manager, User $user, Etudiant $etudiant)
     {
@@ -77,7 +84,7 @@ class EtudiantController extends AbstractController
       $manager->remove($duser);
       $manager->flush();
 
-      return $this->forward('App\Controller\SecurityController::index');
+      return $this->render('etudiant/deleted.html.twig');
 
     }
     
