@@ -6,6 +6,9 @@
 <div class="m-5 d-flex flex-wrap justify-content-center">
 <div class="m-5 card border-light mb-3 rounded text-center" style="width: 50rem;">
         <h3 class="card-header">Informations</h3>
+        <br>
+            <img  style=" object-fit: cover; height:240px; width:240px; border:3px solid lightgrey; border-radius: 50% ; display: block;margin-left: auto;
+            margin-right: auto;" alt="100x100" src = "{{ asset('images/') ~ etudiant.imageFilename }}" >
             <ul class="list-group list-group-flush text-center" style="width: 50rem">
             <li class="list-group-item text-muted">Nom Complet : {{ etudiant.nom ~ ' ' ~ etudiant.prenom }}, {{age}} ans</li>
             <li class="list-group-item text-muted">Niveau : {{ etudiant.dateNaissAt | date('d/m/Y')}} </li>

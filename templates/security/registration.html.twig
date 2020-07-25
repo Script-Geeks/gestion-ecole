@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}INSEA{% endblock %}
+{% block title %}Inscription{% endblock %}
 
 {% block body %}
 
@@ -13,6 +13,7 @@
     {{ form_start(form_etudiant, {'attr': {'class': 'text-success m-5'}}) }}
         <p class="lead text-dark">Informations personnelles</p>
         <hr class="my-4">
+        {{ form_row(form_etudiant.image) }}    
         {{ form_row(form_etudiant.nom, {'attr': {'placeholder': 'Entrer votre nom ...', 'autofocus': ''}}) }}    
         {{ form_row(form_etudiant.prenom, {'attr': {'placeholder': 'Entrer votre prénom ...'}}) }}    
         {{ form_row(form_etudiant.dateNaissAt,  {'label': 'Date de naissance'})}}    

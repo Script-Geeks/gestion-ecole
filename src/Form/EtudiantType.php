@@ -14,6 +14,8 @@ use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
+
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 
 class EtudiantType extends AbstractType
@@ -21,6 +23,10 @@ class EtudiantType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
+            ->add('image', FileType::class, [
+                'mapped' => false,
+                'label' => 'Photo'
+            ])
             ->add('nom', TextType::class)
             ->add('prenom', TextType::class)
             ->add('dateNaissAt', DateType::class)

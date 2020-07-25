@@ -91,6 +91,13 @@ class Etudiant
      */
     private $user;
 
+
+    /**
+     * @ORM\Column(type="string")
+     */
+    private $imageFilename;
+
+    
     public function getId(): ?int
     {
         return $this->id;
@@ -224,6 +231,18 @@ class Etudiant
     public function setNiveau(?Niveau $niveau): self
     {
         $this->niveau = $niveau;
+
+        return $this;
+    }
+    
+    public function getImageFilename()
+    {
+        return $this->imageFilename;
+    }
+
+    public function setImageFilename($imageFilename)
+    {
+        $this->imageFilename = $imageFilename;
 
         return $this;
     }
