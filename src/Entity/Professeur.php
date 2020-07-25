@@ -2,13 +2,19 @@
 
 namespace App\Entity;
 
-use App\Repository\ProfesseurRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
+use Symfony\Component\Validator\Constraints as Assert;
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\ProfesseurRepository;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
  * @ORM\Entity(repositoryClass=ProfesseurRepository::class)
+ * @UniqueEntity(
+ *  fields={"email"},
+ *  message="Cet e-mail existe déjà !"
+ * )
  */
 class Professeur
 {
@@ -31,6 +37,7 @@ class Professeur
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Assert\Regex("/^[0-9]+/", message="L'âge doit-être un nombre positive !")
      */
     private $age;
 
@@ -43,6 +50,12 @@ class Professeur
      * @ORM\OneToOne(targetEntity=User::class, mappedBy="professeur", cascade={"persist", "remove"})
      */
     private $user;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     * @Assert\Email(message="L'e-mail n'est pas valide !")
+     */
+    private $email;
 
     public function __construct()
     {
@@ -135,6 +148,18 @@ class Professeur
         if ($user->getProfesseur() !== $newProfesseur) {
             $user->setProfesseur($newProfesseur);
         }
+
+        return $this;
+    }
+
+    public function getEmail(): ?string
+    {
+        return $this->email;
+    }
+
+    public function setEmail(string $email): self
+    {
+        $this->email = $email;
 
         return $this;
     }
