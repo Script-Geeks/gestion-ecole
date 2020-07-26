@@ -18,7 +18,7 @@
             {% do form_enseignant.password.setRendered() %}
         {% endif %}
         <div class="form-group col text-center">
-            <button type="submit" class="btn btn-outline-success rounded">Ajouter</button>
+            <button type="submit" class="btn btn-outline-success rounded">{{ button }}</button>
             <button type="submit" class="btn btn-outline-danger rounded">Annuler</button>
         </div>
     {{ form_end(form_enseignant) }}

@@ -4,23 +4,33 @@
 
 {% block body %}
     <div class="m-5 d-flex flex-wrap justify-content-center">
-        {% for module in modules %}
-        <div class="m-5 card border-success mb-3 rounded" style="max-width: 30rem;">
-            <div class="card-header text-white bg-success"></div>
-            <div class="card-body">
-                <h4 class="card-title"></h4>
-                <p class="card-text text-center">{{ module.nom }}</p>
+        {% if modules|length != 0 %}
+            {% for module in modules %}
+            <div class="m-5 card border-success mb-3 rounded" style="max-width: 30rem;">
+                <div class="card-header text-white bg-success"></div>
+                <div class="card-body">
+                    <h4 class="card-title"></h4>
+                    <p class="card-text text-center">{{ module.nom }}</p>
+                </div>
+                <div class="card-footer form-inline my-2 my-lg-0 justify-content-center">
+                    <a class="nav-link text-info my-2 my-sm-0" href="#">Plus de détails</a>
+                </div>
+                <div class="card-footer form-inline my-2 my-lg-0 justify-content-center">
+                    <a class="nav-link text-success my-2 my-sm-0" href="#">Modifier</a>
+                </div>
+                <div class="card-footer form-inline my-2 my-lg-0 justify-content-center">
+                    <a class="nav-link text-danger my-2 my-sm-0" href="#">Supprimer</a>
+                </div>
             </div>
-            <div class="card-footer form-inline my-2 my-lg-0 justify-content-center">
-                <a class="nav-link text-info my-2 my-sm-0" href="#">Plus de détails</a>
+            {% endfor %}
+        {% else %}
+            <div class="jumbotron m-5">
+                <h3 class="display-5">Aucun module n'est ajouté pour le moment.</h3>
+                <hr class="my-4">
+                <p class="lead text-center">
+                    <a class="btn btn-success btn-lg" href="{{ path('responsable_ajout_enseignant') }}" role="button">Ajouter un module</a>
+                </p>
             </div>
-            <div class="card-footer form-inline my-2 my-lg-0 justify-content-center">
-                <a class="nav-link text-success my-2 my-sm-0" href="#">Modifier</a>
-            </div>
-            <div class="card-footer form-inline my-2 my-lg-0 justify-content-center">
-                <a class="nav-link text-danger my-2 my-sm-0" href="#">Supprimer</a>
-            </div>
-        </div>
-        {% endfor %}
+        {% endif %}
     </div>
 {% endblock %}
