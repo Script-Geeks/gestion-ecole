@@ -2,6 +2,9 @@
 
 namespace App\Controller;
 use App\Entity\User;
+use App\Entity\Certificats;
+use App\Form\CertificatsType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use App\Form\UserType;
 use App\Entity\Etudiant;
 use App\Form\EtudiantType;
@@ -12,6 +15,8 @@ use App\Repository\EtudiantRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
+
 use Symfony\Component\Routing\Annotation\Route;
 
 class EtudiantController extends AbstractController
@@ -40,7 +45,7 @@ class EtudiantController extends AbstractController
     public function profil(Etudiant $etudiant)
     {
         return $this->render('etudiant/profil.html.twig', [
-            'etudiant' => $etudiant ,   'age' => date_diff(date_create($etudiant->getDateNaissAt()->format('d-m-Y')), date_create('today'))->y]);
+            'etudiant' => $etudiant , 'age' => date_diff(date_create($etudiant->getDateNaissAt()->format('d-m-Y')), date_create('today'))->y]);
     }
 
     /**
@@ -95,19 +100,51 @@ class EtudiantController extends AbstractController
     }
     }
     
+    /**
+     * @Route("/demande/{id}", name="etudiant_certificat")
+     */
+    public function demandecertificat(Request $request, EntityManagerInterface $manager, Etudiant $etudiant)
+    {
+        $demande = new Certificats();
+        
+         $sent = false;
+         $form = $this->createForm(CertificatsType::class, $demande);
+         $form->handleRequest($request);
+         dump($demande);
+        
+         if( $form->isSubmitted() && $form->isValid()){
 
+             $sent = true;
+             $demande->setRequestedAt(new \DateTime());
+             $demande->setEtudiant($etudiant);
+ 
+             $manager->persist($demande);
+             $manager->flush();
+ 
+             return $this->redirectToRoute('etudiant_accueil', [
+                'id'=> $etudiant->getId(),
+                'sent' => $sent,
+
+                ]);
+         }
+ 
+         return $this->render('etudiant/demande.html.twig' , [
+             'formDemande' => $form->createView(),
+             'etudiant' => $etudiant,         
+             'sent' => $sent,
+
+         ]);
+
+    }
      /**
      * @Route("/delete/{id}", name="etudiant_delete")
      */
-    public function supprimer(EntityManagerInterface $manager, User $user, Etudiant $etudiant)
+    public function supprimer(EntityManagerInterface $manager, Etudiant $etudiant)
     {
-      $usrRepo = $manager->getRepository(User::class);
+        $manager->remove($etudiant);
+        $manager->flush();
 
-      $duser = $usrRepo->find($user->getEtudiant()->getId());
-      $manager->remove($duser);
-      $manager->flush();
-
-      return $this->render('etudiant/deleted.html.twig');
+    return $this->render('etudiant/deleted.html.twig');
 
     }
     

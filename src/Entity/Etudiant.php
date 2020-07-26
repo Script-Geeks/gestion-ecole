@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use App\Repository\EtudiantRepository;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
@@ -93,9 +95,17 @@ class Etudiant
 
 
     /**
-     * @ORM\Column(type="string")
+     * @ORM\Column(type="string",options={"default":"PersonPlaceholder.png"})
      */
-    private $imageFilename;
+    private $imageFilename = "PersonPlaceholder.png";
+
+
+    /**
+     * @ORM\OneToMany(targetEntity=Certificats::class, mappedBy="etudiant")
+     */
+    private $certificats;
+
+    
 
     
     public function getId(): ?int
@@ -264,5 +274,14 @@ class Etudiant
 
         return $this;
     }
+
+    /**
+     * @return Collection|Certificats[]
+     */
+    public function getCertificats(): Collection
+    {
+        return $this->certificats;
+    }
+
     
 }

@@ -25,7 +25,9 @@ class EtudiantType extends AbstractType
         $builder
             ->add('image', FileType::class, [
                 'mapped' => false,
-                'label' => 'Photo'
+                'label' => 'Photo', 
+                'required' => false,
+
             ])
             ->add('nom', TextType::class)
             ->add('prenom', TextType::class)

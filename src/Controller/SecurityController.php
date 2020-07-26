@@ -6,6 +6,7 @@ use App\Entity\User;
 use App\Form\UserType;
 use App\Entity\Etudiant;
 use App\Form\EtudiantType;
+use App\Entity\Certificat;
 use App\Repository\UserRepository;
 use App\Repository\EtudiantRepository;
 use Doctrine\ORM\EntityManagerInterface;

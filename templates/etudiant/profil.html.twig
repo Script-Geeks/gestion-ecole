@@ -1,7 +1,9 @@
 {% extends 'base.html.twig' %}
 
 {% block title %}Profil{% endblock %}
+
 {% block body %}
+<a class="m-3 btn btn-primary" href="{{ path('etudiant_accueil' , { 'id': etudiant.id}) }}}">Retour</a>
 
 <div class="m-5 d-flex flex-wrap justify-content-center">
 <div class="m-5 card border-light mb-3 rounded text-center" style="width: 50rem;">
@@ -23,7 +25,7 @@
         <div class="card-body form-inline justify-content-center">
 
                 <a class="nav-link text-success " href="{{ path('etudiant_update' , { 'id': etudiant.id}) }}}">Modifier</a>
-                <a class="nav-link text-danger " href="{{ path('etudiant_delete' , { 'id': etudiant.id}) }}}">Supprimer</a>
+                <a class="nav-link text-danger " onclick="return confirm('Vous voulez vraiment supprimer votre compte? cette action est irréversible')" href="{{ path('etudiant_delete' , { 'id': etudiant.id}) }}}">Supprimer</a>
         </div>
     
     </div>
