@@ -6,6 +6,7 @@ use App\Entity\Professeur;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 
 class EnseignantType extends AbstractType
 {
@@ -16,6 +17,7 @@ class EnseignantType extends AbstractType
             ->add('prenom')
             ->add('age')
             ->add('email')
+            ->add('password', PasswordType::class)
         ;
     }
 

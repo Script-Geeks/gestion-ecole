@@ -163,4 +163,9 @@ class Professeur
 
         return $this;
     }
+
+    /**
+     * @Assert\Length(min=8, minMessage="Cette valeur est trop courte. Il doit comporter 8 caractères ou plus !")
+     */
+    public $password;
 }
