@@ -4,7 +4,7 @@
 
 {% block body %}
 
-{% if sent is defined %}
+{% if demande is defined %}
 <div class="m-0 d-flex flex-wrap justify-content-center">
 <div class="alert alert-dismissible alert-success m-0 text-center justify-content-center " style="max-width: 40rem;">
   <button type="button" class="close" data-dismiss="alert">&times;</button>
@@ -34,6 +34,9 @@
             </div>
             <div class="card-footer form-inline my-2 my-lg-0 justify-content-center">
                 <a class="nav-link text-secondary" href="{{ path('etudiant_certificat' , { 'id': etudiant.id}) }}}">Scolarité</a>
+            </div>
+            <div class="card-footer form-inline my-2 my-lg-0 justify-content-center">
+                <a class="nav-link text-secondary" href="{{ path('etudiant_compte' , { 'id': etudiant.id}) }}}">Compte</a>
             </div>
         </div>
     </div>

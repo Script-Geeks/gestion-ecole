@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 use App\Entity\User;
+
 use App\Entity\Certificats;
 use App\Form\CertificatsType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -15,9 +16,11 @@ use App\Repository\EtudiantRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
-
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\HttpFoundation\Response;
+
 
 class EtudiantController extends AbstractController
 {
@@ -30,6 +33,58 @@ class EtudiantController extends AbstractController
         return $this->render('etudiant/deleted.html.twig');
     }
 
+     /**
+     * @Route("/compte/{id}", name="etudiant_compte")
+     */
+    public function compte(Etudiant $etudiant)
+    {
+        return $this->render('etudiant/compte.html.twig', [
+            'etudiant' => $etudiant,
+             ]);
+    }
+
+    /**
+    * @Route("/updatepassword/{id}", name="etudiant_updatepwd"))
+    */
+    public function change_user_password(EtudiantRepository $repo_etudiant,EntityManagerInterface $manager, Request $request, UserPasswordEncoderInterface $encoder, Etudiant $etudiant ) {
+
+        if($etudiant ->getId()){
+            
+                 $etudiant = $repo_etudiant->find($etudiant ->getId());
+                
+
+                $form = $this->createForm(UserType::class, $user);
+
+                $form->handleRequest($request);
+
+                if($form->isSubmitted() && $form->isValid()){
+                    if($user){
+                    $hash = $encoder->encodePassword($user, $user->getPassword());
+                    $user->setUsername($etudiant->getNom())
+                        ->setEmail ($user->getEmail())
+                         ->setPassword($hash)
+                         ->setEtudiant($etudiant);
+                    
+                    $manager->persist($user);
+                    
+                    $manager->flush();
+
+                    return $this->render('etudiant/accueil.html.twig', [
+                        'etudiant' => $etudiant,
+                        'message' => 'Mot de passe changé avec succés' ]);
+                     } return new Response(
+                    '<html><body>Lucky mot de passe incorrect, veuillez reéssayer </body></html>'  );
+                 
+    
+                 }
+    return $this->render('etudiant/updatepassword.html.twig', [
+        'form_authentication' => $form->createView(),
+        'etudiant' => $etudiant,
+
+    ]);
+    
+    }}
+       
     /**
      * @Route("/etudiant/{id}", name="etudiant_accueil")
      */
@@ -107,14 +162,12 @@ class EtudiantController extends AbstractController
     {
         $demande = new Certificats();
         
-         $sent = false;
          $form = $this->createForm(CertificatsType::class, $demande);
          $form->handleRequest($request);
          dump($demande);
         
          if( $form->isSubmitted() && $form->isValid()){
 
-             $sent = true;
              $demande->setRequestedAt(new \DateTime());
              $demande->setEtudiant($etudiant);
  
@@ -123,7 +176,7 @@ class EtudiantController extends AbstractController
  
              return $this->redirectToRoute('etudiant_accueil', [
                 'id'=> $etudiant->getId(),
-                'sent' => $sent,
+                'demande' => $demande,
 
                 ]);
          }
@@ -131,7 +184,7 @@ class EtudiantController extends AbstractController
          return $this->render('etudiant/demande.html.twig' , [
              'formDemande' => $form->createView(),
              'etudiant' => $etudiant,         
-             'sent' => $sent,
+             'demande' => $demande,
 
          ]);
 

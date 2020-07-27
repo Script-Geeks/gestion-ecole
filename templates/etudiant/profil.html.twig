@@ -13,7 +13,7 @@
             margin-right: auto;" alt="100x100" src = "{{ asset('images/') ~ etudiant.imageFilename }}" >
             <ul class="list-group list-group-flush text-center" style="width: 50rem">
             <li class="list-group-item text-muted">Nom Complet : {{ etudiant.nom ~ ' ' ~ etudiant.prenom }}, {{age}} ans</li>
-            <li class="list-group-item text-muted">Niveau : {{ etudiant.dateNaissAt | date('d/m/Y')}} </li>
+            <li class="list-group-item text-muted">Date de naissance : {{ etudiant.dateNaissAt | date('d/m/Y')}} </li>
             <li class="list-group-item text-muted">CNE : {{ etudiant.cne}}</li>
             <li class="list-group-item text-muted">CIN : {{ etudiant.cin}}</li>
             <li class="list-group-item text-muted">Nom du pére : {{ etudiant.nomCompletpere}}</li>

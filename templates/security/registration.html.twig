@@ -19,7 +19,7 @@
         bsCustomFileInput.init()
          })
         </script>
-        
+
         {{ form_row(form_etudiant.image,  {'attr': {'placeholder': 'Sélectionner une image'}}) }}    
         {{ form_row(form_etudiant.nom, {'attr': {'placeholder': 'Entrer votre nom ...', 'autofocus': ''}}) }}    
         {{ form_row(form_etudiant.prenom, {'attr': {'placeholder': 'Entrer votre prénom ...'}}) }}    
@@ -40,7 +40,7 @@
             <button type="cancel" class="btn btn-outline-danger rounded">Annuler</button>
         {% else %}
             <button type="submit" class="btn btn-outline-success rounded">Ajouter</button>
-            <button type="submit" class="btn btn-outline-danger rounded">Annuler</button>
+            <button type="cancel" class="btn btn-outline-danger rounded">Annuler</button>
         {% endif %}
         </div>
 

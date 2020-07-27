@@ -1,0 +1,26 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Profil{% endblock %}
+
+{% block body %}
+
+
+
+
+  <div class="m-5 d-flex flex-wrap justify-content-center">
+        <div class="m-5 card border-success mb-3 rounded  " style="max-width: 40rem;">
+            <div class="card-header text-white bg-success text-center">Fiche Professeur</div>
+            <div class="card-body">
+                <h4 class="card-title"></h4>
+                <p class="card-text text-center">Nom : {{ professeur.nom  }}</p>
+                <p class="card-text text-center">Prénom : {{ professeur.prenom  }}</p>
+            
+                <a class="nav-link text-info my-2 my-sm-0 text-center" href="{{ path('professeur_profil' , { 'id': professeur.id}) }}}">Plus de détails</a>
+            </div>
+            <div class="card-footer form-inline my-2 my-lg-0 justify-content-center">
+                <a class="nav-link text-primary my-2 my-sm-0" href="#">Notes</a>
+            </div>
+        
+        </div>
+    </div>
+{% endblock %}

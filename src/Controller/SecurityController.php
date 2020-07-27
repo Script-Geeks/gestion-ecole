@@ -151,7 +151,10 @@ class SecurityController extends AbstractController
                     'id' => $user->getEtudiant()->getId()
                 ]);
             }elseif($user->getProfesseur() !== null && $user->getProfesseur()->getId() !== null){
-                return $this->redirectToRoute('responsable_accueil');
+                return $this->redirectToRoute('prof_accueil', [
+                    'id' => $user->getProfesseur()->getId()
+
+                ]);
             }
         }
     }
