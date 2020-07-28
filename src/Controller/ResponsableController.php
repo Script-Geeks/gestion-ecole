@@ -2,12 +2,16 @@
 
 namespace App\Controller;
 
-use Doctrine\DBAL\Driver\Connection;
 use App\Entity\User;
+use App\Entity\Module;
+use App\Entity\Filiere;
+use App\Form\ModuleType;
+use App\Form\FiliereType;
 use App\Entity\Professeur;
 use App\Form\EnseignantType;
 use App\Repository\UserRepository;
 use App\Repository\ModuleRepository;
+use Doctrine\DBAL\Driver\Connection;
 use App\Repository\FiliereRepository;
 use App\Repository\EtudiantRepository;
 use App\Repository\ProfesseurRepository;
@@ -30,7 +34,7 @@ class ResponsableController extends AbstractController
     /**
      * @Route("/responsable/etudiants", name="responsable_etudiant")
      */
-    public function gestion_etudiant(EtudiantRepository $repo_etudiant, FiliereRepository $repo_filiere)
+    public function gestion_etudiant(EtudiantRepository $repo_etudiant)
     {
         $etudiants = $repo_etudiant->findAll();
         return $this->render('responsable/etudiants.html.twig', [
@@ -39,15 +43,15 @@ class ResponsableController extends AbstractController
     }   
 
     /**
-     * @Route("/responsable/modules", name="responsable_module")
+     * @Route("/responsable/filieres", name="responsable_filiere")
      */
-    public function gestion_module(ModuleRepository $repo_module)
+    public function gestion_filiere(FiliereRepository $repo_filiere)
     {
-        $modules = $repo_module->findAll();
-        return $this->render('responsable/modules.html.twig', [
-            'modules' => $modules
+        $filieres = $repo_filiere->findAll();
+        return $this->render('responsable/filieres.html.twig', [
+            'filieres' => $filieres
         ]);
-    }
+    } 
 
     /**
      * @Route("/responsable/enseignants", name="responsable_enseignant")
@@ -72,7 +76,6 @@ class ResponsableController extends AbstractController
         }else{
             $enseignant = $repo_enseignant->find($id);
             $user_array = $connection->fetchAll("SELECT * FROM user WHERE professeur_id = $id");
-            dump($user_array);
             $user = $repo_user->find($user_array[0]['id']);
             $mail_title = 'Profil modifié avec succès';
         }
@@ -117,8 +120,6 @@ class ResponsableController extends AbstractController
             $manager->persist($user);
             
             $manager->flush();
-
-            
             
             $message = (new \Swift_Message($mail_title))
                 ->setFrom('insea.inscription@gmail.com')
@@ -164,5 +165,100 @@ class ResponsableController extends AbstractController
         $manager->flush();
 
         return $this->redirectToRoute('responsable_enseignant');
+    }
+
+    /**
+     * @Route("/responsable/filiere/ajout", name="responsable_ajout_filiere")
+     * @Route("/responsable/filiere/modification/{id}", name="responsable_modification_filiere")
+     */
+    public function ajout_filiere($id = null, FiliereRepository $repo_filiere, Request $request, EntityManagerInterface $manager)
+    {
+        if($id == null){
+            $filiere = new Filiere();
+        }else{
+            $filiere = $repo_filiere->find($id);
+        }
+        $form = $this->createForm(FiliereType::class, $filiere);
+
+        $form->handleRequest($request);
+
+        if($form->isSubmitted() && $form->isValid()){
+
+            $manager->persist($filiere);
+            
+            $manager->flush();
+
+            return $this->redirectToRoute('responsable_filiere');
+        }
+        if($id == null){
+            return $this->render('responsable/filiere_ajout.html.twig', [
+                'form_filiere' => $form->createView(),
+                'button' => 'Ajouter',
+                'title' => 'L\'ajout d\'une filière'
+            ]);
+        }else{
+            return $this->render('responsable/filiere_ajout.html.twig', [
+                'form_filiere' => $form->createView(),
+                'button' => 'Modifer',
+                'title' => 'La modification d\'une filière'
+            ]);
+        }
+    }
+    
+    /**
+     * @Route("/responsable/modules", name="responsable_module")
+     * @Route("/responsable/{id}/modules", name="responsable_filiere_modules")
+     */
+    public function gestion_module($id = null, FiliereRepository $repo_filiere, ModuleRepository $repo_module)
+    {
+        if($id == null){
+            $modules = $repo_module->findAll();
+             return $this->render('responsable/modules.html.twig', [
+                'modules' => $modules
+            ]);
+        }else{
+            $filiere = $repo_filiere->find($id);
+            $modules = $filiere->getModules();
+            return $this->render('responsable/modules.html.twig', [
+                'modules' => $modules,
+                'header' => $filiere->getNom()
+            ]);
+        }
+    }
+
+    /**
+     * @Route("/responsable/modules/ajout", name="responsable_ajout_module")
+     */
+    public function ajout_module($id = null, ModuleRepository $repo_module, Request $request)
+    {
+        if($id == null){
+            $module = new Module();
+        }else{
+            $module = $repo_module->find($id);
+        }
+        $form = $this->createForm(ModuleType::class, $module);
+
+        $form->handleRequest($request);
+
+        if($form->isSubmitted() && $form->isValid()){
+
+            $manager->persist($module);
+            
+            $manager->flush();
+        }
+
+        if($id == null){
+            return $this->render('responsable/module_ajout.html.twig', [
+                'form_module' => $form->createView(),
+                'button' => 'Ajouter',
+                'title' => 'L\'ajout d\'un module'
+            ]);
+        }else{
+            return $this->render('responsable/module_ajout.html.twig', [
+                'form_module' => $form->createView(),
+                'button' => 'Modifer',
+                'title' => 'La modification d\'un module'
+            ]);
+        }
     }
 }

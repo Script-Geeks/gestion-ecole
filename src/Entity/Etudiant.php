@@ -78,6 +78,7 @@ class Etudiant
 
     /**
      * @ORM\ManyToOne(targetEntity=Filiere::class, inversedBy="etudiants")
+     * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
      */
     private $filiere;
 
