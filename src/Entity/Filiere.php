@@ -35,14 +35,15 @@ class Filiere
     private $etudiants;
 
     /**
-     * @ORM\ManyToMany(targetEntity=Module::class, mappedBy="filiere")
+     * @ORM\OneToMany(targetEntity=Module::class, mappedBy="filiere")
      */
-    private $modules;
+    private $module;
 
     public function __construct()
     {
         $this->etudiants = new ArrayCollection();
         $this->modules = new ArrayCollection();
+        $this->module = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -108,16 +109,16 @@ class Filiere
     /**
      * @return Collection|Module[]
      */
-    public function getModules(): Collection
+    public function getModule(): Collection
     {
-        return $this->modules;
+        return $this->module;
     }
 
     public function addModule(Module $module): self
     {
-        if (!$this->modules->contains($module)) {
-            $this->modules[] = $module;
-            $module->addFiliere($this);
+        if (!$this->module->contains($module)) {
+            $this->module[] = $module;
+            $module->setFiliere($this);
         }
 
         return $this;
@@ -125,11 +126,15 @@ class Filiere
 
     public function removeModule(Module $module): self
     {
-        if ($this->modules->contains($module)) {
-            $this->modules->removeElement($module);
-            $module->removeFiliere($this);
+        if ($this->module->contains($module)) {
+            $this->module->removeElement($module);
+            // set the owning side to null (unless already changed)
+            if ($module->getFiliere() === $this) {
+                $module->setFiliere(null);
+            }
         }
 
         return $this;
     }
+
 }

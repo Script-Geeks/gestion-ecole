@@ -21,19 +21,93 @@
 
             <div class="collapse navbar-collapse" id="navbarColor03">
                 <ul class="navbar-nav mr-auto">
-                <li class="nav-item">
-                 
+                {% if app.user %}
+                    {% if app.user.getResponsable != null %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ path('responsable_accueil') }}">Accueil</a>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Étudiants</a>
+                            <div class="dropdown-menu" style="">
+                                <a class="dropdown-item" href="{{ path('responsable_niveau', {'type': 'etudiants'}) }}">Afficher les étudiants</a>
+                                <a class="dropdown-item" href="{{ path('responsable_registration') }}">Ajouter un(e) étudiant(e)</a>
+                            </div>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Enseignants</a>
+                            <div class="dropdown-menu" style="">
+                                <a class="dropdown-item" href="{{ path('responsable_enseignant') }}">Afficher les enseignants</a>
+                                <a class="dropdown-item" href="{{ path('responsable_ajout_enseignant') }}">Ajouter un(e) enseignant(e)</a>
+                            </div>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Filières</a>
+                            <div class="dropdown-menu" style="">
+                                <a class="dropdown-item" href="{{ path('responsable_filiere') }}">Afficher les filières</a>
+                                <a class="dropdown-item" href="{{ path('responsable_ajout_filiere') }}">Ajouter une filière</a>
+                            </div>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Modules</a>
+                            <div class="dropdown-menu" style="">
+                                <a class="dropdown-item" href="{{ path('responsable_niveau', {'type': 'modules'}) }}">Afficher les modules</a>
+                                <a class="dropdown-item" href="{{ path('responsable_ajout_module') }}">Ajouter un module</a>
+                                <a class="dropdown-item" href="{{ path('responsable_ajout_element') }}">Ajouter un élément</a>
+                            </div>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Classes</a>
+                            <div class="dropdown-menu" style="">
+                                <a class="dropdown-item" href="{{ path('responsable_classe') }}">Afficher les classes</a>
+                                <a class="dropdown-item" href="{{ path('responsable_ajout_classe') }}">Ajouter une classe</a>
+                            </div>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Séances</a>
+                            <div class="dropdown-menu" style="">
+                                <a class="dropdown-item" href="#">Afficher les séances</a>
+                                <a class="dropdown-item" href="#">Ajouter une séance</a>
+                            </div>
+                        </li>
+                    {% elseif app.user.getEtudiant != null %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ path('etudiant_accueil', {'id': app.user.getEtudiant.getId}) }}">Accueil</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ path('etudiant_profil', {'id': app.user.getEtudiant.getId}) }}">Profil</a>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Scolarité</a>
+                            <div class="dropdown-menu" style="">
+                                <a class="dropdown-item" href="#">Demandes acceptées</a>
+                                <a class="dropdown-item" href="{{ path('etudiant_certificat', {'id': app.user.getEtudiant.getId}) }}">Nouvelle demande</a>
+                            </div>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">Emploi</a>
+                        </li>
+                    {% elseif app.user.getProfesseur != null %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ path('prof_accueil', {'id': app.user.getProfesseurt.getId}) }}">Accueil</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">Note</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">Emploi</a>
+                        </li>
+                    {% endif %}
                 </ul>
-            {% if app.user %}
-            <form class="form-inline my-2 my-lg-0">
-                    <a class="nav-link text-info my-2 my-sm-0" href="{{ path('security_logout') }}">Se deconnecter</a>
                 <form class="form-inline my-2 my-lg-0">
-               </form>
-               {% else %}  
+                    <a class="nav-link text-info my-2 my-sm-0" href="{{ path('security_logout') }}">Se deconnecter</a>
+                </form>
+                {% else %}
+                </ul>
+                <form class="form-inline my-2 my-lg-0">
                     <a class="nav-link text-success my-2 my-sm-0" href="{{ path('security_login') }}">Se connecter</a>
                     <a class="nav-link text-info my-2 my-sm-0" href="{{ path('security_registration') }}">S'inscrire</a>
                 </form>
-               {% endif %} 
+                {% endif %}
             </div>
          </nav>
         {% block body %}{% endblock %}

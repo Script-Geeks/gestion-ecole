@@ -44,6 +44,13 @@ class Professeur
      */
     private $user;
 
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $email;
+
+    public $password;
+
     public function __construct()
     {
         $this->elements = new ArrayCollection();
@@ -135,6 +142,18 @@ class Professeur
         if ($user->getProfesseur() !== $newProfesseur) {
             $user->setProfesseur($newProfesseur);
         }
+
+        return $this;
+    }
+
+    public function getEmail(): ?string
+    {
+        return $this->email;
+    }
+
+    public function setEmail(string $email): self
+    {
+        $this->email = $email;
 
         return $this;
     }

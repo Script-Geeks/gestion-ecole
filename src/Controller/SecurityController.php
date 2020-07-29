@@ -56,11 +56,7 @@ class SecurityController extends AbstractController
                 } catch (FileException $e) {
                     
                 }
-
-             
                 $etudiant->setImageFilename($newFilename);
-
-                
             }
             $manager->persist($etudiant);
 
@@ -150,7 +146,6 @@ class SecurityController extends AbstractController
             }elseif($user->getProfesseur() !== null && $user->getProfesseur()->getId() !== null){
                 return $this->redirectToRoute('prof_accueil', [
                     'id' => $user->getProfesseur()->getId()
-
                 ]);
             }
         }

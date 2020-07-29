@@ -5,23 +5,25 @@
 {% block body %}
 
 {% if msg is defined %}
-<div class="m-0 d-flex flex-wrap justify-content-center">
-<div class="alert alert-dismissible alert-success m-0 text-center justify-content-center " style="max-width: 40rem;">
-  <button type="button" class="close" data-dismiss="alert">&times;</button>
-{{ msg }}</div>
-</div>
+    <div class="m-0 d-flex flex-wrap justify-content-center">
+        <div class="alert alert-dismissible alert-success m-0 text-center justify-content-center " style="max-width: 40rem;">
+            <button type="button" class="close" data-dismiss="alert">&times;</button>
+            {{ msg }}
+        </div>
+    </div>
 {% endif %}
 
 {% if message is defined %}
-<div class="m-0 d-flex flex-wrap justify-content-center">
-<div class="alert alert-dismissible alert-success m-0 text-center justify-content-center " style="max-width: 40rem;">
-  <button type="button" class="close" data-dismiss="alert">&times;</button>
-{{ message }}</div>
-</div>
+    <div class="m-0 d-flex flex-wrap justify-content-center">
+        <div class="alert alert-dismissible alert-success m-0 text-center justify-content-center " style="max-width: 40rem;">
+            <button type="button" class="close" data-dismiss="alert">&times;</button>
+            {{ message }}
+        </div>
+    </div>
 {% endif %}
 
   <div class="m-5 d-flex flex-wrap justify-content-center">
-        <div class="m-5 card border-success mb-3 rounded  " style="max-width: 40rem;">
+        <div class="m-5 card border-success mb-3 rounded  " style="width: 40rem;">
             <div class="card-header text-white bg-success text-center">Fiche Étudiant</div>
             <div class="card-body">
                 <h4 class="card-title"></h4>

@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Controller;
+
 use App\Entity\User;
 use Dompdf\Dompdf;
 use Dompdf\Options;
@@ -24,10 +25,9 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Response;
 use Doctrine\DBAL\Driver\Connection;
 
-
 class EtudiantController extends AbstractController
 {
-    
+
     /**
      * @Route("/deleted", name="out")
      */
@@ -51,7 +51,7 @@ class EtudiantController extends AbstractController
     */
     public function change_user_password(Connection $connection, EtudiantRepository $repo_etudiant,EntityManagerInterface $manager, Request $request, UserPasswordEncoderInterface $encoder, Etudiant $etudiant, UserRepository $user ) {
 
-            
+
                  $etudiant = $repo_etudiant->find($etudiant ->getId());
                  $id=$etudiant ->getId();
                  $user_array = $connection->fetchAll("SELECT * FROM user WHERE etudiant_id = $id");
@@ -72,9 +72,9 @@ class EtudiantController extends AbstractController
 
                             $hash = $encoder->encodePassword($user, $user->getPassword());
                             $user->setPassword($hash);
-                            
+
                             $manager->persist($user);
-                            
+
                             $manager->flush();
 
                             return $this->render('etudiant/accueil.html.twig', [
@@ -83,19 +83,19 @@ class EtudiantController extends AbstractController
                         }
                             else{ return new Response(
                             '<html><body> mot de passe incorrect, veuillez reéssayer </body></html>'  );
-                        
+
                                 }
                      }  
                    }
-                
+
                return $this->render('etudiant/updatepassword.html.twig', [
                  'form_authentication' => $form->createView(),
                   'etudiant' => $etudiant,
 
     ]);
-    
+
     }
-       
+
     /**
      * @Route("/etudiant/{id}", name="etudiant_accueil")
      */
@@ -126,7 +126,7 @@ class EtudiantController extends AbstractController
         $certificat = $this->getDoctrine()
         ->getRepository(Certificats::Class)
             ->findOneBy(array('etudiant' => $etudiant->getId()));
-            
+
             $options = new Options();
             $options->setIsRemoteEnabled(true);
 
@@ -142,16 +142,16 @@ class EtudiantController extends AbstractController
                 $dompdf->loadHtml($doc);
 
             $dompdf->render();
-    
+
         // (Optional) Setup the paper size and orientation
         $dompdf->setPaper('A4', 'portrait');
 
 
         // Render the HTML as PDF
        $dompdf->loadHtml( 'doc');
-        
+
         $dompdf->stream('Certificat');
-       
+
     }
     /**
      * @Route("/profil/{id}" ,name="etudiant_profil")
@@ -195,7 +195,7 @@ class EtudiantController extends AbstractController
                 // instead of its contents
                 $etudiant->setImageFilename($newFilename);
 
-                
+
             }
 
             $manager->persist($etudiant);
@@ -205,35 +205,35 @@ class EtudiantController extends AbstractController
             return $this->redirectToRoute('etudiant_profil', 
                ['id'=> $etudiant->getId() , ] 
             );
-            
+
         }
-        
+
         return $this->render('etudiant/modification.html.twig', [
             'form_etudiant' => $form->createView() , 'etudiant' => $etudiant
         ]);
     }
     }
-    
+
     /**
      * @Route("/demande/{id}", name="etudiant_certificat")
      */
     public function demandecertificat(Request $request, EntityManagerInterface $manager, Etudiant $etudiant, CertificatsRepository $ceritificat)
     {
         $demande = new Certificats();
-        
+
          $form = $this->createForm(CertificatsType::class, $demande);
          $form->handleRequest($request);
          dump($demande);
-        
+
          if( $form->isSubmitted() && $form->isValid()){
 
              $demande->setRequestedAt(new \DateTime());
              $demande->setEtudiant($etudiant);
- 
+
              $manager->persist($demande);
              $manager->flush();
 
-           
+
 
              return $this->redirectToRoute('etudiant_accueil', [
                 'id'=> $etudiant->getId(),
@@ -242,7 +242,7 @@ class EtudiantController extends AbstractController
 
                 ]);
          }
- 
+
          return $this->render('etudiant/demande.html.twig' , [
              'formDemande' => $form->createView(),
              'etudiant' => $etudiant,         
@@ -261,5 +261,5 @@ class EtudiantController extends AbstractController
     return $this->render('etudiant/deleted.html.twig');
 
     }
-    
+
 }
