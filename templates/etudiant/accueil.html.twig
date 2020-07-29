@@ -1,7 +1,51 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello EtudiantController!{% endblock %}
+{% block title %}Profil{% endblock %}
 
 {% block body %}
 
+{% if msg is defined %}
+    <div class="m-0 d-flex flex-wrap justify-content-center">
+        <div class="alert alert-dismissible alert-success m-0 text-center justify-content-center " style="max-width: 40rem;">
+            <button type="button" class="close" data-dismiss="alert">&times;</button>
+            {{ msg }}
+        </div>
+    </div>
+{% endif %}
+
+{% if message is defined %}
+    <div class="m-0 d-flex flex-wrap justify-content-center">
+        <div class="alert alert-dismissible alert-success m-0 text-center justify-content-center " style="max-width: 40rem;">
+            <button type="button" class="close" data-dismiss="alert">&times;</button>
+            {{ message }}
+        </div>
+    </div>
+{% endif %}
+
+  <div class="m-5 d-flex flex-wrap justify-content-center">
+        <div class="m-5 card border-success mb-3 rounded  " style="width: 40rem;">
+            <div class="card-header text-white bg-success text-center">Fiche Étudiant</div>
+            <div class="card-body">
+                <h4 class="card-title"></h4>
+                <p><img  style=" object-fit: cover; height:140px; width:140px; border:3px solid mediumseagreen; border-radius: 50% ; display: block;margin-left: auto;
+            margin-right: auto;" alt="image" src = "{{ asset('images/') ~ etudiant.imageFilename }}" ><p>
+                <p class="card-text text-center">Nom : {{ etudiant.nom  }}</p>
+                <p class="card-text text-center">Prénom : {{ etudiant.prenom  }}</p>
+                <p class="card-text text-center">Cycle : {{ etudiant.cycle.nom}}</p>
+                <p class="card-text text-center">Filiere : {{ etudiant.filiere.nom}}</p>
+                <p class="card-text text-center">Niveau : {{ etudiant.niveau.nom}}</p>
+            
+                <a class="nav-link text-info my-2 my-sm-0 text-center" href="{{ path('etudiant_profil' , { 'id': etudiant.id}) }}}">Plus de détails</a>
+            </div>
+            <div class="card-footer form-inline my-2 my-lg-0 justify-content-center">
+                <a class="nav-link text-primary my-2 my-sm-0" href="#">Emploi</a>
+            </div>
+            <div class="card-footer form-inline my-2 my-lg-0 justify-content-center">
+                <a class="nav-link text-secondary" href="{{ path('etudiant_certificat' , { 'id': etudiant.id}) }}}">Scolarité</a>
+            </div>
+            <div class="card-footer form-inline my-2 my-lg-0 justify-content-center">
+                <a class="nav-link text-secondary" href="{{ path('etudiant_compte' , { 'id': etudiant.id}) }}}">Compte</a>
+            </div>
+        </div>
+    </div>
 {% endblock %}

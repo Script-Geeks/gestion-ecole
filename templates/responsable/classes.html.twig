@@ -1,0 +1,41 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Responsable{% endblock %}
+
+{% block body %}
+<div class="card rounded border-success m-2 mx-auto" style="max-width: 85rem">
+    <h1 id="nav-breadcrumbs" class="mt-5 display-3 text-center text-success">Les classes</h1>
+    <div class="m-5 d-flex flex-wrap justify-content-center">
+        {% if classes|length != 0 %}
+            {% if header is defined %}
+                <h1 id="nav-breadcrumbs" class="display-3 text-center text-success">{{ header }}</h1>
+                
+            {% endif %}
+            {% for classe in classes %}
+                <div class="m-5 card border-success mb-3 rounded" style="max-width: 30rem;">
+                    <div class="card-header text-white bg-success"></div>
+                    <div class="card-body">
+                        <h4 class="card-title"></h4>
+                        <p class="card-text m-4"><span class="text-muted">Nom:</span> {{ classe.nom }}</p>
+                        <p class="card-text m-4"><span class="text-muted">Type:</span> {{ classe.getType.getNom }} </p>
+                    </div>
+                    <div class="card-footer form-inline my-2 my-lg-0 justify-content-center">
+                        <a class="nav-link text-success my-2 my-sm-0" href="{{ path('responsable_modification_classe', {'id': classe.id}) }}">Modifier</a>
+                    </div>
+                    <div class="card-footer form-inline my-2 my-lg-0 justify-content-center">
+                        <a class="nav-link text-danger my-2 my-sm-0" href="{{ path('responsable_classe_suppression', {'id': classe.id}) }}">Supprimer</a>
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <div class="jumbotron m-5">
+                <h3 class="display-5">Aucunne classe n'est ajouté pour le moment.</h3>
+                <hr class="my-4">
+                <p class="lead text-center">
+                    <a class="btn btn-success btn-lg" href="{{ path('responsable_ajout_classe') }}" role="button">Ajouter une classe</a>
+                </p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

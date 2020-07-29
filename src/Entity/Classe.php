@@ -30,7 +30,7 @@ class Classe
     private $elements;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\ManyToOne(targetEntity=Type::class, inversedBy="classes")
      */
     private $type;
 
@@ -87,12 +87,12 @@ class Classe
         return $this;
     }
 
-    public function getType(): ?string
+    public function getType(): ?Type
     {
         return $this->type;
     }
 
-    public function setType(string $type): self
+    public function setType(?Type $type): self
     {
         $this->type = $type;
 

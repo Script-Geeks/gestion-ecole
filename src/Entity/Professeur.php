@@ -2,19 +2,13 @@
 
 namespace App\Entity;
 
-use Symfony\Component\Validator\Constraints as Assert;
-use Doctrine\ORM\Mapping as ORM;
 use App\Repository\ProfesseurRepository;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
-use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Entity(repositoryClass=ProfesseurRepository::class)
- * @UniqueEntity(
- *  fields={"email"},
- *  message="Cet e-mail existe déjà !"
- * )
  */
 class Professeur
 {
@@ -37,7 +31,6 @@ class Professeur
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Assert\Regex("/^[0-9]+/", message="L'âge doit-être un nombre positive !")
      */
     private $age;
 
@@ -53,9 +46,10 @@ class Professeur
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Assert\Email(message="L'e-mail n'est pas valide !")
      */
     private $email;
+
+    public $password;
 
     public function __construct()
     {
@@ -163,9 +157,4 @@ class Professeur
 
         return $this;
     }
-
-    /**
-     * @Assert\Length(min=8, minMessage="Cette valeur est trop courte. Il doit comporter 8 caractères ou plus !")
-     */
-    public $password;
 }

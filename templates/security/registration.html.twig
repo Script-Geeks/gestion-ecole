@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}INSEA{% endblock %}
+{% block title %}Inscription{% endblock %}
 
 {% block body %}
 
@@ -13,26 +13,34 @@
     {{ form_start(form_etudiant, {'attr': {'class': 'text-success m-5'}}) }}
         <p class="lead text-dark">Informations personnelles</p>
         <hr class="my-4">
+        <script src="https://cdn.jsdelivr.net/npm/bs-custom-file-input/dist/bs-custom-file-input.min.js"></script>
+        <script>
+        $(document).ready(function () {
+        bsCustomFileInput.init()
+         })
+        </script>
+
+        {{ form_row(form_etudiant.image,  {'attr': {'placeholder': 'Sélectionner une image'}}) }}    
         {{ form_row(form_etudiant.nom, {'attr': {'placeholder': 'Entrer votre nom ...', 'autofocus': ''}}) }}    
         {{ form_row(form_etudiant.prenom, {'attr': {'placeholder': 'Entrer votre prénom ...'}}) }}    
-        {{ form_row(form_etudiant.dateNaissAt, {'attr': {'label': 'Date de naissance', 'type': 'date'}})}}    
+        {{ form_row(form_etudiant.dateNaissAt,  {'label': 'Date de naissance'})}}    
         {{ form_row(form_etudiant.cne, {'label': 'Code national d\'étudiant', 'attr': {'placeholder': 'Entrer votre CNE ...'}}) }}    
         {{ form_row(form_etudiant.cin, {'label': 'Code d\'identité national', 'attr': {'placeholder': 'Entrer votre CIN ...'}}) }}    
         {{ form_row(form_etudiant.nomComplet_pere, {'label': 'Nom complet du père', 'attr': {'placeholder': 'Entrer le nom de votre père ...'}}) }}    
         {{ form_row(form_etudiant.tel_pere, {'label': 'Numéro de téléphone du père', 'attr': {'placeholder': 'Entrer le numéro de téléphone de votre père ...'}}) }}
         <hr class="my-4"> 
-        <p class="lead text-dark">Informations académique</p>
+        <p class="lead text-dark">Informations académiques</p>
         <hr class="my-4"> 
         {{ form_row(form_etudiant.cycle) }}
-        {{ form_row(form_etudiant.filiere) }}
+        {{ form_row(form_etudiant.filiere ,{'label': 'Filière'})}}
         {{ form_row(form_etudiant.niveau) }}
         <div class="form-group col text-center">
         {% if app.user == null %}
             <button type="submit" class="btn btn-outline-success rounded">Enregistrer</button>
-            <button type="submit" class="btn btn-outline-danger rounded">Annuler</button>
+            <button type="cancel" class="btn btn-outline-danger rounded">Annuler</button>
         {% else %}
             <button type="submit" class="btn btn-outline-success rounded">Ajouter</button>
-            <button type="submit" class="btn btn-outline-danger rounded">Annuler</button>
+            <button type="cancel" class="btn btn-outline-danger rounded">Annuler</button>
         {% endif %}
         </div>
 

@@ -29,16 +29,34 @@ class Element
 
     /**
      * @ORM\ManyToOne(targetEntity=Module::class, inversedBy="elements")
+     * @ORM\JoinColumn(
+     *      name="module_id",
+     *      referencedColumnName="id",
+     *      onDelete="CASCADE",
+     *      nullable=false
+     * )
      */
     private $module;
 
     /**
      * @ORM\ManyToOne(targetEntity=Professeur::class, inversedBy="elements")
+     * @ORM\JoinColumn(
+     *      name="professeur_id",
+     *      referencedColumnName="id",
+     *      onDelete="CASCADE",
+     *      nullable=false
+     * )
      */
     private $professeur;
 
     /**
      * @ORM\ManyToOne(targetEntity=Classe::class, inversedBy="elements")
+     * @ORM\JoinColumn(
+     *      name="classe_id",
+     *      referencedColumnName="id",
+     *      onDelete="CASCADE",
+     *      nullable=false
+     * )
      */
     private $classe;
 

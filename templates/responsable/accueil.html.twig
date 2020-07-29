@@ -4,62 +4,43 @@
 
 {% block body %}
     <div class="m-5 d-flex flex-wrap justify-content-center">
-        <div class="m-5 card border-success mb-3 rounded" style="max-width: 20rem;">
-            <div class="card-header text-white bg-success">Enseignants</div>
-            <div class="card-body">
-                <h4 class="card-title"></h4>
-                <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-            </div>
+        <div class="m-5 card border-success mb-3 rounded" style="width: 20rem;">
+            <div class="card-header text-white text-center bg-success">Enseignants</div>
             <div class="card-footer form-inline my-2 my-lg-0 justify-content-center">
                 <a class="nav-link text-success my-2 my-sm-0" href="{{ path('responsable_enseignant') }}">Afficher</a>
                 <a class="nav-link text-success my-2 my-sm-0" href="{{ path('responsable_ajout_enseignant') }}">Ajouter</a>
             </div>
         </div>
-        <div class="m-5 card border-success mb-3 rounded" style="max-width: 20rem;">
-            <div class="card-header text-white bg-success">Étudiants</div>
-            <div class="card-body">
-                <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-            </div>
+        <div class="m-5 card border-success mb-3 rounded" style="width: 20rem;">
+            <div class="card-header text-white text-center bg-success">Étudiants</div>
             <div class="card-footer form-inline my-2 my-lg-0 justify-content-center">
-                <a class="nav-link text-success my-2 my-sm-0" href="{{ path('responsable_etudiant') }}">Afficher</a>
+                <a class="nav-link text-success my-2 my-sm-0" href="{{ path('responsable_niveau', {'type': 'etudiants'}) }}">Afficher</a>
                 <a class="nav-link text-success my-2 my-sm-0" href="{{ path('responsable_registration') }}">Ajouter</a>
             </div>
         </div>
-        <div class="m-5 card border-success mb-3 rounded" style="max-width: 20rem;">
-            <div class="card-header text-white bg-success">Filières</div>
-            <div class="card-body">
-                <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-            </div>
+        <div class="m-5 card border-success mb-3 rounded" style="width: 20rem;">
+            <div class="card-header text-white text-center bg-success">Filières</div>
             <div class="card-footer form-inline my-2 my-lg-0 justify-content-center">
                 <a class="nav-link text-success my-2 my-sm-0" href="{{ path('responsable_filiere') }}">Afficher</a>
                 <a class="nav-link text-success my-2 my-sm-0" href="{{ path('responsable_ajout_filiere') }}">Ajouter</a>
             </div>
         </div>
-        <div class="m-5 card border-success mb-3 rounded" style="max-width: 20rem;">
-            <div class="card-header text-white bg-success">Modules</div>
-            <div class="card-body">
-                <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-            </div>
+        <div class="m-5 card border-success mb-3 rounded" style="width: 20rem;">
+            <div class="card-header text-white text-center bg-success">Modules</div>
             <div class="card-footer form-inline my-2 my-lg-0 justify-content-center">
-                <a class="nav-link text-success my-2 my-sm-0" href="{{ path('responsable_module') }}">Afficher</a>
-                <a class="nav-link text-success my-2 my-sm-0" href="#">Ajouter</a>
+                <a class="nav-link text-success my-2 my-sm-0" href="{{ path('responsable_niveau', {'type': 'modules'}) }}">Afficher</a>
+                <a class="nav-link text-success my-2 my-sm-0" href="{{ path('responsable_ajout_module') }}">Ajouter</a>
             </div>
         </div>
-        <div class="m-5 card border-success mb-3 rounded" style="max-width: 20rem;">
-            <div class="card-header text-white bg-success">Séances</div>
-            <div class="card-body">
-                <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-            </div>
+        <div class="m-5 card border-success mb-3 rounded" style="width: 20rem;">
+            <div class="card-header text-white text-center bg-success">Classes</div>
             <div class="card-footer form-inline my-2 my-lg-0 justify-content-center">
-                <a class="nav-link text-success my-2 my-sm-0" href="#">Afficher</a>
-                <a class="nav-link text-success my-2 my-sm-0" href="#">Ajouter</a>
+                <a class="nav-link text-success my-2 my-sm-0" href="{{ path('responsable_classe') }}">Afficher</a>
+                <a class="nav-link text-success my-2 my-sm-0" href="{{ path('responsable_ajout_classe') }}">Ajouter</a>
             </div>
         </div>
-        <div class="m-5 card border-success mb-3 rounded" style="max-width: 20rem;">
-            <div class="card-header text-white bg-success">Classes</div>
-            <div class="card-body">
-                <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-            </div>
+        <div class="m-5 card border-success mb-3 rounded" style="width: 20rem;">
+            <div class="card-header text-white text-center bg-success">Séances</div>
             <div class="card-footer form-inline my-2 my-lg-0 justify-content-center">
                 <a class="nav-link text-success my-2 my-sm-0" href="#">Afficher</a>
                 <a class="nav-link text-success my-2 my-sm-0" href="#">Ajouter</a>

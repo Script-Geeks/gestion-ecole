@@ -34,10 +34,16 @@ class Niveau
      */
     private $etudiants;
 
+    /**
+     * @ORM\OneToMany(targetEntity=Module::class, mappedBy="niveau")
+     */
+    private $modules;
+
     public function __construct()
     {
         $this->groupes = new ArrayCollection();
         $this->etudiants = new ArrayCollection();
+        $this->modules = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -113,6 +119,37 @@ class Niveau
             // set the owning side to null (unless already changed)
             if ($etudiant->getNiveau() === $this) {
                 $etudiant->setNiveau(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Module[]
+     */
+    public function getModules(): Collection
+    {
+        return $this->modules;
+    }
+
+    public function addModule(Module $module): self
+    {
+        if (!$this->modules->contains($module)) {
+            $this->modules[] = $module;
+            $module->setNiveau($this);
+        }
+
+        return $this;
+    }
+
+    public function removeModule(Module $module): self
+    {
+        if ($this->modules->contains($module)) {
+            $this->modules->removeElement($module);
+            // set the owning side to null (unless already changed)
+            if ($module->getNiveau() === $this) {
+                $module->setNiveau(null);
             }
         }
 

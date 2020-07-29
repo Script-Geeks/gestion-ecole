@@ -5,7 +5,12 @@
 {% block body %}
 
 <div class="card rounded border-success m-2 mx-auto" style="max-width: 55rem">
-    <h1 class="text-center text-success m-5">{{ title }}</h1>
+    <h1 class="text-center text-success m-5">
+        {{ title }}
+        {% if nomComplet is defined %} 
+            <span class="text-primary"> {{ nomComplet }}</span>
+        {% endif %}
+    </h1>
     {{ form_start(form_enseignant, {'attr': {'class': 'text-success m-5'}}) }}
         <hr class="my-4">
         {{ form_row(form_enseignant.nom, {'attr': {'placeholder': 'Nom du professeur ...', 'autofocus': ''}}) }}    

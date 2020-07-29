@@ -3,6 +3,7 @@
 namespace App\Form;
 
 use App\Entity\Module;
+use App\Entity\Niveau;
 use App\Entity\Filiere;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -19,6 +20,10 @@ class ModuleType extends AbstractType
             ->add('nbr_element', NumberType::class)
             ->add('filiere', EntityType::class, [
                 'class' => Filiere::class,
+                'choice_label' => 'nom'
+            ])
+            ->add('niveau', EntityType::class, [
+                'class' => Niveau::class,
                 'choice_label' => 'nom'
             ])
         ;

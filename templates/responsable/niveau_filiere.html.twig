@@ -1,0 +1,18 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Responsable{% endblock %}
+
+{% block body %}
+<div class="card rounded border-success m-2 mx-auto" style="max-width: 85rem">
+    <h1 id="nav-breadcrumbs" class="m-5 display-4 text-center text-success">{{ header }} de la <span class="text-primary">{{ niveau.nom }}</span></h1>
+    <div class="m-5 d-flex flex-wrap justify-content-center">
+        {% for filiere in filieres %}
+        <div class="m-5 card border-success mb-3 rounded" style="width: 20rem;">
+            <div class="card-header text-center text-white bg-success">{{ filiere.nom }}</div>
+            <div class="card-footer form-inline my-2 my-lg-0 justify-content-center">
+                <a class="nav-link text-success my-2 my-sm-0" href="{{ path(path, {'id': niveau.id, 'idFil': filiere.id}) }}">Afficher</a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+{% endblock %}

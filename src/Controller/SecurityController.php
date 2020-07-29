@@ -6,6 +6,7 @@ use App\Entity\User;
 use App\Form\UserType;
 use App\Entity\Etudiant;
 use App\Form\EtudiantType;
+use App\Entity\Certificat;
 use App\Repository\UserRepository;
 use App\Repository\EtudiantRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -14,6 +15,8 @@ use Symfony\Component\Security\Core\Security;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
+use Symfony\Component\HttpFoundation\File\Exception\FileException;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 class SecurityController extends AbstractController
 {
@@ -38,7 +41,23 @@ class SecurityController extends AbstractController
         $form->handleRequest($request);
 
         if( $form->isSubmitted() && $form->isValid() ){
+        $imageFile = $form->get('image')->getData();
 
+            if ($imageFile) {
+                $originalFilename = pathinfo($imageFile->getClientOriginalName(), PATHINFO_FILENAME);
+                $safeFilename = md5($originalFilename);
+                $newFilename = $safeFilename.'-'.uniqid().'.'.$imageFile->guessExtension();
+
+                try {
+                    $imageFile->move(
+                        $this->getParameter('uploads_directory'),
+                        $newFilename
+                    );
+                } catch (FileException $e) {
+                    
+                }
+                $etudiant->setImageFilename($newFilename);
+            }
             $manager->persist($etudiant);
 
             $manager->flush();
@@ -53,6 +72,7 @@ class SecurityController extends AbstractController
             'form_etudiant' => $form->createView()
         ]);
     }
+
     
     /**
      * @Route("/{idEtudiant}/authentification", name="security_authentication")
@@ -120,9 +140,13 @@ class SecurityController extends AbstractController
             if($user->getResponsable() !== null && $user->getResponsable()->getId() !== null){
                 return $this->redirectToRoute('responsable_accueil');
             }elseif($user->getEtudiant() !== null && $user->getEtudiant()->getId() !== null){
-                return $this->redirectToRoute('etudiant_accueil');
+                return $this->redirectToRoute('etudiant_accueil', [
+                    'id' => $user->getEtudiant()->getId()
+                ]);
             }elseif($user->getProfesseur() !== null && $user->getProfesseur()->getId() !== null){
-                return $this->redirectToRoute('responsable_accueil');
+                return $this->redirectToRoute('prof_accueil', [
+                    'id' => $user->getProfesseur()->getId()
+                ]);
             }
         }
     }

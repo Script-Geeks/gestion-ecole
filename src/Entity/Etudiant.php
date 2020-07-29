@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use App\Repository\EtudiantRepository;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
@@ -78,7 +80,6 @@ class Etudiant
 
     /**
      * @ORM\ManyToOne(targetEntity=Filiere::class, inversedBy="etudiants")
-     * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
      */
     private $filiere;
 
@@ -92,6 +93,31 @@ class Etudiant
      */
     private $user;
 
+
+    /**
+     * @ORM\Column(type="string",options={"default":"PersonPlaceholder.png"})
+     */
+    private $imageFilename = "PersonPlaceholder.png";
+
+
+    /**
+     * @ORM\OneToMany(targetEntity=Certificats::class, mappedBy="etudiant")
+     */
+    private $certificats;
+
+    /**
+     * @ORM\Column(type="boolean", nullable=true)
+     */
+    private $payed;
+
+    /**
+     * @ORM\Column(type="boolean", nullable=true)
+     */
+    private $accepted;
+
+    
+
+    
     public function getId(): ?int
     {
         return $this->id;
@@ -228,6 +254,18 @@ class Etudiant
 
         return $this;
     }
+    
+    public function getImageFilename()
+    {
+        return $this->imageFilename;
+    }
+
+    public function setImageFilename($imageFilename)
+    {
+        $this->imageFilename = $imageFilename;
+
+        return $this;
+    }
 
     public function getUser(): ?User
     {
@@ -246,5 +284,38 @@ class Etudiant
 
         return $this;
     }
+
+    /**
+     * @return Collection|Certificats[]
+     */
+    public function getCertificats(): Collection
+    {
+        return $this->certificats;
+    }
+
+    public function getPayed(): ?bool
+    {
+        return $this->payed;
+    }
+
+    public function setPayed(?bool $payed): self
+    {
+        $this->payed = $payed;
+
+        return $this;
+    }
+
+    public function getAccepted(): ?bool
+    {
+        return $this->accepted;
+    }
+
+    public function setAccepted(?bool $accepted): self
+    {
+        $this->accepted = $accepted;
+
+        return $this;
+    }
+
     
 }

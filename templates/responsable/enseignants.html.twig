@@ -3,6 +3,8 @@
 {% block title %}Enseignant{% endblock %}
 
 {% block body %}
+<div class="card rounded border-success m-2 mx-auto" style="max-width: 85rem">
+    <h1 id="nav-breadcrumbs" class="mt-5 display-3 text-center text-success">Les enseignants</h1>
     <div class="m-5 d-flex flex-wrap justify-content-center">
         {% if enseignants|length != 0 %}
             {% for enseignant in enseignants %}
@@ -13,7 +15,7 @@
                     <p class="card-text text-center"></p>
                 </div>
                 <div class="card-footer form-inline my-2 my-lg-0 justify-content-center">
-                    <a class="nav-link text-info my-2 my-sm-0" href="#">Plus de détails</a>
+                    <a class="nav-link text-info my-2 my-sm-0" href="{{ path('prof_accueil', {'id': enseignant.id}) }}">Plus de détails</a>
                 </div>
                 <div class="card-footer form-inline my-2 my-lg-0 justify-content-center">
                     <a class="nav-link text-success my-2 my-sm-0" href="{{ path('responsable_modification_enseignant', {'id': enseignant.id}) }}">Modifier</a>
