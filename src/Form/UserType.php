@@ -18,6 +18,10 @@ class UserType extends AbstractType
             ->add('email', TextType::class)
             ->add('password', PasswordType::class)
             ->add('confirm_password', PasswordType::class)
+            ->add('oldpassword',  PasswordType::class, array(
+                "mapped" => false,
+                "required" => false
+            ))
         ;
     }
 

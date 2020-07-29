@@ -1,0 +1,40 @@
+<html>
+
+   <head>
+      <title>Certificat</title>
+   </head>
+   <style>
+   .insea{
+        height:110px;
+        width:110px;
+        margin-left:auto;
+        margin-right:auto;
+         display: block;
+   }
+
+   </style>
+   <body>
+    <div class="insea">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/05/INSEA_logo.png/552px-INSEA_logo.png" alt ="insea" >
+        </br>
+    </div>
+      <div style="text-align:center ; font-family:Helvetica">
+         <p >INSTITUT NATIONAL DE STATISTIQUE ET D'ÉCONOMIE APPLIQUÉE</p>
+         <hr>
+
+         <br><br>
+         <h2>Certificat de scolarité</h2>
+         <div >
+            <p><strong>Nom</strong> : {{ etudiant.nom  }} </p>
+            <p><strong>Prénom </strong>: {{ etudiant.prenom  }} </p>
+            <p><strong>Cycle</strong> : {{ etudiant.cycle.nom}} </p>
+            <p><strong>Filiere</strong> : {{ etudiant.filiere.nom}} </p>
+            <p><strong>Niveau</strong> : {{ etudiant.niveau.nom}} </p>
+            <p><strong>Année scolaire </strong>: 2019/2020</p>
+         </div>
+      </div>
+      <div>
+      <p><img style="height:140px; width:140px;  display: block, float:center ; margin: 0px 600px" src="https://i.imgur.com/wZS4Cfq.png" alt ="cachet">
+      <p>
+   </body>
+</html>

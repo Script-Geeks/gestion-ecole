@@ -4,7 +4,7 @@
 {% block body %}
 
 <div class="card rounded border-success m-5 mx-auto" style="max-width: 55rem">
-<h1 class="text-center text-success m-5">Demande </h1>
+<h1 class="text-center text-success m-5">Nouvelle demande </h1>
 {{form_start(formDemande , {'attr': {'class': 'text-success m-4'}})}}
 
         {{form_row(formDemande.type ,{'attr': {'placeholder' : "Type" }}) }}
@@ -16,6 +16,10 @@
         </div>
 
        
-    {{form_end(formDemande)}}
+{{form_end(formDemande)}}
+</div>
+<a class="text-center" style="display: block;margin-left: auto;
+            margin-right: auto;" href="{{ path('etudiant_document', { 'id': etudiant.id} ) }}">Voir demandes acceptées</a>
+            </div>  
 
 {% endblock %}

@@ -105,6 +105,16 @@ class Etudiant
      */
     private $certificats;
 
+    /**
+     * @ORM\Column(type="boolean", nullable=true)
+     */
+    private $payed;
+
+    /**
+     * @ORM\Column(type="boolean", nullable=true)
+     */
+    private $accepted;
+
     
 
     
@@ -281,6 +291,30 @@ class Etudiant
     public function getCertificats(): Collection
     {
         return $this->certificats;
+    }
+
+    public function getPayed(): ?bool
+    {
+        return $this->payed;
+    }
+
+    public function setPayed(?bool $payed): self
+    {
+        $this->payed = $payed;
+
+        return $this;
+    }
+
+    public function getAccepted(): ?bool
+    {
+        return $this->accepted;
+    }
+
+    public function setAccepted(?bool $accepted): self
+    {
+        $this->accepted = $accepted;
+
+        return $this;
     }
 
     

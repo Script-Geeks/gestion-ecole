@@ -14,6 +14,9 @@
             <p class="lead text-dark">Informations d'authentification</p>
             <hr class="my-4">
             {{ form_row(form_authentication.email, {'label': 'Adresse e-mail', 'attr': {'placeholder': 'Entrer votre adresse électronique', 'class': 'rounded'}}) }}
+            <div style="display:none;">
+            {{ form_row(form_authentication.oldpassword, {'label': 'Mot de passe', 'attr': {'placeholder': 'Entrer votre mot de passe', 'class': 'rounded'}}) }}
+            </div>
             {{ form_row(form_authentication.password, {'label': 'Mot de passe', 'attr': {'placeholder': 'Entrer votre mot de passe', 'class': 'rounded'}}) }}
             {{ form_row(form_authentication.confirm_password, {'label': 'Confirmation du mot de passe', 'attr': {'placeholder': 'Entrer la confirmation du mot de passe', 'class': 'rounded'}}) }}
             <div class="form-group col text-center">

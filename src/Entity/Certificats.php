@@ -43,6 +43,11 @@ class Certificats
      */
     private $etudiant;
 
+    /**
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    private $issuedAt;
+
 
     public function getId(): ?int
     {
@@ -105,6 +110,18 @@ class Certificats
     public function setEtudiant(?Etudiant $etudiant): self
     {
         $this->etudiant = $etudiant;
+        return $this;
+    }
+
+    public function getIssuedAt(): ?\DateTimeInterface
+    {
+        return $this->issuedAt;
+    }
+
+    public function setIssuedAt(?\DateTimeInterface $issuedAt): self
+    {
+        $this->issuedAt = $issuedAt;
+
         return $this;
     }
 

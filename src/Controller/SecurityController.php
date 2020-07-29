@@ -45,22 +45,19 @@ class SecurityController extends AbstractController
 
             if ($imageFile) {
                 $originalFilename = pathinfo($imageFile->getClientOriginalName(), PATHINFO_FILENAME);
-                // this is needed to safely include the file name as part of the URL
                 $safeFilename = md5($originalFilename);
                 $newFilename = $safeFilename.'-'.uniqid().'.'.$imageFile->guessExtension();
 
-                // Move the file to the directory where brochures are stored
                 try {
                     $imageFile->move(
                         $this->getParameter('uploads_directory'),
                         $newFilename
                     );
                 } catch (FileException $e) {
-                    // ... handle exception if something happens during file upload
+                    
                 }
 
-                // updates the 'imageFilename' property to store the PDF file name
-                // instead of its contents
+             
                 $etudiant->setImageFilename($newFilename);
 
                 
