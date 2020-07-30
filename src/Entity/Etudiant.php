@@ -116,8 +116,6 @@ class Etudiant
     private $accepted;
 
     
-
-    
     public function getId(): ?int
     {
         return $this->id;

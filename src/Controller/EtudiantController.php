@@ -116,7 +116,8 @@ class EtudiantController extends AbstractController
 
         return $this->render('etudiant/doc.html.twig', [
             'etudiant' => $etudiant ,
-            'demande' => $certificat]);
+            'demande' => $certificat
+        ]);
     }
     /**
      * @Route("/demande/document/impression/{id}", name="etudiant_impression")
@@ -150,7 +151,7 @@ class EtudiantController extends AbstractController
         // Render the HTML as PDF
        $dompdf->loadHtml( 'doc');
 
-        $dompdf->stream('Certificat');
+        $dompdf->stream('Certificat_de_scolarité_'.$etudiant->getNom().'_'.$etudiant->getPrenom());
 
     }
     /**
@@ -169,87 +170,87 @@ class EtudiantController extends AbstractController
     {
         if($etudiant ->getId()){
 
-        $form = $this->createForm(EtudiantType::class, $etudiant);
-        $form->handleRequest($request);
-        dump($etudiant);
-        $imageFile = $form->get('image')->getData();
+            $form = $this->createForm(EtudiantType::class, $etudiant);
+            $form->handleRequest($request);
+            dump($etudiant);
+            $imageFile = $form->get('image')->getData();
 
-        if( $form->isSubmitted() && $form->isValid() ){
-            if ($imageFile) {
-                $originalFilename = pathinfo($imageFile->getClientOriginalName(), PATHINFO_FILENAME);
-                // this is needed to safely include the file name as part of the URL
-                $safeFilename = md5($originalFilename);
-                $newFilename = $safeFilename.'-'.uniqid().'.'.$imageFile->guessExtension();
+            if( $form->isSubmitted() && $form->isValid() ){
+                if ($imageFile) {
+                    $originalFilename = pathinfo($imageFile->getClientOriginalName(), PATHINFO_FILENAME);
+                    // this is needed to safely include the file name as part of the URL
+                    $safeFilename = md5($originalFilename);
+                    $newFilename = $safeFilename.'-'.uniqid().'.'.$imageFile->guessExtension();
 
-                // Move the file to the directory where brochures are stored
-                try {
-                    $imageFile->move(
-                        $this->getParameter('uploads_directory'),
-                        $newFilename
-                    );
-                } catch (FileException $e) {
-                    // ... handle exception if something happens during file upload
+                    // Move the file to the directory where brochures are stored
+                    try {
+                        $imageFile->move(
+                            $this->getParameter('uploads_directory'),
+                            $newFilename
+                        );
+                    } catch (FileException $e) {
+                        // ... handle exception if something happens during file upload
+                    }
+
+                    // updates the 'imageFilename' property to store the PDF file name
+                    // instead of its contents
+                    $etudiant->setImageFilename($newFilename);
                 }
 
-                // updates the 'imageFilename' property to store the PDF file name
-                // instead of its contents
-                $etudiant->setImageFilename($newFilename);
+                $manager->persist($etudiant);
 
+                $manager->flush();
+
+                return $this->redirectToRoute('etudiant_profil', 
+                ['id'=> $etudiant->getId() , ] 
+                );
 
             }
 
-            $manager->persist($etudiant);
-
-            $manager->flush();
-
-            return $this->redirectToRoute('etudiant_profil', 
-               ['id'=> $etudiant->getId() , ] 
-            );
-
+            return $this->render('etudiant/modification.html.twig', [
+                'form_etudiant' => $form->createView() , 'etudiant' => $etudiant
+            ]);
         }
-
-        return $this->render('etudiant/modification.html.twig', [
-            'form_etudiant' => $form->createView() , 'etudiant' => $etudiant
-        ]);
     }
-    }
-
+    
     /**
      * @Route("/demande/{id}", name="etudiant_certificat")
      */
-    public function demandecertificat(Request $request, EntityManagerInterface $manager, Etudiant $etudiant, CertificatsRepository $ceritificat)
+    public function demandecertificat(Request $request, EntityManagerInterface $manager, Etudiant $etudiant, CertificatsRepository $certificat)
     {
         $demande = new Certificats();
 
-         $form = $this->createForm(CertificatsType::class, $demande);
-         $form->handleRequest($request);
-         dump($demande);
+        $form = $this->createForm(CertificatsType::class, $demande);
+        $form->handleRequest($request);
+        dump($demande);
 
-         if( $form->isSubmitted() && $form->isValid()){
+        if( $form->isSubmitted() && $form->isValid()){
+    
+            $certificat_array = $certificat->findBy(array('etudiant' => $etudiant->getId(), 'type' => $demande->getType()));
+            foreach ($certificat_array as $c) {
+                $manager->remove($c);
+            }
 
-             $demande->setRequestedAt(new \DateTime());
-             $demande->setEtudiant($etudiant);
+            $demande->setRequestedAt(new \DateTime());
+            $demande->setEtudiant($etudiant)
+                    ->setAccepted(0);
 
-             $manager->persist($demande);
-             $manager->flush();
+            $manager->persist($demande);
+            $manager->flush();
 
-
-
-             return $this->redirectToRoute('etudiant_accueil', [
+            return $this->redirectToRoute('etudiant_accueil', [
                 'id'=> $etudiant->getId(),
                 'msg' =>   "Votre demande est envoyé à l\'admin. Une réponse vous sera envoyée dans les meilleurs delais"
-                ,
+            ]);
+        }
 
-                ]);
-         }
+        return $this->render('etudiant/demande.html.twig' , [
+            'formDemande' => $form->createView(),
+            'etudiant' => $etudiant,         
 
-         return $this->render('etudiant/demande.html.twig' , [
-             'formDemande' => $form->createView(),
-             'etudiant' => $etudiant,         
-
-         ]);
-
+        ]);
     }
+
      /**
      * @Route("/delete/{id}", name="etudiant_delete")
      */

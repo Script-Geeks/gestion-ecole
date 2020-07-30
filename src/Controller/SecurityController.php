@@ -5,18 +5,19 @@ namespace App\Controller;
 use App\Entity\User;
 use App\Form\UserType;
 use App\Entity\Etudiant;
-use App\Form\EtudiantType;
 use App\Entity\Certificat;
+use App\Form\EtudiantType;
 use App\Repository\UserRepository;
 use App\Repository\EtudiantRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Security;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
-use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\File\Exception\FileException;
+use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
+use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
 class SecurityController extends AbstractController
 {
@@ -56,7 +57,9 @@ class SecurityController extends AbstractController
                 } catch (FileException $e) {
                     
                 }
-                $etudiant->setImageFilename($newFilename);
+                $etudiant->setImageFilename($newFilename)
+                         ->setAccepted(0)
+                         ->setPayed(0);
             }
             $manager->persist($etudiant);
 
@@ -119,9 +122,16 @@ class SecurityController extends AbstractController
     /**
      * @Route("/connexion", name="security_login")
      */
-    public function login()
+    public function login(Request $request, UserRepository $repo_user, AuthenticationUtils $utils)
     {
-        return $this->render('security/login.html.twig');
+        $error = $utils->getLastAuthenticationError();
+        $email = $utils->getLastUsername();
+        $user = $repo_user->findBy(array('email'=>$email));
+        dump($user);
+        return $this->render('security/login.html.twig', [
+            'error' => $error,
+            'email' => $email
+        ]);
     }
 
     /**

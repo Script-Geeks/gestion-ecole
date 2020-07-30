@@ -23,6 +23,7 @@ use App\Repository\FiliereRepository;
 use App\Repository\EtudiantRepository;
 use App\Repository\ProfesseurRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use App\Repository\CertificatsRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -45,7 +46,7 @@ class ResponsableController extends AbstractController
     {
         $niveau = $repo_niveau->find($id);
         $filiere = $repo_filiere->find($idFil);
-        $etudiants = $repo_etudiant->findBy(array('niveau'=>$niveau, 'filiere'=>$filiere));
+        $etudiants = $repo_etudiant->findBy(array('accepted'=>1, 'niveau'=>$niveau, 'filiere'=>$filiere));
         return $this->render('responsable/etudiants.html.twig', [
             'etudiants' => $etudiants,
             'niveau' => $niveau,
@@ -114,17 +115,121 @@ class ResponsableController extends AbstractController
     
     /**
      * @Route("/responsable/filieres", name="responsable_filiere")
+     * @Route("/responsable/filieres/d/{demandes}", name="responsable_filiere_demandes")
+     * @Route("/responsable/filieres/p/{paiment}", name="responsable_filiere_paiment")
+     * @Route("/responsable/filieres/s/{scolarite}", name="responsable_filiere_scolarite")
      */
-    public function gestion_filiere(NiveauRepository $repo_niveau, FiliereRepository $repo_filiere)
+    public function gestion_filiere( $scolarite = null, $paiment = null, $demandes = null, NiveauRepository $repo_niveau, FiliereRepository $repo_filiere)
     {
         $filieres = $repo_filiere->findAll();
         $niveaux = $repo_niveau->findAll();
         return $this->render('responsable/filieres.html.twig', [
             'filieres' => $filieres,
-            'niveaux' => $niveaux
+            'niveaux' => $niveaux,
+            'demandes' => $demandes,
+            'paiment' => $paiment,
+            'scolarite' => $scolarite
         ]);
     }
 
+    /**
+     * @Route("/responsable/demandes/scolarite/{idFil}/{idNiv}/etudiant", name="responsable_demandes_etudiant")
+     */
+    public function demandes_scolarite( $idFil, $idNiv, NiveauRepository $repo_niveau, FiliereRepository $repo_filiere, CertificatsRepository $repo_certificats)
+    {
+        $filiere = $repo_filiere->find($idFil);
+        $niveau = $repo_niveau->find($idNiv);
+        $etudiants_certificats = $repo_certificats->findBy(array('accepted'=> 0));
+        dump($etudiants_certificats);
+        return $this->render('responsable/scolarite_demande.html.twig', [
+            'etudiants_certificats' => $etudiants_certificats,
+            'filiere' => $filiere,
+            'niveau' => $niveau
+            ]);
+    }
+
+    /**
+     * @Route("/responsable/demandes/etudiant/{id}/{idFil}/{idNiv}/accepter", name="responsable_demandes_accepter")
+     */
+    public function accepter_demandes_scolarite( $id, $idFil, $idNiv, CertificatsRepository $repo_certificats, EntityManagerInterface $manager)
+    {
+        $certificat_array = $repo_certificats->findBy(array('etudiant' => $id, 'accepted' => 0));
+        $certificat = $repo_certificats->find($certificat_array[0]->getId());
+        $certificat->setAccepted(1)
+                   ->setIssuedAt(new \DateTime());
+        $manager->persist($certificat);
+        $manager->flush();
+
+        return $this->redirectToRoute('responsable_demandes_etudiant', ['id' => $id, 'idNiv'=> $idNiv, 'idFil'=> $idFil]);
+    }
+
+    /**
+     * @Route("responsable/{idFil}/{idNiv}/suppression/{id}/demande/scolarite", name="responsable_suppression_demande_scolarite")
+     */
+    public function suppression_demande_scolarite( $id, $idFil, $idNiv, CertificatsRepository $repo_certificat, EntityManagerInterface $manager)
+    {
+        $certificat = $repo_certificat->find($id);
+        $manager->remove($certificat);
+        $manager->flush();
+        return $this->redirectToRoute('responsable_demandes_etudiant', ['id' => $id, 'idNiv'=> $idNiv, 'idFil'=> $idFil]);
+    }
+
+    /**
+     * @Route("/responsable/demandes/{idFil}/{idNiv}/inscription", name="responsable_demandes_inscription")
+     */
+    public function demandes_inscription( $idFil, $idNiv, FiliereRepository $repo_filiere, NiveauRepository $repo_niveau, EtudiantRepository $repo_etudiant)
+    {
+        $filiere = $repo_filiere->find($idFil);
+        $niveau = $repo_niveau->find($idNiv);
+        $etudiants_non_acceptes = $repo_etudiant->findBy(array('accepted'=> 0, 'filiere'=> $idFil, 'niveau'=> $idNiv));
+        return $this->render('responsable/demandes.html.twig', [
+            'etudiants_non_acceptes' => $etudiants_non_acceptes,
+            'filiere' => $filiere,
+            'niveau' => $niveau
+            ]);
+    }
+        
+    /**
+     * @Route("/responsable/etudiant/{id}/{idFil}/{idNiv}/accepter", name="responsable_etudiant_accepter")
+     */
+    public function accepter_etudiant( $id, $idFil, $idNiv, EtudiantRepository $repo_etudiant, EntityManagerInterface $manager)
+    {
+        $etudiant = $repo_etudiant->find($id);
+        $etudiant->setAccepted(1);
+        $manager->persist($etudiant);
+        $manager->flush();
+
+        return $this->redirectToRoute('responsable_demandes_inscription', ['idNiv'=> $idNiv, 'idFil'=> $idFil]);
+    }
+
+    /**
+     * @Route("/responsable/paiment/{idFil}/{idNiv}/inscription", name="responsable_paiment_etudiant")
+     */
+    public function demandes_paiment( $idFil, $idNiv, FiliereRepository $repo_filiere, NiveauRepository $repo_niveau, EtudiantRepository $repo_etudiant)
+    {
+        $filiere = $repo_filiere->find($idFil);
+        $niveau = $repo_niveau->find($idNiv);
+        $etudiants_non_payes = $repo_etudiant->findBy(array('payed'=> 0, 'filiere'=> $idFil, 'niveau'=> $idNiv));
+        return $this->render('responsable/paiment.html.twig', [
+            'etudiants_non_payes' => $etudiants_non_payes,
+            'filiere' => $filiere,
+            'niveau' => $niveau
+            ]);
+    }
+
+    /**
+     * @Route("/responsable/etudiant/{id}/{idFil}/{idNiv}/payer", name="responsable_etudiant_accepter")
+     */
+    public function payer_etudiant( $id, $idFil, $idNiv, EtudiantRepository $repo_etudiant, EntityManagerInterface $manager)
+    {
+        $etudiant = $repo_etudiant->find($id);
+        $etudiant->setPayed(1);
+        $manager->persist($etudiant);
+        $manager->flush();
+
+        return $this->redirectToRoute('responsable_paiment_etudiant', ['idNiv'=> $idNiv, 'idFil'=> $idFil]);
+    }
+    
     /**
      * @Route("/responsable/enseignants", name="responsable_enseignant")
      */
