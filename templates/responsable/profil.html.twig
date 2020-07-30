@@ -1,0 +1,27 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Profil{% endblock %}
+
+{% block body %}
+
+    <a class="m-3 btn btn-primary" href="{{ path('responsable_accueil') }}">Retour</a>
+
+    <div class="m-5 d-flex flex-wrap justify-content-center">
+    <div class="m-5 card border-light mb-3 rounded text-center" style="width: 50rem;">
+            <h3 class="card-header">Informations du compte</h3>
+            <br>
+                <p class="m-3 text-muted">Nom Complet : {{ responsable.nom ~ ' ' ~ responsable.prenom }}</p>
+                <p class="m-2 text-muted">E-mail : {{ responsable.email }} </p>
+                
+                <div class="card-body form-inline justify-content-center">
+
+                    <a class="nav-link text-success " href="{{ path('responsable_modification' , { 'id': responsable.id}) }}">Modifier Compte</a>
+            </div>
+        
+        </div>
+            </div>
+
+
+    </div>
+
+{% endblock %}

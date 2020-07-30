@@ -27,6 +27,13 @@
                             <a class="nav-link" href="{{ path('responsable_accueil') }}">Accueil</a>
                         </li>
                         <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Résponsable</a>
+                            <div class="dropdown-menu" style="">
+                                <a class="dropdown-item" href="{{ path('responsable_profil') }}">Profil</a>
+                                <a class="dropdown-item" href="{{ path('responsable_ajout') }}">Ajouter un réponsable</a>
+                            </div>
+                        </li>
+                        <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Étudiants</a>
                             <div class="dropdown-menu" style="">
                                 <a class="dropdown-item" href="{{ path('responsable_niveau', {'type': 'etudiants'}) }}">Afficher les étudiants</a>
@@ -76,6 +83,7 @@
                         <li class="nav-item">
                             <a class="nav-link" href="{{ path('etudiant_accueil', {'id': app.user.getEtudiant.getId}) }}">Accueil</a>
                         </li>
+                        {% if app.user.getEtudiant.getAccepted == 1 %}
                         <li class="nav-item">
                             <a class="nav-link" href="{{ path('etudiant_profil', {'id': app.user.getEtudiant.getId}) }}">Profil</a>
                         </li>
@@ -89,6 +97,7 @@
                         <li class="nav-item">
                             <a class="nav-link" href="#">Emploi</a>
                         </li>
+                        {% endif %}
                     {% elseif app.user.getProfesseur != null %}
                         <li class="nav-item">
                             <a class="nav-link" href="{{ path('prof_accueil', {'id': app.user.getProfesseur.getId}) }}">Accueil</a>

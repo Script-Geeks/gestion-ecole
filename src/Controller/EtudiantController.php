@@ -108,15 +108,13 @@ class EtudiantController extends AbstractController
     /**
      * @Route("/demande/document/{id}", name="etudiant_document")
      */
-    public function doc(Etudiant $etudiant, CertificatsRepository $certificat)
+    public function doc(Etudiant $etudiant, CertificatsRepository $repo_certificat)
     {
-        $certificat = $this->getDoctrine()
-            ->getRepository(Certificats::Class)
-                ->findOneBy(array('etudiant' => $etudiant->getId()));
+        $certificat = $repo_certificat->findOneBy(array('etudiant' => $etudiant->getId()));
 
         return $this->render('etudiant/doc.html.twig', [
             'etudiant' => $etudiant ,
-            'demande' => $certificat
+            'certificat' => $certificat
         ]);
     }
     /**
@@ -139,7 +137,7 @@ class EtudiantController extends AbstractController
 
             $doc = $this->renderview('etudiant/impression.html.twig', [
                 'etudiant' => $etudiant ,
-                'demande' => $certificat]);
+                'certificat' => $certificat]);
                 $dompdf->loadHtml($doc);
 
             $dompdf->render();
@@ -149,7 +147,7 @@ class EtudiantController extends AbstractController
 
 
         // Render the HTML as PDF
-       $dompdf->loadHtml( 'doc');
+        $dompdf->loadHtml( 'doc');
 
         $dompdf->stream('Certificat_de_scolarité_'.$etudiant->getNom().'_'.$etudiant->getPrenom());
 

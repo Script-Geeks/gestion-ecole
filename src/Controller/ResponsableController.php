@@ -12,7 +12,9 @@ use App\Form\ModuleType;
 use App\Form\ElementType;
 use App\Form\FiliereType;
 use App\Entity\Professeur;
+use App\Entity\Responsable;
 use App\Form\EnseignantType;
+use App\Form\ResponsableType;
 use App\Repository\UserRepository;
 use App\Repository\ClasseRepository;
 use App\Repository\ModuleRepository;
@@ -24,6 +26,7 @@ use App\Repository\EtudiantRepository;
 use App\Repository\ProfesseurRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Repository\CertificatsRepository;
+use App\Repository\ResponsableRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -37,6 +40,106 @@ class ResponsableController extends AbstractController
     public function index()
     {
         return $this->render('responsable/accueil.html.twig');
+    }
+
+    /**
+     * @Route("responsable/profil", name="responsable_profil")
+     */
+    public function responsable_profil(ResponsableRepository $repo_responsable)
+    {
+        $responsable = $repo_responsable->find($this->getUser()->getResponsable()->getId());
+        return $this->render('responsable/profil.html.twig', [
+            'responsable' => $responsable
+        ]);
+    }
+ 
+    /**
+     * @Route("/responsable/ajout", name="responsable_ajout")
+     * @Route("/responsable/modification/{id}", name="responsable_modification")
+     */
+    public function ajout_responsable(Connection $connection, $id = null, UserRepository $repo_user, ResponsableRepository $repo_responsable, Request $request, EntityManagerInterface $manager, UserPasswordEncoderInterface $encoder, \Swift_Mailer $mailer)
+    {
+        if($id == null){
+            $responsable = new Responsable();
+            $user = new User();
+            $mail_title = 'Profil ajouté avec succès';
+        }else{
+            $responsable = $repo_responsable->find($id);
+            $user_array = $connection->fetchAll("SELECT * FROM user WHERE responsable_id = $id");
+            $user = $repo_user->find($user_array[0]['id']);
+            $mail_title = 'Profil modifié avec succès';
+        }
+        $form = $this->createForm(ResponsableType::class, $responsable);
+
+        $form->handleRequest($request);
+
+        if($form->isSubmitted() && $form->isValid())
+        {
+            $manager->persist($responsable);
+
+            $manager->flush();
+
+            $pwd = '';
+            if($id == null){
+                $x = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+                for($i = 0; $i < 6; $i++){
+                    $pwd .= $x[rand(0, strlen($x)-1)];
+                }
+            }else{
+                $pwd = $responsable->password;
+            }
+
+            if($user->getPassword() !== $pwd){
+                $hash = $encoder->encodePassword($user, $pwd);
+                $user->setPassword($hash);
+                $body = strtoupper($responsable->getNom())." ".$responsable->getPrenom().",\nVous pouvez vous authentifier en utilisant les informations ci-dessous.\n
+                    E-mail: ".$responsable->getEmail()."\n
+                    Mot de passe: ".$pwd;
+            }else{
+                $body = strtoupper($responsable->getNom())." ".$responsable->getPrenom().",\nVotre profil a été modifié avec succès.";
+            }
+            $user->setUsername($responsable->getNom())
+                 ->setEmail($responsable->getEmail())
+                 ->setResponsable($responsable);
+            
+            $manager->persist($user);
+            
+            $manager->flush();
+
+            $user_now = $this->getUser();
+            $message = (new \Swift_Message($mail_title))
+                ->setFrom('insea.inscription@gmail.com')
+                ->setTo($responsable->getEmail())
+                ->setBody(
+                    $body,
+                    'text/plain'
+                );
+            $mailer->send($message);
+            
+            if($id !== null){
+                return $this->redirectToRoute('responsable_profil');
+            }else{
+                return $this->redirectToRoute('responsable_accueil');
+            }
+        }
+
+        if($id == null){
+            return $this->render('responsable/responsable_ajout.html.twig', [
+                'form_responsable' => $form->createView(),
+                'pwd' => 0,
+                'title' => 'L\'ajout d\'un enseignat',
+                'button' => 'Ajouter'
+            ]);
+        }else{
+            return $this->render('responsable/responsable_ajout.html.twig', [
+                'form_responsable' => $form->createView(),
+                'pwd' => 1,
+                'title' => "La modification des informations de :\n",
+                'nomComplet' => $responsable->getNom()." ".$responsable->getPrenom(),
+                'password' => $user_array[0]['password'],
+                'button' => 'Modifier'
+            ]);
+        }
     }
 
     /**
@@ -218,7 +321,7 @@ class ResponsableController extends AbstractController
     }
 
     /**
-     * @Route("/responsable/etudiant/{id}/{idFil}/{idNiv}/payer", name="responsable_etudiant_accepter")
+     * @Route("/responsable/etudiant/{id}/{idFil}/{idNiv}/payer", name="responsable_etudiant_payer")
      */
     public function payer_etudiant( $id, $idFil, $idNiv, EtudiantRepository $repo_etudiant, EntityManagerInterface $manager)
     {
@@ -297,17 +400,22 @@ class ResponsableController extends AbstractController
             $manager->persist($user);
             
             $manager->flush();
-            
-            $message = (new \Swift_Message($mail_title))
-                ->setFrom('insea.inscription@gmail.com')
-                ->setTo($enseignant->getEmail())
-                ->setBody(
-                    $body,
-                    'text/plain'
-                );
-            $mailer->send($message);
-            
-            return $this->redirectToRoute('responsable_enseignant');
+
+            $user_now = $this->getUser();
+            if($user_now->getResponsable() != null ){
+                $message = (new \Swift_Message($mail_title))
+                    ->setFrom('insea.inscription@gmail.com')
+                    ->setTo($enseignant->getEmail())
+                    ->setBody(
+                        $body,
+                        'text/plain'
+                    );
+                $mailer->send($message);
+                
+                return $this->redirectToRoute('responsable_enseignant');
+            }else{
+                return $this->redirectToRoute('prof_accueil', ['id'=> $user->getProfesseur()->getId()]);
+            }
         }
         
         if($id == null){

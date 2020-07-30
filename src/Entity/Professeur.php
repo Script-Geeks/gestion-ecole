@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\ProfesseurRepository;
+use Symfony\Component\Validator\Constraints as Assert;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -46,9 +47,13 @@ class Professeur
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Assert\Email(message="L'e-mail n'est pas valide !")
      */
     private $email;
 
+    /**
+     * @Assert\Length(min=8, minMessage="Cette valeur est trop courte. Il doit comporter 8 caractères ou plus !")
+     */
     public $password;
 
     public function __construct()

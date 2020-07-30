@@ -4,20 +4,19 @@
       <title>Certificat</title>
    </head>
    <style>
-   .insea{
-        height:110px;
-        width:110px;
-        margin-left:auto;
-        margin-right:auto;
-         display: block;
-   }
+      .insea{
+         margin-left:45%;
+         display: inline;
+      }
+      body{
+         padding-top: 15%;
+      }
 
    </style>
    <body>
-    <div class="insea">
-        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/05/INSEA_logo.png/552px-INSEA_logo.png" alt ="insea" >
-        </br>
-    </div>
+      <div class="insea">
+         <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/05/INSEA_logo.png/552px-INSEA_logo.png" height="80em" width="80em" alt ="insea" >
+      </div>
       <div style="text-align:center ; font-family:Helvetica">
          <p >INSTITUT NATIONAL DE STATISTIQUE ET D'ÉCONOMIE APPLIQUÉE</p>
          <hr>
@@ -34,7 +33,9 @@
          </div>
       </div>
       <div>
-      <p><img style="height:140px; width:140px;  display: block, float:center ; margin: 0px 600px" src="https://i.imgur.com/wZS4Cfq.png" alt ="cachet">
+      <p>
+      <img style="height:140px; width:140px;  display: block, float:center ; margin: 0px 600px" src="https://i.imgur.com/wZS4Cfq.png" alt ="cachet"><br>
+      <span style="float:right">Le {{ certificat.getIssuedAt| date('d/m/Y')}}</span>
       <p>
    </body>
 </html>
