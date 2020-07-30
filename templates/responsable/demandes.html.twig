@@ -1,0 +1,40 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Enseignant{% endblock %}
+
+{% block body %}
+
+    <a class="m-3 btn btn-primary" href="{{ path('responsable_filiere_demandes', {'demandes': 'demandes'}) }}">Retour</a>
+
+    <h1 id="nav-breadcrumbs" class="mt-5 display-5 text-center text-success">
+        Les demandes d'inscriptions de la <span class="text-primary">{{filiere.nom}}</span> du <span class="text-primary">{{niveau.nom}}</span>
+    </h1>
+    {% if etudiants_non_acceptes|length == 0 %}
+        <div class="alert alert-dismissible alert-warning text-center m-5 mx-auto" style="width: 40rem">
+            <h4 class="alert-heading ">Aucune demande inscriptions reçues</h4>
+        </div>
+    {% else %}
+    <table class="table table-hover mt-5">
+    <thead>
+        <thead>
+            <tr>
+                <th scope="col">Nom et prénom</th>
+                <th scope="col">Action</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for etudiant in etudiants_non_acceptes %}
+            <tr class="table-warning">
+                <th scope="row">
+                    <a class=" text-success text-center" href="{{ path('etudiant_profil', {'id': etudiant.id}) }}">{{ etudiant.nom ~ ' ' ~ etudiant.prenom}}</a>
+                    </th>
+                <td>
+                    <a class=" text-success text-center" href="{{ path('responsable_etudiant_accepter', {'id': etudiant.id,'idFil': etudiant.getFiliere.getId,'idNiv': etudiant.getNiveau.getId}) }}">Accepter</a> | 
+                    <a class=" text-success text-danger text-center" href="{{ path('responsable_suppression_etudiant', { 'id': etudiant.id} ) }}">Supprimer</a>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table> 
+    {% endif %}
+{% endblock %}

@@ -3,7 +3,11 @@
 {% block title %}INSEA{% endblock %}
 
 {% block body %}
-
+{% if app.user.getResponsable != null %}
+    <a class="m-3 btn btn-primary" href="{{ path('responsable_enseignant') }}">Annuler</a>
+{% elseif app.user.getProfesseur != null %}
+    <a class="m-3 btn btn-primary" href="{{ path('prof_accueil', {'id': app.user.getProfesseur.getId}) }}">Annuler</a>
+{% endif %}
 <div class="card rounded border-success m-2 mx-auto" style="max-width: 55rem">
     <h1 class="text-center text-success m-5">
         {{ title }}
@@ -24,7 +28,6 @@
         {% endif %}
         <div class="form-group col text-center">
             <button type="submit" class="btn btn-outline-success rounded">{{ button }}</button>
-            <button type="submit" class="btn btn-outline-danger rounded">Annuler</button>
         </div>
     {{ form_end(form_enseignant) }}
 </div>

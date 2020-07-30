@@ -3,7 +3,10 @@
 {% block title %}Responsable{% endblock %}
 
 {% block body %}
+
+
 <div class="card rounded border-success m-2 mx-auto" style="max-width: 85rem">
+    <a class="m-3 btn btn-secondary" href="{{ path('responsable_accueil') }}">Retour</a>
     <h1 id="nav-breadcrumbs" class="m-5 display-3 text-center text-success">{{ header }}</h1>
     <div class="m-5 d-flex flex-wrap justify-content-center">
         {% for niveau in niveaux %}

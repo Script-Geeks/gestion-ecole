@@ -4,10 +4,19 @@
 
 {% block body %}
 
-
-    <div class="card rounded border-success m-5 mx-auto" style="max-width: 30rem">
+    <a class="m-3 btn btn-primary" href="/">Retour</a>
+    {% if error %}
+    <div class="card rounded border-danger m-1 mx-auto" style="max-width: 30rem">
+        <div class="card-body m-2">
+            <h1 class="text-center text-danger ">Connexion</h1>
+                <div class="text-center alert alert-dismissible alert-danger mt-5 ml-5 mx-auto rounded" style="width: 24rem">
+                    <span class="ml-5">{{ error.messageKey|trans(error.messageData, 'security') }}</span>
+                </div>
+    {% else %}
+    <div class="card rounded border-success m-4 mx-auto" style="max-width: 30rem">
         <div class="card-body m-2">
             <h1 class="text-center text-success ">Connexion</h1>
+    {% endif %}
             <form action="{{ path('security_login') }}" method="post" class="m-4">
                 <div class="input-group form-group">
                     <input type="text" name="_username" class="form-control rounded" placeholder="Adresse e-mail" required autofocus>
