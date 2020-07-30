@@ -120,6 +120,21 @@ class EtudiantController extends AbstractController
         ]);
     }
     /**
+     * @Route("/demande/documents/{id}", name="etudiant_documents")
+     */
+    public function documents(Etudiant $etudiant, CertificatsRepository $certificat)
+    {
+        $certificat = $this->getDoctrine()
+            ->getRepository(Certificats::Class)
+                ->findBy(array('etudiant' => $etudiant->getId()));
+
+
+        return $this->render('etudiant/documents.html.twig', [
+            'etudiant' => $etudiant ,
+            'demande' => $certificat
+        ]);
+    }
+    /**
      * @Route("/demande/document/impression/{id}", name="etudiant_impression")
      */
     public function impression(Etudiant $etudiant, CertificatsRepository $certificat)
@@ -127,7 +142,7 @@ class EtudiantController extends AbstractController
         $certificat = $this->getDoctrine()
         ->getRepository(Certificats::Class)
             ->findOneBy(array('etudiant' => $etudiant->getId()));
-
+            if ($certificat->getType()== 'Certificat de scolarité'){
             $options = new Options();
             $options->setIsRemoteEnabled(true);
 
@@ -152,7 +167,33 @@ class EtudiantController extends AbstractController
        $dompdf->loadHtml( 'doc');
 
         $dompdf->stream('Certificat_de_scolarité_'.$etudiant->getNom().'_'.$etudiant->getPrenom());
+            }
+            else{
+                $options = new Options();
+            $options->setIsRemoteEnabled(true);
 
+            $options->set('defaultFont', 'Courier');
+            $dompdf = new Dompdf($options);
+
+
+            $dompdf->set_option('isHtml5ParserEnabled', true);
+
+            $doc = $this->renderview('etudiant/impression.html.twig', [
+                'etudiant' => $etudiant ,
+                'demande' => $certificat]);
+                $dompdf->loadHtml($doc);
+
+            $dompdf->render();
+
+        // (Optional) Setup the paper size and orientation
+        $dompdf->setPaper('A4', 'portrait');
+
+
+        // Render the HTML as PDF
+       $dompdf->loadHtml( 'doc');
+
+        $dompdf->stream('Relevé de note'.$etudiant->getNom().'_'.$etudiant->getPrenom());
+            }
     }
     /**
      * @Route("/profil/{id}" ,name="etudiant_profil")

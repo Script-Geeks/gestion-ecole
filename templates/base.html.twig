@@ -82,7 +82,7 @@
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Scolarité</a>
                             <div class="dropdown-menu" style="">
-                                <a class="dropdown-item" href="{{ path('etudiant_document', {'id': app.user.getEtudiant.getId}) }}">Demandes acceptées</a>
+                                <a class="dropdown-item" href="{{ path('etudiant_documents', {'id': app.user.getEtudiant.getId}) }}">Demandes acceptées</a>
                                 <a class="dropdown-item" href="{{ path('etudiant_certificat', {'id': app.user.getEtudiant.getId}) }}">Nouvelle demande</a>
                             </div>
                         </li>
