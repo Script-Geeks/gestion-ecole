@@ -88,31 +88,37 @@ class ProfesseurController extends AbstractController
     }
    
     /**
+     * @Route("/elements/modification/{idEl}/{idEt}/{id}/{idNote}", name="prof_elements_update_notes")
      * @Route("/elements/{idEl}/{idEt}/{id}", name="prof_elements_notes")
      */
-    public function notes(EntityManagerInterface $manager,Request $request,Professeur $professeur,EtudiantRepository $repo_etudiant,ElementRepository $repo_element,NotesRepository $repo_note, $idEl, $idEt)
+    public function notes(NotesRepository $repo_note , $idNote = null,EntityManagerInterface $manager,Request $request,Professeur $professeur,EtudiantRepository $repo_etudiant,ElementRepository $repo_element, $idEl, $idEt)
     {
+        
         $etudiant= $repo_etudiant->find($idEt);
         $element= $repo_element->find($idEl);
-        
+
+        if ($idNote == null){
         $note = new Notes();
+        }
+        else{
+            $note = $repo_note->find($idNote);
+        }
         $form = $this->createForm(NotesType::class, $note);
 
         $form->handleRequest($request);
 
         if($form->isSubmitted() && $form->isValid()){
 
-            if ( $note->getId()=== null){
-                $note_array = $repo_note->findBy(array('element' => $element->getId(), 'etudiant' => $etudiant->getId()));
-                foreach ($note_array as $n) {
-                    $manager->remove($n);
+           if( $note->getId()=== null){
+
+                    $note->setElement($element);
+                    $note->setEtudiant($etudiant);
+                    $note->setProfesseur($professeur);
+
                 }
     
-            }
-            $note->setNote($note->getNote());
-            $note->setElement($element);
-            $note->setEtudiant($etudiant);
-            $note->setProfesseur($professeur);
+            
+           
 
             $manager->persist($note);
             
@@ -125,8 +131,8 @@ class ProfesseurController extends AbstractController
                 'id' => $professeur->getId(),
                 'message' => 'Note ajoutée',
                  ]);
-        }
-
+        
+            }
        
             return $this->render('professeur/notes.html.twig', [
                 'formNotes' => $form->createView(),
@@ -138,4 +144,5 @@ class ProfesseurController extends AbstractController
             ]);
         
     }
+
 }

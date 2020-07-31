@@ -45,10 +45,13 @@
 
             <td>
             {% set noteEtudiant = '-' %}
+            {% set idNote = null %}
 
             {% for note in notes  %}
                 {% if note.etudiant == etudiant %}
                    {% set noteEtudiant = note.note %}
+                   {% set idNote = note.id %}
+
                 {% endif %}
                 
             {% endfor %}
@@ -59,21 +62,15 @@
              <td>
                 {% else %}
     
-            <a class=" text-center" href="{{ path('prof_elements_notes', {'id':professeur.id ,'idEt' : etudiant.id,'idEl' : element.id}) }}">Modifier note</a> 
+            <a class=" text-center" href="{{ path('prof_elements_update_notes', {'idNote': idNote,'id':professeur.id ,'idEt' : etudiant.id,'idEl' : element.id}) }}">Modifier note</a> 
              
-
             </td>
-            <td>
-            
-                {% if noteEtudiant == '-' %}
+            <td>   
+                 {% endif %}
                 {{ noteEtudiant }}
-                {% else %}
-                {{ noteEtudiant }}
-                     {% endif %}
-
+    
             </td>
         </tr>
-        {% endif %}
             {% endfor %}
     </tbody>
 </table>        
