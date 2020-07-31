@@ -1,0 +1,23 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Notes{% endblock %}
+{% block body %}
+
+<div class="card rounded border-success m-5 mx-auto" style="max-width: 55rem">
+<h1 class="text-center text-success m-5">Entrer Note </h1>
+{{form_start(formNotes , {'attr': {'class': 'text-success m-4'}})}}
+
+        {{form_row(formNotes.note ,{'attr': {'placeholder' : "Entrer note" }}) }}
+        {{form_row(formNotes.observations,{'attr': {'placeholder' : "Entrer observations" }}) }}
+        <div class="form-group col text-center">
+
+        <button type="submit" class="btn btn-outline-success rounded">Valider</button>
+        <a class="m-3 btn btn-outline-danger rounded" href="{{path('prof_elements_etudiants', {'idEl' : element.id , 'id' : professeur.id})}}">Annuler</a>
+        </div>
+
+       
+{{form_end(formNotes)}}
+</div>
+
+
+{% endblock %}

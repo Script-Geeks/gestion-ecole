@@ -1,0 +1,88 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Etudiants{% endblock %}
+
+{% block body %}
+
+
+
+<div class="card rounded border-success m-2 mx-auto" style="max-width: 85rem">
+    <a class="m-3 btn btn-secondary" href="{{ path('prof_elements', {'id':professeur.id}) }}">Retour</a>
+
+    {% if message is defined %}
+    <div class="m-0 d-flex flex-wrap justify-content-center">
+        <div class="alert alert-dismissible alert-success m-0 text-center justify-content-center " style="max-width: 40rem;">
+            <button type="button" class="close" data-dismiss="alert">&times;</button>
+            {{ message }}
+        </div>
+    </div>
+    {% endif %}
+
+
+    <h1 id="nav-breadcrumbs" class="mt-5 display-3 text-center text-success">Les étudiants</h1>
+    <div class="m-5 d-flex flex-wrap justify-content-center">
+        <table class="table table-hover mt-5">
+
+        {% if element|length != 0 %}
+   
+<thead>
+    <thead>
+        <tr>
+            <th scope="col">Étudiant</th>
+            <th scope="col">Action</th>
+            <th scope="col">Note</th>
+
+        </tr>
+    </thead>
+    <tbody>
+            {% for etudiant in etudiant %}
+
+        <tr class="table-success">
+            <td>
+            
+                {{ etudiant.nom }}
+            </td>
+
+            <td>
+            {% set noteEtudiant = '-' %}
+
+            {% for note in notes  %}
+                {% if note.etudiant == etudiant %}
+                   {% set noteEtudiant = note.note %}
+                {% endif %}
+                
+            {% endfor %}
+                {% if noteEtudiant == '-' %}
+            <a class=" text-center" href="{{ path('prof_elements_notes', {'id':professeur.id ,'idEt' : etudiant.id,'idEl' : element.id}) }}">Entrer note</a> 
+
+            </td>
+             <td>
+                {% else %}
+    
+            <a class=" text-center" href="{{ path('prof_elements_notes', {'id':professeur.id ,'idEt' : etudiant.id,'idEl' : element.id}) }}">Modifier note</a> 
+             
+
+            </td>
+            <td>
+            
+                {% if noteEtudiant == '-' %}
+                {{ noteEtudiant }}
+                {% else %}
+                {{ noteEtudiant }}
+                     {% endif %}
+
+            </td>
+        </tr>
+        {% endif %}
+            {% endfor %}
+    </tbody>
+</table>        
+            {% else %}
+            <div class="jumbotron m-5">
+                <h3 class="display-5">Aucun étudiant n'est affecté à cet élement pour le moment</h3>
+            </div>
+            {% endif %}
+
+    </div>
+
+{% endblock %}

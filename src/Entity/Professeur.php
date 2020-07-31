@@ -51,9 +51,15 @@ class Professeur
 
     public $password;
 
+    /**
+     * @ORM\OneToMany(targetEntity=Notes::class, mappedBy="professeur")
+     */
+    private $notes;
+
     public function __construct()
     {
         $this->elements = new ArrayCollection();
+        $this->notes = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -154,6 +160,37 @@ class Professeur
     public function setEmail(string $email): self
     {
         $this->email = $email;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Notes[]
+     */
+    public function getNotes(): Collection
+    {
+        return $this->notes;
+    }
+
+    public function addNote(Notes $note): self
+    {
+        if (!$this->notes->contains($note)) {
+            $this->notes[] = $note;
+            $note->setProfesseur($this);
+        }
+
+        return $this;
+    }
+
+    public function removeNote(Notes $note): self
+    {
+        if ($this->notes->contains($note)) {
+            $this->notes->removeElement($note);
+            // set the owning side to null (unless already changed)
+            if ($note->getProfesseur() === $this) {
+                $note->setProfesseur(null);
+            }
+        }
 
         return $this;
     }

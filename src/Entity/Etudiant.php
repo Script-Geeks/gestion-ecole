@@ -115,6 +115,16 @@ class Etudiant
      */
     private $accepted;
 
+    /**
+     * @ORM\OneToMany(targetEntity=Notes::class, mappedBy="etudiant")
+     */
+    private $notes;
+
+    public function __construct()
+    {
+        $this->notes = new ArrayCollection();
+    }
+
     
     public function getId(): ?int
     {
@@ -311,6 +321,37 @@ class Etudiant
     public function setAccepted(?bool $accepted): self
     {
         $this->accepted = $accepted;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Notes[]
+     */
+    public function getNotes(): Collection
+    {
+        return $this->notes;
+    }
+
+    public function addNote(Notes $note): self
+    {
+        if (!$this->notes->contains($note)) {
+            $this->notes[] = $note;
+            $note->setEtudiant($this);
+        }
+
+        return $this;
+    }
+
+    public function removeNote(Notes $note): self
+    {
+        if ($this->notes->contains($note)) {
+            $this->notes->removeElement($note);
+            // set the owning side to null (unless already changed)
+            if ($note->getEtudiant() === $this) {
+                $note->setEtudiant(null);
+            }
+        }
 
         return $this;
     }
