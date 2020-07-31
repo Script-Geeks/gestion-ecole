@@ -3,15 +3,14 @@
 {% block title %}Certificat{% endblock %}
 
 {% block body %}
-
-{% if demande is null %}
   <a class="m-3 btn btn-primary" href="{{ path('etudiant_accueil' , { 'id': etudiant.id}) }}}">Retour</a>
+
+{% if demandes is null %}
   <div class="alert alert-dismissible alert-warning text-center m-5 mx-auto" style="width: 40rem">
     <h4 class="alert-heading ">Aucune demande envoyée</h4>
   </div>
-{% elseif demande.accepted == 1  %}
-  <a class="m-3 btn btn-primary" href="{{ path('etudiant_accueil' , { 'id': etudiant.id}) }}">Retour</a>
-  <a class="m-3 btn btn-success" href="{{ path('etudiant_impression', { 'id': etudiant.id} ) }}">Télecharger</a>
+{% elseif demandes.accepted == 1  %}
+  <a class="m-3 btn btn-success" href="{{ path('etudiant_impression', { 'type': demandes.getType, 'id': etudiant.id} ) }}">Télecharger</a>
 
   <img style="height:110px; width:110px;  display: block;margin-left: auto;
             margin-right: auto;" src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/05/INSEA_logo.png/552px-INSEA_logo.png">
@@ -30,7 +29,7 @@
       <div> <p><img style="height:140px; width:140px;  display: block, float:left ; margin: 0px 1000px" src="https://i.imgur.com/wZS4Cfq.png"><p>
         <p class="text-center">issue le <p>
       <a class=" text-success text-center" style="display: block;margin-left: auto;
-  margin-right: auto;" href="{{ path('etudiant_impression', { 'id': etudiant.id} ) }}">Télecharger</a>
+  margin-right: auto;" href="{{ path('etudiant_impression', { 'type': demandes.getType,'id': etudiant.id} ) }}">Télecharger</a>
   </div>  
 {% else %}
 

@@ -2,28 +2,29 @@
 
 namespace App\Controller;
 
-use App\Entity\User;
 use Dompdf\Dompdf;
 use Dompdf\Options;
-use App\Entity\Certificats;
-use App\Form\CertificatsType;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use App\Entity\User;
 use App\Form\UserType;
+use App\Entity\Filiere;
 use App\Entity\Etudiant;
 use App\Form\EtudiantType;
-use App\Entity\Filiere;
+use App\Entity\Certificats;
+use App\Form\CertificatsType;
 use App\Repository\UserRepository;
-use App\Repository\CertificatsRepository;
+use App\Repository\NotesRepository;
+use Doctrine\DBAL\Driver\Connection;
 use App\Controller\SecurityController;
 use App\Repository\EtudiantRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use App\Repository\CertificatsRepository;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
-use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Response;
-use Doctrine\DBAL\Driver\Connection;
+use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
+use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
 class EtudiantController extends AbstractController
 {
@@ -106,19 +107,29 @@ class EtudiantController extends AbstractController
     }
 
     /**
-     * @Route("/demande/document/{id}", name="etudiant_document")
+     * @Route("/demande/document/{type}/{id}", name="etudiant_document")
      */
-    public function doc(Etudiant $etudiant, CertificatsRepository $certificat)
+    public function doc(Etudiant $etudiant, $type, CertificatsRepository $repo_certificat, NotesRepository $repo_note)
     {
-        $certificat = $this->getDoctrine()
-            ->getRepository(Certificats::Class)
-                ->findOneBy(array('etudiant' => $etudiant->getId()));
+        $certificat = $repo_certificat->findOneBy(array('etudiant' => $etudiant->getId(), 'type' => $type));
+        $note = $repo_note->findBy(array('etudiant' => $etudiant->getId()));
 
+        if ($certificat->getType()=='Certificat de scolarité'){
         return $this->render('etudiant/doc.html.twig', [
             'etudiant' => $etudiant ,
-            'demande' => $certificat
-        ]);
+            'demandes' => $certificat,
+            'type' => $type
+            ]);
+        }
+        else{
+            return $this->render('etudiant/doc_releve.html.twig', [
+                'notes' => $note ,
+                'demandes' => $certificat,
+                'etudiant' => $etudiant ,
+            ]);
+        }
     }
+    
     /**
      * @Route("/demande/documents/{id}", name="etudiant_documents")
      */
@@ -131,70 +142,58 @@ class EtudiantController extends AbstractController
 
         return $this->render('etudiant/documents.html.twig', [
             'etudiant' => $etudiant ,
-            'demande' => $certificat
+            'demandes' => $certificat
         ]);
     }
+    
     /**
-     * @Route("/demande/document/impression/{id}", name="etudiant_impression")
+     * @Route("/demande/document/{type}/impression/{id}", name="etudiant_impression")
      */
-    public function impression(Etudiant $etudiant, CertificatsRepository $certificat)
+    public function impression(Etudiant $etudiant, $type, CertificatsRepository $repo_certificat, NotesRepository $repo_note)
     {
-        $certificat = $this->getDoctrine()
-        ->getRepository(Certificats::Class)
-            ->findOneBy(array('etudiant' => $etudiant->getId()));
-            if ($certificat->getType()== 'Certificat de scolarité'){
-            $options = new Options();
-            $options->setIsRemoteEnabled(true);
+        $note = $repo_note->findBy(array('etudiant' => $etudiant->getId()));
 
-            $options->set('defaultFont', 'Courier');
-            $dompdf = new Dompdf($options);
+        $certificat = $repo_certificat->findOneBy(array('type' => $type, 'etudiant' => $etudiant->getId()));
+
+        dump($certificat);
+        $options = new Options();
+        $options->setIsRemoteEnabled(true);
+
+        $options->set('defaultFont', 'Courier');
+        $dompdf = new Dompdf($options);
 
 
-            $dompdf->set_option('isHtml5ParserEnabled', true);
+        $dompdf->set_option('isHtml5ParserEnabled', true);
 
-            $doc = $this->renderview('etudiant/impression.html.twig', [
+        if ($certificat->getType()=='Certificat de scolarité'){
+
+        $doc = $this->renderview('etudiant/impression.html.twig', [
+            'etudiant' => $etudiant ,
+            'demande' => $certificat,
+            'issuedAt' => $certificat->getIssuedAt()
+            ]);
+        }
+        else{
+            $doc = $this->renderview('etudiant/impression_releve.html.twig', [
+                'notes' => $note ,
                 'etudiant' => $etudiant ,
-                'demande' => $certificat]);
-                $dompdf->loadHtml($doc);
+                'demande' => $certificat,
+                'issuedAt' => $certificat->getIssuedAt()]);
+        }   
+            $dompdf->loadHtml($doc);
 
-            $dompdf->render();
+        $dompdf->render();
 
         // (Optional) Setup the paper size and orientation
         $dompdf->setPaper('A4', 'portrait');
 
 
         // Render the HTML as PDF
-       $dompdf->loadHtml( 'doc');
+        $dompdf->loadHtml( 'doc');
 
-        $dompdf->stream('Certificat_de_scolarité_'.$etudiant->getNom().'_'.$etudiant->getPrenom());
-            }
-            else{
-                $options = new Options();
-            $options->setIsRemoteEnabled(true);
-
-            $options->set('defaultFont', 'Courier');
-            $dompdf = new Dompdf($options);
-
-
-            $dompdf->set_option('isHtml5ParserEnabled', true);
-
-            $doc = $this->renderview('etudiant/impression.html.twig', [
-                'etudiant' => $etudiant ,
-                'demande' => $certificat]);
-                $dompdf->loadHtml($doc);
-
-            $dompdf->render();
-
-        // (Optional) Setup the paper size and orientation
-        $dompdf->setPaper('A4', 'portrait');
-
-
-        // Render the HTML as PDF
-       $dompdf->loadHtml( 'doc');
-
-        $dompdf->stream('Relevé de note'.$etudiant->getNom().'_'.$etudiant->getPrenom());
-            }
+        $dompdf->stream($type.'_'.$etudiant->getNom().'_'.$etudiant->getPrenom());
     }
+
     /**
      * @Route("/profil/{id}" ,name="etudiant_profil")
      */
@@ -272,8 +271,8 @@ class EtudiantController extends AbstractController
                 $manager->remove($c);
             }
 
-            $demande->setRequestedAt(new \DateTime());
-            $demande->setEtudiant($etudiant)
+            $demande->setRequestedAt(new \DateTime())
+                    ->setEtudiant($etudiant)
                     ->setAccepted(0);
 
             $manager->persist($demande);
@@ -287,8 +286,7 @@ class EtudiantController extends AbstractController
 
         return $this->render('etudiant/demande.html.twig' , [
             'formDemande' => $form->createView(),
-            'etudiant' => $etudiant,         
-
+            'etudiant' => $etudiant
         ]);
     }
 
