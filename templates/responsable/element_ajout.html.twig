@@ -4,12 +4,13 @@
 
 {% block body %}
 
+<a class="m-3 btn btn-dark" href="{{ path('responsable_accueil') }}">Retour</a>
 <div class="card rounded border-success m-2 mx-auto" style="max-width: 55rem">
     <h1 class="text-center text-success m-5">{{ title }}</h1>
     {{ form_start(form_element, {'attr': {'class': 'text-success m-5'}}) }}
         <hr class="my-4">
         {{ form_row(form_element.nom, {'label': 'Nom de l\'élèment', 'attr': {'placeholder': 'Entrer le nom de l\'élèment ...', 'autofocus': ''}}) }}    
-        {{ form_row(form_element.coefficient, {'label': 'Coefficient', 'attr': {'placeholder': 'Entrer le coefficient ...'}}) }}    
+        {{ form_row(form_element.coefficient, {'label': 'Coefficient (en % )', 'type': 'number', 'attr': {'min': 1, 'max': 100}}) }}    
         {{ form_row(form_element.module) }}
         {{ form_row(form_element.professeur) }}
         {{ form_row(form_element.classe) }}
@@ -17,7 +18,6 @@
 
         <div class="form-group col text-center">
             <button type="submit" class="btn btn-outline-success rounded">{{ button }}</button>
-            <button type="submit" class="btn btn-outline-danger rounded">Annuler</button>
         </div>
     {{ form_end(form_element) }}
 </div>

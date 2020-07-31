@@ -4,10 +4,12 @@ namespace App\Controller;
 
 use App\Entity\User;
 use App\Entity\Classe;
+use App\Entity\Emploi;
 use App\Entity\Module;
 use App\Entity\Element;
 use App\Entity\Filiere;
 use App\Form\ClassType;
+use App\Form\EmploiType;
 use App\Form\ModuleType;
 use App\Form\ElementType;
 use App\Form\FiliereType;
@@ -16,7 +18,9 @@ use App\Entity\Responsable;
 use App\Form\EnseignantType;
 use App\Form\ResponsableType;
 use App\Repository\UserRepository;
+use App\Repository\JoursRepository;
 use App\Repository\ClasseRepository;
+use App\Repository\EmploiRepository;
 use App\Repository\ModuleRepository;
 use App\Repository\NiveauRepository;
 use Doctrine\DBAL\Driver\Connection;
@@ -221,8 +225,9 @@ class ResponsableController extends AbstractController
      * @Route("/responsable/filieres/d/{demandes}", name="responsable_filiere_demandes")
      * @Route("/responsable/filieres/p/{paiment}", name="responsable_filiere_paiment")
      * @Route("/responsable/filieres/s/{scolarite}", name="responsable_filiere_scolarite")
+     * @Route("/responsable/filieres/e/{emploi}", name="responsable_emploi")
      */
-    public function gestion_filiere( $scolarite = null, $paiment = null, $demandes = null, NiveauRepository $repo_niveau, FiliereRepository $repo_filiere)
+    public function gestion_filiere( $emploi = null,$scolarite = null, $paiment = null, $demandes = null, NiveauRepository $repo_niveau, FiliereRepository $repo_filiere)
     {
         $filieres = $repo_filiere->findAll();
         $niveaux = $repo_niveau->findAll();
@@ -231,7 +236,8 @@ class ResponsableController extends AbstractController
             'niveaux' => $niveaux,
             'demandes' => $demandes,
             'paiment' => $paiment,
-            'scolarite' => $scolarite
+            'scolarite' => $scolarite,
+            'emploi' => $emploi
         ]);
     }
 
@@ -535,8 +541,14 @@ class ResponsableController extends AbstractController
      * @Route("/responsable/modules/ajout", name="responsable_ajout_module")
      * @Route("/responsable/modules/modification/{id}", name="responsable_modification_module")
      */
-    public function ajout_module($id = null, ModuleRepository $repo_module, Request $request, EntityManagerInterface $manager)
+    public function ajout_module($id = null, FiliereRepository $repo_filiere, NiveauRepository $repo_niveau, ModuleRepository $repo_module, Request $request, EntityManagerInterface $manager)
     {
+        $niveaux = $repo_niveau->findAll();
+        $filieres = $repo_filiere->findAll();
+        if($niveaux == null || $filieres == null){
+            return $this->redirectToRoute('responsable_accueil');
+        }
+
         if($id == null){
             $module = new Module();
         }else{
@@ -673,8 +685,15 @@ class ResponsableController extends AbstractController
      * @Route("/responsable/element/ajout", name="responsable_ajout_element")
      * @Route("/responsable/element/modification/{id}", name="responsable_modification_element")
      */
-    public function ajout_element($id = null, ElementRepository $repo_element, Request $request, EntityManagerInterface $manager)
+    public function ajout_element($id = null, ModuleRepository $repo_module, ClasseRepository $repo_classe, ProfesseurRepository $repo_professeur, ElementRepository $repo_element, Request $request, EntityManagerInterface $manager)
     {
+        $classes = $repo_classe->findAll();
+        $modules = $repo_module->findAll();
+        $professeurs = $repo_professeur->findAll();
+        if($classes == null || $modules == null || $professeurs == null){
+            return $this->redirectToRoute('responsable_accueil');
+        }
+
         if($id == null){
             $element = new Element();
         }else{
@@ -721,5 +740,109 @@ class ResponsableController extends AbstractController
         $manager->flush();
 
         return $this->redirectToRoute('responsable_module_elements', ['id' => $id_module]);
+    }
+
+    /**
+     * @Route("/responsable/seance/ajout", name="responsable_seance_ajout")
+     * @Route("/responsable/seance/modification/{id}", name="responsable_seance_modification")
+     */
+    public function ajout_seance($id = null, ElementRepository $repo_element, ClasseRepository $repo_classe, ProfesseurRepository $repo_professeur, EmploiRepository $repo_emploi, Request $request, EntityManagerInterface $manager)
+    {
+        $classes = $repo_classe->findAll();
+        $elements = $repo_element->findAll();
+        $professeurs = $repo_professeur->findAll();
+        if($classes == null || $elements == null || $professeurs == null){
+            return $this->redirectToRoute('responsable_accueil');
+        }
+
+        if($id == null){
+            $seance = new Emploi();
+        }else{
+            $seance = $repo_emploi->find($id);
+        }
+
+        $form = $this->createForm(EmploiType::class, $seance);
+
+        $form->handleRequest($request);
+
+        if($form->isSubmitted() && $form->isValid()){
+            // 'element' => $seance->getElement(), 'professeur' => $seance->getProfesseur(), 
+            if($seance->getId() == null){
+                $seances_array = $repo_emploi->findBy(array('filiere' => $seance->getElement()->getModule()->getFiliere(), 'jour' => $seance->getJour()->getId(), 'heure_debut' => $seance->getHeureDebut(), 'heure_fin' => $seance->getHeureFin()));
+                if($seances_array !== null){
+                    return $this->redirectToRoute('responsable_seance_ajout', [
+                        'error' => 0
+                    ]);
+                }
+            }
+
+            $seance->setFiliere($seance->getElement()->getModule()->getFiliere())
+                   ->setNiveau($seance->getElement()->getModule()->getNiveau());
+
+            $manager->persist($seance);
+            
+            $manager->flush();
+
+            return $this->redirectToRoute('responsable_seance', ['id' => $seance->getId()]);
+        }
+
+        if($id == null){
+            return $this->render('responsable/seance_ajout.html.twig', [
+                'form_seance' => $form->createView(),
+                'button' => 'Ajouter',
+                'title' => 'L\'ajout d\'une séance'
+            ]);
+        }else{
+            return $this->render('responsable/seance_ajout.html.twig', [
+                'form_seance' => $form->createView(),
+                'button' => 'Modifer',
+                'title' => 'La modification d\'une séance'
+            ]);
+        }
+    }
+
+    /**
+     * @Route("responsable/seance/suppression/{id}", name="responsable_seance_suppression")
+     */
+    public function seance_supprimer( $id, EmploiRepository $repo_emploi, EntityManagerInterface $manager)
+    {
+        $seance = $repo_emploi->find($id);
+        $idFil = $seance->getElement()->getModule()->getNiveau()->getId(); 
+        $idNiv = $seance->getElement()->getModule()->getFiliere()->getId();
+        $manager->remove($seance);
+        $manager->flush();
+
+        return $this->redirectToRoute('responsable_seances', [
+            'idFil' => $idFil,
+            'idNiv' => $idNiv
+        ]);
+    }
+
+    /**
+     * @Route("/responsable/seance/{id}", name="responsable_seance")
+     */
+    public function affichage_seance($id, EmploiRepository $repo_emploi)
+    {
+        $seance = $repo_emploi->find($id);
+        return $this->render('responsable/seance.html.twig', [
+            'seance' => $seance
+        ]);
+    }
+    
+    /**
+     * @Route("/responsable/emploi/{idFil}/{idNiv}", name="responsable_seances")
+     */
+    public function affichage_emploi($idFil, $idNiv, JoursRepository $repo_jour, EmploiRepository $repo_emploi, FiliereRepository $repo_filiere, NiveauRepository $repo_niveau)
+    {
+        $filiere = $repo_filiere->find($idFil);
+        $niveau = $repo_niveau->find($idNiv);
+        $jours = $repo_jour->findAll();
+        $seances = $repo_emploi->findBy(array('filiere' => $filiere->getId(), 'niveau' => $niveau->getId()));
+        return $this->render('responsable/seances.html.twig', [
+            'seances' => $seances,
+            'jours' => $jours,
+            'filiere' => $filiere,
+            'niveau' => $niveau
+        ]);
     }
 }

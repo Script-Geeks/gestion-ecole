@@ -8,6 +8,9 @@ use App\Entity\Etudiant;
 use App\Entity\Certificat;
 use App\Form\EtudiantType;
 use App\Repository\UserRepository;
+use App\Repository\CycleRepository;
+use App\Repository\NiveauRepository;
+use App\Repository\FiliereRepository;
 use App\Repository\EtudiantRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -33,8 +36,13 @@ class SecurityController extends AbstractController
      * @Route("/inscription", name="security_registration")
      * @Route("/ajout_Etudiant", name="responsable_registration")
      */
-    public function registration(Request $request, EntityManagerInterface $manager)
+    public function registration(Request $request, FiliereRepository $repo_filiere, EntityManagerInterface $manager)
     {
+        $filieres = $repo_filiere->findAll();
+        if($filieres == null){
+            return $this->redirectToRoute('home');
+        }
+
         $etudiant = new Etudiant();
 
         $form = $this->createForm(EtudiantType::class, $etudiant);

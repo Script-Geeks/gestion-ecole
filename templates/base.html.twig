@@ -75,8 +75,8 @@
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Séances</a>
                             <div class="dropdown-menu" style="">
-                                <a class="dropdown-item" href="#">Afficher les séances</a>
-                                <a class="dropdown-item" href="#">Ajouter une séance</a>
+                                <a class="dropdown-item" href="{{ path('responsable_emploi', {'emploi': 'emploi'}) }}">Afficher les séances</a>
+                                <a class="dropdown-item" href="{{ path('responsable_seance_ajout') }}">Ajouter une séance</a>
                             </div>
                         </li>
                     {% elseif app.user.getEtudiant != null %}

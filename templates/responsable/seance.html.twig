@@ -1,0 +1,32 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Profil{% endblock %}
+
+{% block body %}
+
+    <a class="btn btn-primary" href="{{ path('responsable_seances', {'idNiv': seance.getElement.getModule.getNiveau.id, 'idFil': seance.getElement.getModule.getFiliere.id}) }}">Emploi</a>
+
+    <div class="d-flex flex-wrap justify-content-center">
+        <div class="card border-light mb-3 rounded text-center" style="width: 50rem;">
+            <h3 class="card-header">Informations de la séance</h3>
+            <br>
+            <p class="m-3"><span class="text-muted">Element :</span> {{ seance.getElement.getNom }}</p>
+            <p class="m-3"><span class="text-muted">Coefficient :</span> {{ seance.getElement.getCoefficient }}%</p>
+            <p class="m-2"><span class="text-muted">Module :</span> {{ seance.getElement.getModule.getNom }} </p>
+            <p class="m-2"><span class="text-muted">Filière :</span> {{ seance.getElement.getModule.getFiliere.getNom }} </p>
+            <p class="m-2"><span class="text-muted">Niveau :</span> {{ seance.getElement.getModule.getNiveau.getNom }} </p>
+            <p class="m-2"><span class="text-muted">Professeur :</span> {{ seance.getProfesseur.getNom }} </p>
+            <p class="m-2"><span class="text-muted">Date :</span> {{ seance.getJour.getNom ~ ' de ' ~ seance.getHeureDebut ~ 'H à ' ~ seance.getHeureFin ~ 'H'}} </p>
+            <p class="m-2"><span class="text-muted">Classe :</span> {{ seance.getClasse.getNom }} <span class="text-muted">( {{ seance.getClasse.getType.getNom }} )</span></p>
+            
+            <div class="card-header form-inline justify-content-center">
+                <a class="nav-link text-success " href="{{ path('responsable_seance_modification' , { 'id': seance.id}) }}">Modifier</a>
+                <a class="nav-link text-danger " href="{{ path('responsable_seance_suppression' , { 'id': seance.id}) }}">Supprimer</a>
+            </div>
+        </div>
+    </div>
+
+
+    </div>
+
+{% endblock %}

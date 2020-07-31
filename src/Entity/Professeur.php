@@ -56,9 +56,15 @@ class Professeur
      */
     public $password;
 
+    /**
+     * @ORM\OneToMany(targetEntity=Emploi::class, mappedBy="professeur", orphanRemoval=true)
+     */
+    private $emplois;
+
     public function __construct()
     {
         $this->elements = new ArrayCollection();
+        $this->emplois = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -159,6 +165,37 @@ class Professeur
     public function setEmail(string $email): self
     {
         $this->email = $email;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Emploi[]
+     */
+    public function getEmplois(): Collection
+    {
+        return $this->emplois;
+    }
+
+    public function addEmploi(Emploi $emploi): self
+    {
+        if (!$this->emplois->contains($emploi)) {
+            $this->emplois[] = $emploi;
+            $emploi->setProfesseur($this);
+        }
+
+        return $this;
+    }
+
+    public function removeEmploi(Emploi $emploi): self
+    {
+        if ($this->emplois->contains($emploi)) {
+            $this->emplois->removeElement($emploi);
+            // set the owning side to null (unless already changed)
+            if ($emploi->getProfesseur() === $this) {
+                $emploi->setProfesseur(null);
+            }
+        }
 
         return $this;
     }

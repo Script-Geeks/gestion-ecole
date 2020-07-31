@@ -39,11 +39,17 @@ class Niveau
      */
     private $modules;
 
+    /**
+     * @ORM\OneToMany(targetEntity=Emploi::class, mappedBy="niveau", orphanRemoval=true)
+     */
+    private $emplois;
+
     public function __construct()
     {
         $this->groupes = new ArrayCollection();
         $this->etudiants = new ArrayCollection();
         $this->modules = new ArrayCollection();
+        $this->emplois = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -150,6 +156,37 @@ class Niveau
             // set the owning side to null (unless already changed)
             if ($module->getNiveau() === $this) {
                 $module->setNiveau(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Emploi[]
+     */
+    public function getEmplois(): Collection
+    {
+        return $this->emplois;
+    }
+
+    public function addEmploi(Emploi $emploi): self
+    {
+        if (!$this->emplois->contains($emploi)) {
+            $this->emplois[] = $emploi;
+            $emploi->setNiveau($this);
+        }
+
+        return $this;
+    }
+
+    public function removeEmploi(Emploi $emploi): self
+    {
+        if ($this->emplois->contains($emploi)) {
+            $this->emplois->removeElement($emploi);
+            // set the owning side to null (unless already changed)
+            if ($emploi->getNiveau() === $this) {
+                $emploi->setNiveau(null);
             }
         }
 
