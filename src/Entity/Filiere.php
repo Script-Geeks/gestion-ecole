@@ -35,14 +35,21 @@ class Filiere
     private $etudiants;
 
     /**
-     * @ORM\ManyToMany(targetEntity=Module::class, mappedBy="filiere")
+     * @ORM\OneToMany(targetEntity=Module::class, mappedBy="filiere")
      */
-    private $modules;
+    private $module;
+
+    /**
+     * @ORM\OneToMany(targetEntity=Emploi::class, mappedBy="filiere", orphanRemoval=true)
+     */
+    private $emplois;
 
     public function __construct()
     {
         $this->etudiants = new ArrayCollection();
         $this->modules = new ArrayCollection();
+        $this->module = new ArrayCollection();
+        $this->emplois = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -108,16 +115,16 @@ class Filiere
     /**
      * @return Collection|Module[]
      */
-    public function getModules(): Collection
+    public function getModule(): Collection
     {
-        return $this->modules;
+        return $this->module;
     }
 
     public function addModule(Module $module): self
     {
-        if (!$this->modules->contains($module)) {
-            $this->modules[] = $module;
-            $module->addFiliere($this);
+        if (!$this->module->contains($module)) {
+            $this->module[] = $module;
+            $module->setFiliere($this);
         }
 
         return $this;
@@ -125,11 +132,46 @@ class Filiere
 
     public function removeModule(Module $module): self
     {
-        if ($this->modules->contains($module)) {
-            $this->modules->removeElement($module);
-            $module->removeFiliere($this);
+        if ($this->module->contains($module)) {
+            $this->module->removeElement($module);
+            // set the owning side to null (unless already changed)
+            if ($module->getFiliere() === $this) {
+                $module->setFiliere(null);
+            }
         }
 
         return $this;
     }
+
+    /**
+     * @return Collection|Emploi[]
+     */
+    public function getEmplois(): Collection
+    {
+        return $this->emplois;
+    }
+
+    public function addEmploi(Emploi $emploi): self
+    {
+        if (!$this->emplois->contains($emploi)) {
+            $this->emplois[] = $emploi;
+            $emploi->setFiliere($this);
+        }
+
+        return $this;
+    }
+
+    public function removeEmploi(Emploi $emploi): self
+    {
+        if ($this->emplois->contains($emploi)) {
+            $this->emplois->removeElement($emploi);
+            // set the owning side to null (unless already changed)
+            if ($emploi->getFiliere() === $this) {
+                $emploi->setFiliere(null);
+            }
+        }
+
+        return $this;
+    }
+
 }

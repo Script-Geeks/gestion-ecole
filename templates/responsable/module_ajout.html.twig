@@ -1,0 +1,21 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}INSEA{% endblock %}
+
+{% block body %}
+
+<a class="m-3 btn btn-dark" href="{{ path('responsable_accueil') }}">Retour</a>
+<div class="card rounded border-success m-2 mx-auto" style="max-width: 55rem">
+    <h1 class="text-center text-success m-5">{{ title }}</h1>
+    {{ form_start(form_module, {'attr': {'class': 'text-success m-5'}}) }}
+        <hr class="my-4">
+        {{ form_row(form_module.nom, {'label': 'Nom du module', 'attr': {'placeholder': 'Entrer le nom du module ...', 'autofocus': ''}}) }}    
+        {{ form_row(form_module.nbr_element, {'label': 'Le nombre des éléments', 'attr': {'placeholder': 'Entrer le nombre des éléments ...'}}) }}    
+        {{ form_row(form_module.filiere) }}
+        {{ form_row(form_module.niveau) }}
+        <div class="form-group col text-center">
+            <button type="submit" class="btn btn-outline-success rounded">{{ button }}</button>
+        </div>
+    {{ form_end(form_module) }}
+</div>
+{% endblock %}

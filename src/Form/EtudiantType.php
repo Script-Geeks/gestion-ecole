@@ -13,7 +13,12 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
+
+use Symfony\Component\Form\Extension\Core\Type\EmailType;
+use Symfony\Component\Form\Extension\Core\Type\NumberType;
+use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 
 class EtudiantType extends AbstractType
@@ -21,20 +26,31 @@ class EtudiantType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
+            ->add('image', FileType::class, [
+                'mapped' => false,
+                'label' => 'Photo', 
+                'required' => false,
+
+            ])
             ->add('nom', TextType::class)
             ->add('prenom', TextType::class)
-            ->add('dateNaissAt', DateType::class)
+            ->add('email', EmailType::class)
+            ->add('dateNaissAt', DateType::class, [
+                'widget' => 'single_text'
+            ])
             ->add('cne', TextType::class)
             ->add('cin', TextType::class)
             ->add('nomComplet_pere', TextType::class)
-            ->add('tel_pere', TextType::class)
+            ->add('tel_pere', NumberType::class)
             ->add('cycle', EntityType::class, [
                 'class' => Cycle::class,
                 'choice_label' => 'nom'
             ])
             ->add('filiere', EntityType::class, [
                 'class' => Filiere::class,
-                'choice_label' => 'nom'
+                'choice_label' => function (Filiere $filiere) {
+                    return $filiere->getNom();
+                },
             ])
             ->add('niveau', EntityType::class, [
                 'class' => Niveau::class,

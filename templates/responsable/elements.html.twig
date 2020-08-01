@@ -1,0 +1,48 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Responsable{% endblock %}
+
+{% block body %}
+    <div class="card rounded border-success m-2 mx-auto" style="max-width: 85rem">
+        {% if header is defined %}
+            <h1 id="nav-breadcrumbs" class="mt-5 display-3 text-center text-success"><span class="text-muted">Module:</span> {{ header }}</h1>
+        {% else %}
+            <h1 id="nav-breadcrumbs" class="mt-5 display-3 text-center text-success">Les éléments</h1>
+        {% endif %}
+        <div class="d-flex flex-wrap justify-content-center">
+            {% if elements|length != 0 %}
+                {% for element in elements %}
+                    <div class="m-5 card border-success mb-3 rounded" style="max-width: 30rem;">
+                        <div class="card-header bg-success"><h5 class="text-white"></div>
+                        <div class="card-body">
+                            <h4 class="card-title"></h4>
+                            <p class="card-text m-4"><span class="text-muted">Nom:</span> {{ element.nom }}</p>
+                            <p class="card-text m-4"><span class="text-muted">Coefficient:</span> {{ element.getCoefficient }}% </p>
+                            {% if header is not defined %}
+                                <p class="card-text m-4"><span class="text-muted">Module:</span> {{ element.getModule.nom }}</p>
+                            {% endif %}
+                            <p class="card-text m-4"><span class="text-muted">Niveau:</span> {{ element.getModule.getNiveau.nom }}</p>
+                            <p class="card-text m-4"><span class="text-muted">Professeur:</span> {{ element.getProfesseur.nom }} </p>
+                            <p class="card-text m-4"><span class="text-muted">Classe:</span> {{ element.getClasse.nom }} </p>
+                        </div>
+                        <div class="card-footer form-inline my-2 my-lg-0 justify-content-center">
+                            <a class="nav-link text-success my-2 my-sm-0" href="{{ path('responsable_modification_element', {'id': element.id}) }}">Modifier</a>
+                        </div>
+                        <div class="card-footer form-inline my-2 my-lg-0 justify-content-center">
+                            <a class="nav-link text-danger my-2 my-sm-0" href="{{ path('responsable_element_suppression', {'id': element.id}) }}">Supprimer</a>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <div class="jumbotron m-5">
+                    <h3 class="display-5">Aucun element n'est ajouté pour le moment
+                    {% if header is defined %} dans le module <span class="text-success">{{ header }}</span> {% endif %}.</h3>
+                    <hr class="my-4">
+                    <p class="lead text-center">
+                        <a class="btn btn-success btn-lg" href="{{ path('responsable_ajout_element') }}" role="button">Ajouter un element</a>
+                    </p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}

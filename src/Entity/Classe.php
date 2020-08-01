@@ -30,13 +30,19 @@ class Classe
     private $elements;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\ManyToOne(targetEntity=Type::class, inversedBy="classes")
      */
     private $type;
+
+    /**
+     * @ORM\OneToMany(targetEntity=Emploi::class, mappedBy="classe", orphanRemoval=true)
+     */
+    private $emplois;
 
     public function __construct()
     {
         $this->elements = new ArrayCollection();
+        $this->emplois = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -87,14 +93,45 @@ class Classe
         return $this;
     }
 
-    public function getType(): ?string
+    public function getType(): ?Type
     {
         return $this->type;
     }
 
-    public function setType(string $type): self
+    public function setType(?Type $type): self
     {
         $this->type = $type;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Emploi[]
+     */
+    public function getEmplois(): Collection
+    {
+        return $this->emplois;
+    }
+
+    public function addEmploi(Emploi $emploi): self
+    {
+        if (!$this->emplois->contains($emploi)) {
+            $this->emplois[] = $emploi;
+            $emploi->setClasse($this);
+        }
+
+        return $this;
+    }
+
+    public function removeEmploi(Emploi $emploi): self
+    {
+        if ($this->emplois->contains($emploi)) {
+            $this->emplois->removeElement($emploi);
+            // set the owning side to null (unless already changed)
+            if ($emploi->getClasse() === $this) {
+                $emploi->setClasse(null);
+            }
+        }
 
         return $this;
     }

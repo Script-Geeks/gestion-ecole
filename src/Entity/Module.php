@@ -2,10 +2,11 @@
 
 namespace App\Entity;
 
-use App\Repository\ModuleRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
+use App\Entity\Filiere;
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\ModuleRepository;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * @ORM\Entity(repositoryClass=ModuleRepository::class)
@@ -30,20 +31,25 @@ class Module
     private $nbr_element;
 
     /**
-     * @ORM\ManyToMany(targetEntity=Filiere::class, inversedBy="modules")
-     */
-    private $filiere;
-
-    /**
      * @ORM\OneToMany(targetEntity=Element::class, mappedBy="module")
      */
     private $elements;
 
-    public function __construct()
-    {
-        $this->filiere = new ArrayCollection();
-        $this->elements = new ArrayCollection();
-    }
+    /**
+     * @ORM\ManyToOne(targetEntity=Filiere::class, inversedBy="module")
+     * @ORM\JoinColumn(
+     *      name="filiere_id",
+     *      referencedColumnName="id",
+     *      onDelete="CASCADE",
+     *      nullable=false
+     * )
+     */
+    private $filiere;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=Niveau::class, inversedBy="modules")
+     */
+    private $niveau;
 
     public function getId(): ?int
     {
@@ -75,32 +81,6 @@ class Module
     }
 
     /**
-     * @return Collection|Filiere[]
-     */
-    public function getFiliere(): Collection
-    {
-        return $this->filiere;
-    }
-
-    public function addFiliere(Filiere $filiere): self
-    {
-        if (!$this->filiere->contains($filiere)) {
-            $this->filiere[] = $filiere;
-        }
-
-        return $this;
-    }
-
-    public function removeFiliere(Filiere $filiere): self
-    {
-        if ($this->filiere->contains($filiere)) {
-            $this->filiere->removeElement($filiere);
-        }
-
-        return $this;
-    }
-
-    /**
      * @return Collection|Element[]
      */
     public function getElements(): Collection
@@ -127,6 +107,30 @@ class Module
                 $element->setModule(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getFiliere(): ?Filiere
+    {
+        return $this->filiere;
+    }
+
+    public function setFiliere(?Filiere $filiere): self
+    {
+        $this->filiere = $filiere;
+
+        return $this;
+    }
+
+    public function getNiveau(): ?Niveau
+    {
+        return $this->niveau;
+    }
+
+    public function setNiveau(?Niveau $niveau): self
+    {
+        $this->niveau = $niveau;
 
         return $this;
     }

@@ -2,13 +2,19 @@
 
 namespace App\Entity;
 
-use App\Repository\ProfesseurRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\ProfesseurRepository;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
  * @ORM\Entity(repositoryClass=ProfesseurRepository::class)
+ * @UniqueEntity(
+ *  fields={"email"},
+ *  message="Cet e-mail est déjà pris !"
+ * )
  */
 class Professeur
 {
@@ -44,9 +50,26 @@ class Professeur
      */
     private $user;
 
+    /**
+     * @ORM\Column(type="string", length=255)
+     * @Assert\Email(message="L'e-mail n'est pas valide !")
+     */
+    private $email;
+
+    /**
+     * @Assert\Length(min=8, minMessage="Cette valeur est trop courte. Il doit comporter 8 caractères ou plus !")
+     */
+    public $password;
+
+    /**
+     * @ORM\OneToMany(targetEntity=Emploi::class, mappedBy="professeur", orphanRemoval=true)
+     */
+    private $emplois;
+
     public function __construct()
     {
         $this->elements = new ArrayCollection();
+        $this->emplois = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -134,6 +157,49 @@ class Professeur
         $newProfesseur = null === $user ? null : $this;
         if ($user->getProfesseur() !== $newProfesseur) {
             $user->setProfesseur($newProfesseur);
+        }
+
+        return $this;
+    }
+
+    public function getEmail(): ?string
+    {
+        return $this->email;
+    }
+
+    public function setEmail(string $email): self
+    {
+        $this->email = $email;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Emploi[]
+     */
+    public function getEmplois(): Collection
+    {
+        return $this->emplois;
+    }
+
+    public function addEmploi(Emploi $emploi): self
+    {
+        if (!$this->emplois->contains($emploi)) {
+            $this->emplois[] = $emploi;
+            $emploi->setProfesseur($this);
+        }
+
+        return $this;
+    }
+
+    public function removeEmploi(Emploi $emploi): self
+    {
+        if ($this->emplois->contains($emploi)) {
+            $this->emplois->removeElement($emploi);
+            // set the owning side to null (unless already changed)
+            if ($emploi->getProfesseur() === $this) {
+                $emploi->setProfesseur(null);
+            }
         }
 
         return $this;

@@ -1,0 +1,44 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Enseignant{% endblock %}
+
+{% block body %}
+
+    <a class="m-3 btn btn-primary" href="{{ path('responsable_filiere_scolarite', {'scolarite': 'scolarite'}) }}">Retour</a>
+
+    <h1 id="nav-breadcrumbs" class="mt-5 display-5 text-center text-success">
+        Les demandes des certificats de scolarité de la <span class="text-primary">{{filiere.nom}}</span> du <span class="text-primary">{{niveau.nom}}</span>
+    </h1>
+    {% if etudiants_certificats|length == 0 %}
+        <div class="alert alert-dismissible alert-warning text-center m-5 mx-auto" style="width: 40rem">
+            <h4 class="alert-heading ">Aucune demande d'une certificat de scolarité reçues</h4>
+        </div>
+    {% else %}
+    <table class="table table-hover mt-5">
+    <thead>
+        <thead>
+            <tr>
+                <th scope="col">Nom et prénom</th>
+                <th scope="col">Type</th>
+                <th scope="col">Action</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for certificat in etudiants_certificats %}
+            <tr class="table-warning">
+                <th scope="row">
+                    <a class=" text-success text-center" href="{{ path('etudiant_profil', {'id': certificat.getEtudiant.getId}) }}">{{ certificat.getEtudiant.getNom ~ ' ' ~ certificat.getEtudiant.getPrenom}}</a>
+                </th>
+                <td>
+                    {{ certificat.getType }}
+                </td>
+                <td>
+                    <a class=" text-success text-center" href="{{ path('responsable_demandes_accepter', {'id': certificat.getEtudiant.getId,'idFil': certificat.getEtudiant.getFiliere.getId,'idNiv': certificat.getEtudiant.getNiveau.getId}) }}">Accepter</a> | 
+                    <a class=" text-success text-danger text-center" href="{{ path('responsable_suppression_demande_scolarite', { 'id': certificat.id, 'idFil': certificat.getEtudiant.getFiliere.getId,'idNiv': certificat.getEtudiant.getNiveau.getId} ) }}">Annuler</a>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table> 
+    {% endif %}
+{% endblock %}

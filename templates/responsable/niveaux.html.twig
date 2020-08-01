@@ -1,0 +1,21 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Responsable{% endblock %}
+
+{% block body %}
+
+
+<div class="card rounded border-success m-2 mx-auto" style="max-width: 85rem">
+    <a class="m-3 btn btn-secondary" href="{{ path('responsable_accueil') }}">Retour</a>
+    <h1 id="nav-breadcrumbs" class="m-5 display-3 text-center text-success">{{ header }}</h1>
+    <div class="m-5 d-flex flex-wrap justify-content-center">
+        {% for niveau in niveaux %}
+        <div class="m-5 card border-success mb-3 rounded" style="width: 20rem;">
+            <div class="card-header text-center text-white bg-success">{{ niveau.nom }}</div>
+            <div class="card-footer form-inline my-2 my-lg-0 justify-content-center">
+                <a class="nav-link text-success my-2 my-sm-0" href="{{ path('responsable_niveau_filiere', {'type': type, 'id': niveau.id}) }}">Choisir</a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+{% endblock %}

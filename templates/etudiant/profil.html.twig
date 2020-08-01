@@ -1,0 +1,42 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Profil{% endblock %}
+
+{% block body %}
+{% if app.user.getResponsable != null %}
+    {% if etudiant.certificats != null %}
+        <a class="m-3 btn btn-primary" href="{{ path('responsable_demandes_etudiant' , { 'idNiv': etudiant.getNiveau.getId, 'idFil': etudiant.getFiliere.getId}) }}">Retour</a>
+    {% elseif etudiant.getAccepted == 0 %}
+        <a class="m-3 btn btn-primary" href="{{ path('responsable_demandes_inscription' , { 'idNiv': etudiant.getNiveau.getId, 'idFil': etudiant.getFiliere.getId}) }}">Retour</a>
+    {% else %}
+        <a class="m-3 btn btn-primary" href="{{ path('responsable_etudiant' , { 'id': etudiant.getNiveau.getId, 'idFil': etudiant.getFiliere.getId}) }}">Retour</a>
+    {% endif %}
+{% elseif app.user.getEtudiant != null %}
+    <a class="m-3 btn btn-primary" href="{{ path('etudiant_accueil' , { 'id': etudiant.id}) }}">Retour</a>
+{% endif %}
+    <div class="mx-auto d-flex flex-wrap justify-content-center">
+        <div class="m-5 card border-light mb-3 rounded text-center" style="width: 50rem;">
+            <h3 class="card-header">Informations</h3>
+            <br>
+            <img  style=" object-fit: cover; height:240px; width:240px; border:3px solid lightgrey; border-radius: 50% ; display: block;margin-left: auto;
+            margin-right: auto;" alt="100x100" src = "{{ asset('images/') ~ etudiant.imageFilename }}" >
+            <ul class="list-group list-group-flush text-center" style="width: 50rem">
+                <li class="list-group-item text-muted">Nom Complet : {{ etudiant.nom ~ ' ' ~ etudiant.prenom }}, {{age}} ans</li>
+                <li class="list-group-item text-muted">Date de naissance : {{ etudiant.dateNaissAt | date('d/m/Y')}} </li>
+                <li class="list-group-item text-muted">CNE : {{ etudiant.cne}}</li>
+                <li class="list-group-item text-muted">CIN : {{ etudiant.cin}}</li>
+                <li class="list-group-item text-muted">Nom du pére : {{ etudiant.nomCompletpere}}</li>
+                <li class="list-group-item text-muted">Tel du pére : {{ etudiant.telpere}}</li>
+                <li class="list-group-item text-muted">Cycle : {{ etudiant.cycle.nom}}</li>
+                <li class="list-group-item text-muted">Filiere : {{ etudiant.filiere.nom}}</li>
+                <li class="list-group-item text-muted">Niveau : {{ etudiant.niveau.nom}}</li>
+            </ul>
+            <div class="card-header form-inline justify-content-center">
+                <a class="nav-link mr-4 text-success " href="{{ path('etudiant_update' , { 'id': etudiant.id}) }}}">Modifier</a>
+                <a class="nav-link ml-4 text-danger " onclick="return confirm('Vous voulez vraiment supprimer votre compte? cette action est irréversible')" href="{{ path('etudiant_delete' , { 'id': etudiant.id}) }}}">Supprimer</a>
+            </div>
+        </div>
+    </div>
+
+
+{% endblock %}

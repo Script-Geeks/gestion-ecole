@@ -4,10 +4,19 @@
 
 {% block body %}
 
-
-    <div class="card rounded border-success m-5 mx-auto" style="max-width: 30rem">
-        <div class="card-body m-2">
-            <h1 class="text-center text-success ">Connexion</h1>
+    <a class="btn btn-primary" href="/">Retour</a>
+    {% if error %}
+        <div class="card text-center rounded border-danger m-1 mx-auto" style="max-width: 32rem">
+            <div class="card-body m-2">
+                <h1 class="text-danger ">Connexion</h1>
+                <div class="text-center alert alert-dismissible alert-danger mt-5 ml-5 mx-auto rounded" style="width: 26rem">
+                    <small><span class="ml-5">{{ error.messageKey|trans(error.messageData, 'security') }}</span></small>
+                </div>
+    {% else %}       
+        <div class="card text-center rounded border-success m-4 mx-auto" style="max-width: 32rem">
+            <div class="card-body m-2">
+                <h1 class="text-success ">Connexion</h1>
+    {% endif %}
             <form action="{{ path('security_login') }}" method="post" class="m-4">
                 <div class="input-group form-group">
                     <input type="text" name="_username" class="form-control rounded" placeholder="Adresse e-mail" required autofocus>
@@ -15,7 +24,8 @@
                 <div class="input-group form-group">            
                     <input type="password" name="_password" class="form-control rounded" placeholder="Mot de passe" required>
                 </div>
-                <div class="form-group col text-center">
+                <small><a href="{{ path('recherche_compte') }}" class="text-success">Informations de compte oubliées ?</a></small>
+                <div class="mt-4 form-group col text-center">
                     <button type="submit" class="btn btn-outline-success rounded">S'identifier</button>
                 </div>
             </form>

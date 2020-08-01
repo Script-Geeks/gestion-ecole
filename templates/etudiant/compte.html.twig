@@ -1,0 +1,28 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Profil{% endblock %}
+
+{% block body %}
+
+    <a class="m-3 btn btn-primary" href="{{ path('etudiant_accueil' , { 'id': etudiant.id}) }}">Retour</a>
+
+    <div class="mx-auto d-flex flex-wrap justify-content-center">
+        <div class="m-5 card border-light mb-3 rounded text-center" style="width: 50rem;">
+            <h3 class="card-header">Informations du compte</h3>
+            <br>
+                <img  style=" object-fit: cover; height:100px; width:100px; border:3px solid lightgrey; border-radius: 50% ; display: block;margin-left: auto;
+                margin-right: auto;" alt="100x100" src = "{{ asset('images/') ~ etudiant.imageFilename }}" >
+                <p class="m-3 text-muted">Nom Complet : {{ etudiant.nom ~ ' ' ~ etudiant.prenom }}</p>
+                <p class="m-2 text-muted">E-mail : {{ app.user.email }} </p>
+                
+            <div class="card-body form-inline justify-content-center">
+                <a class="nav-link text-success " href="{{ path('etudiant_updatepwd' , { 'id': etudiant.id}) }}">Modifier Compte</a>
+            </div>
+        
+        </div>
+    </div>
+
+
+    </div>
+
+{% endblock %}

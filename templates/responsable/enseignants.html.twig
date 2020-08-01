@@ -1,0 +1,40 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Enseignant{% endblock %}
+
+{% block body %}
+
+<div class="card rounded border-success m-2 mx-auto" style="max-width: 85rem">
+    <a class="m-3 btn btn-secondary" href="{{ path('responsable_accueil') }}">Retour</a>
+    <h1 id="nav-breadcrumbs" class="mt-5 display-3 text-center text-success">Les enseignants</h1>
+    <div class="m-5 d-flex flex-wrap justify-content-center">
+        {% if enseignants|length != 0 %}
+            {% for enseignant in enseignants %}
+            <div class="m-5 card border-success mb-3 rounded" style="max-width: 30rem;">
+                <div class="card-header text-white bg-success"></div>
+                <div class="card-body">
+                    <h4 class="card-title">{{ enseignant.nom ~ ' ' ~ enseignant.prenom }}</h4>
+                    <p class="card-text text-center"></p>
+                </div>
+                <div class="card-footer form-inline my-2 my-lg-0 justify-content-center">
+                    <a class="nav-link text-info my-2 my-sm-0" href="{{ path('prof_accueil', {'id': enseignant.id}) }}">Plus de détails</a>
+                </div>
+                <div class="card-footer form-inline my-2 my-lg-0 justify-content-center">
+                    <a class="nav-link text-success my-2 my-sm-0" href="{{ path('responsable_modification_enseignant', {'id': enseignant.id}) }}">Modifier</a>
+                </div>
+                <div class="card-footer form-inline my-2 my-lg-0 justify-content-center">
+                    <a class="nav-link text-danger my-2 my-sm-0" href="{{ path('responsable_suppression_enseignant',{'id': enseignant.id}) }}">Supprimer</a>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="jumbotron m-5">
+                <h3 class="display-5">Aucun professeur n'est ajouté pour le moment.</h3>
+                <hr class="my-4">
+                <p class="lead text-center">
+                    <a class="btn btn-success btn-lg" href="{{ path('responsable_ajout_enseignant') }}" role="button">Ajouter un professeur</a>
+                </p>
+            </div>
+        {% endif %}
+    </div>
+{% endblock %}

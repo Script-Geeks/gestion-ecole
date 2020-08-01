@@ -3,13 +3,21 @@
 {% block title %}INSEA{% endblock %}
 
 {% block body %}
-    <div class="jumbotron">
-        <h1 class="display-3 text-success text-center">INSEA</h1>
-        <p class="lead text-center">Institut National de Statistique et d'Economie Appliquée.</p>
-        <hr class="my-4">
-        <p class="text-center">L'Institut national de statistique et d'économie appliquée est l'une des grandes écoles d'ingénieurs marocaines située à Rabat et créée en 1961. Il s'est substitué, par décret royal, au Centre de formation d'ingénieurs des travaux statistiques en 1967 grâce à l'appui de la Commission économique pour l'Afrique.</p>
+    {% if error is defined %}
+        <div class="mt-2 alert text-center alert-dismissible alert-danger mx-auto" style="max-width: 72rem">
+            <button type="button" class="close" data-dismiss="alert">&times;</button>
+            Impossible de générer le <strong>formulaire</strong>.
+        </div>
+    {% endif %}
+    <div class="jumbotron m-5">
+        <h1 class="display-3 text-center">
+         <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/05/INSEA_logo.png/552px-INSEA_logo.png" height="100em" width="100em" alt ="insea" >
+        </h1>
+        <p class="lead text-center text-success">Institut National de Statistique et d'Economie Appliquée.</p>
+        <hr class="my-4 ml-4 mr-4">
+        <p class="text-center ml-4 mr-4">L'Institut national de statistique et d'économie appliquée est l'une des grandes écoles d'ingénieurs marocaines située à Rabat et créée en 1961. Il s'est substitué, par décret royal, au Centre de formation d'ingénieurs des travaux statistiques en 1967 grâce à l'appui de la Commission économique pour l'Afrique.</p>
         <p class="lead text-center">
-            <a class="btn btn-primary " href="http://www.insea.ac.ma" target="_blank" role="button">Learn more</a>
+            <a class="btn btn-outline-success " href="http://www.insea.ac.ma" target="_blank" role="button">Learn more</a>
         </p>
     </div>
 {% endblock %}

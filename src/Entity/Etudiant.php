@@ -2,6 +2,9 @@
 
 namespace App\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
+use Symfony\Component\Validator\Constraints as Assert;
 use Doctrine\ORM\Mapping as ORM;
 use App\Repository\EtudiantRepository;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
@@ -13,12 +16,12 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
  *  message="Ce code est déjà pris !"
  * )
  * @UniqueEntity(
- *  fields={"cne"},
- *  message="Ce code est déjà pris !"
+ *  fields={"email"},
+ *  message="Cet e-mail est déjà pris !"
  * )
  * @UniqueEntity(
- *  fields={"tel_pere"},
- *  message="Ce numero est déjà pris !"
+ *  fields={"cne"},
+ *  message="Ce code est déjà pris !"
  * )
  */
 class Etudiant
@@ -42,6 +45,7 @@ class Etudiant
 
     /**
      * @ORM\Column(type="datetime")
+     * @Assert\DateTime(message="Ce champ est obligatoire !")
      */
     private $dateNaissAt;
 
@@ -62,6 +66,7 @@ class Etudiant
 
     /**
      * @ORM\Column(type="integer")
+     * @Assert\Regex("/^212[0-9]{9}$/", message="Le numéro doit être la forme 212xxxxxxxx !")
      */
     private $tel_pere;
 
@@ -91,6 +96,33 @@ class Etudiant
      */
     private $user;
 
+    /**
+     * @ORM\Column(type="string",options={"default":"PersonPlaceholder.png"})
+     */
+    private $imageFilename = "PersonPlaceholder.png";
+
+
+    /**
+     * @ORM\OneToMany(targetEntity=Certificats::class, mappedBy="etudiant")
+     */
+    private $certificats;
+
+    /**
+     * @ORM\Column(type="boolean", nullable=true)
+     */
+    private $payed;
+
+    /**
+     * @ORM\Column(type="boolean", nullable=true)
+     */
+    private $accepted;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     * @Assert\Email(message="L'e-mail n'est pas valide !")
+     */
+    private $email;
+    
     public function getId(): ?int
     {
         return $this->id;
@@ -227,6 +259,18 @@ class Etudiant
 
         return $this;
     }
+    
+    public function getImageFilename()
+    {
+        return $this->imageFilename;
+    }
+
+    public function setImageFilename($imageFilename)
+    {
+        $this->imageFilename = $imageFilename;
+
+        return $this;
+    }
 
     public function getUser(): ?User
     {
@@ -245,5 +289,50 @@ class Etudiant
 
         return $this;
     }
+
+    /**
+     * @return Collection|Certificats[]
+     */
+    public function getCertificats(): Collection
+    {
+        return $this->certificats;
+    }
+
+    public function getPayed(): ?bool
+    {
+        return $this->payed;
+    }
+
+    public function setPayed(?bool $payed): self
+    {
+        $this->payed = $payed;
+
+        return $this;
+    }
+
+    public function getAccepted(): ?bool
+    {
+        return $this->accepted;
+    }
+
+    public function setAccepted(?bool $accepted): self
+    {
+        $this->accepted = $accepted;
+
+        return $this;
+    }
+
+    public function getEmail(): ?string
+    {
+        return $this->email;
+    }
+
+    public function setEmail(string $email): self
+    {
+        $this->email = $email;
+
+        return $this;
+    }
+
     
 }

@@ -2,11 +2,17 @@
 
 namespace App\Entity;
 
-use App\Repository\ResponsableRepository;
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\ResponsableRepository;
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
  * @ORM\Entity(repositoryClass=ResponsableRepository::class)
+ * @UniqueEntity(
+ *  fields={"email"},
+ *  message="Cet e-mail est déjà pris !"
+ * )
  */
 class Responsable
 {
@@ -32,6 +38,17 @@ class Responsable
      */
     private $user;
 
+    /**
+     * @ORM\Column(type="string", length=255)
+     * @Assert\Email(message="L'e-mail n'est pas valide !")
+     */
+    private $email;
+    
+    /**
+     * @Assert\Length(min=8, minMessage="Cette valeur est trop courte. Il doit comporter 8 caractères ou plus !")
+     */
+    public $password;
+    
     public function getId(): ?int
     {
         return $this->id;
@@ -75,6 +92,18 @@ class Responsable
         if ($user->getResponsable() !== $newResponsable) {
             $user->setResponsable($newResponsable);
         }
+
+        return $this;
+    }
+
+    public function getEmail(): ?string
+    {
+        return $this->email;
+    }
+
+    public function setEmail(string $email): self
+    {
+        $this->email = $email;
 
         return $this;
     }

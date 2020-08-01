@@ -21,16 +21,98 @@
 
             <div class="collapse navbar-collapse" id="navbarColor03">
                 <ul class="navbar-nav mr-auto">
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ path('responsable_accueil') }}">Accueil</a>
-                </li>
                 {% if app.user %}
-                <li class="nav-item">
-                    <a class="nav-link" href="">Étudiant</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">Professeur</a>
-                </li>
+                    {% if app.user.getResponsable != null %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ path('responsable_accueil') }}">Accueil</a>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Résponsable</a>
+                            <div class="dropdown-menu" style="">
+                                <a class="dropdown-item" href="{{ path('responsable_profil') }}">Profil</a>
+                                <a class="dropdown-item" href="{{ path('responsable_ajout') }}">Ajouter un réponsable</a>
+                            </div>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Étudiants</a>
+                            <div class="dropdown-menu" style="">
+                                <a class="dropdown-item" href="{{ path('responsable_niveau', {'type': 'etudiants'}) }}">Afficher les étudiants</a>
+                                <a class="dropdown-item" href="{{ path('responsable_releve_notes', {'notes': 'notes'}) }}">Relevés de notes</a>
+                                <a class="dropdown-item" href="{{ path('responsable_filiere_demandes', {'demandes': 'demandes'}) }}">Demandes d'inscription</a>
+                                <a class="dropdown-item" href="{{ path('responsable_filiere_scolarite', {'scolarite': 'scolarite'}) }}">Demandes des certificats de scolarié</a>
+                                <a class="dropdown-item" href="{{ path('responsable_filiere_paiment', {'paiment': 'paiment'}) }}">Gérer les paiements</a>
+                                <a class="dropdown-item" href="{{ path('responsable_registration') }}">Ajouter un(e) étudiant(e)</a>
+                            </div>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Enseignants</a>
+                            <div class="dropdown-menu" style="">
+                                <a class="dropdown-item" href="{{ path('responsable_enseignant') }}">Afficher les enseignants</a>
+                                <a class="dropdown-item" href="{{ path('responsable_ajout_enseignant') }}">Ajouter un(e) enseignant(e)</a>
+                            </div>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Filières</a>
+                            <div class="dropdown-menu" style="">
+                                <a class="dropdown-item" href="{{ path('responsable_filiere') }}">Afficher les filières</a>
+                                <a class="dropdown-item" href="{{ path('responsable_ajout_filiere') }}">Ajouter une filière</a>
+                            </div>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Modules</a>
+                            <div class="dropdown-menu" style="">
+                                <a class="dropdown-item" href="{{ path('responsable_niveau', {'type': 'modules'}) }}">Afficher les modules</a>
+                                <a class="dropdown-item" href="{{ path('responsable_ajout_module') }}">Ajouter un module</a>
+                                <a class="dropdown-item" href="{{ path('responsable_ajout_element') }}">Ajouter un élément</a>
+                            </div>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Classes</a>
+                            <div class="dropdown-menu" style="">
+                                <a class="dropdown-item" href="{{ path('responsable_classe') }}">Afficher les classes</a>
+                                <a class="dropdown-item" href="{{ path('responsable_ajout_classe') }}">Ajouter une classe</a>
+                            </div>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Séances</a>
+                            <div class="dropdown-menu" style="">
+                                <a class="dropdown-item" href="{{ path('responsable_emploi', {'emploi': 'emploi'}) }}">Afficher les séances</a>
+                                <a class="dropdown-item" href="{{ path('responsable_seance_ajout') }}">Ajouter une séance</a>
+                            </div>
+                        </li>
+                    {% elseif app.user.getEtudiant != null %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ path('etudiant_accueil', {'id': app.user.getEtudiant.getId}) }}">Accueil</a>
+                        </li>
+                        {% if app.user.getEtudiant.getAccepted == 1 %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ path('etudiant_profil', {'id': app.user.getEtudiant.getId}) }}">Profil</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ path('etudiant_compte', {'id': app.user.getEtudiant.getId}) }}">Compte</a>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Scolarité</a>
+                            <div class="dropdown-menu" style="">
+                                <a class="dropdown-item" href="{{ path('etudiant_documents', {'id': app.user.getEtudiant.getId}) }}">Demandes acceptées</a>
+                                <a class="dropdown-item" href="{{ path('etudiant_certificat', {'id': app.user.getEtudiant.getId}) }}">Nouvelle demande</a>
+                            </div>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ path('etudiant_seances', {'id': app.user.getEtudiant.getId}) }}">Emploi</a>
+                        </li>
+                        {% endif %}
+                    {% elseif app.user.getProfesseur != null %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ path('prof_accueil', {'id': app.user.getProfesseur.getId}) }}">Accueil</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ path('prof_elements', {'id': app.user.getProfesseur.getId}) }}">Note</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ path('professeur_seances', {'id': app.user.getProfesseur.getId}) }}">Emploi</a>
+                        </li>
+                    {% endif %}
                 </ul>
                 <form class="form-inline my-2 my-lg-0">
                     <a class="nav-link text-info my-2 my-sm-0" href="{{ path('security_logout') }}">Se deconnecter</a>

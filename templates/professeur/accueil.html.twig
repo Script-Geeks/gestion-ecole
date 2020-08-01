@@ -1,0 +1,28 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Profil{% endblock %}
+
+{% block body %}
+    <div class="m-5 d-flex flex-wrap justify-content-center">
+        <div class="m-5 card border-success mb-3 rounded  " style="width: 40rem;">
+            <div class="card-header text-white bg-success text-center">Fiche Professeur</div>
+            <div class="card-body">
+                <h4 class="card-title"></h4>
+                <p class="card-text text-center"><span class="text-muted">Nom :</span> {{ professeur.nom  }}</p>
+                <p class="card-text text-center"><span class="text-muted">Prénom :</span> {{ professeur.prenom  }}</p>
+                <p class="card-text text-center"><span class="text-muted">Age :</span> {{ professeur.age  }} ans</p>
+                <p class="card-text text-center"><span class="text-muted">E-mail :</span> {{ professeur.email  }}</p>
+            </div>
+            <div class="card-footer form-inline my-2 my-lg-0 justify-content-center">
+                <a class="nav-link text-primary mr-3 my-2 my-sm-0" href="{{ path('professeur_seances', {'id': app.user.getProfesseur.getId}) }}">Emploi</a>
+                <a class="nav-link text-primary ml-3 my-2 my-sm-0" href="{{ path('prof_elements', {'id': professeur.id}) }}">Notes</a>
+            </div>
+            <div class="card-footer form-inline my-2 my-lg-0 justify-content-center">
+                    <a class="nav-link text-success my-2 my-sm-0" href="{{ path('responsable_modification_enseignant', {'id': professeur.id}) }}">Modifier</a>
+            {% if app.user.getResponsable != null %}
+                <a class="nav-link text-danger my-2 my-sm-0" href="{{ path('responsable_suppression_enseignant',{'id': professeur.id}) }}">Supprimer</a>
+            {% endif %}
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,106 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Responsable{% endblock %}
+
+{% block body %}
+
+<div class="card rounded border-success m-2 mx-auto" style="max-width: 85rem">
+    <a class="m-3 btn btn-secondary" href="{{ path('responsable_accueil') }}">Retour</a>
+    <h1 id="nav-breadcrumbs" class="mt-5 display-3 text-center text-success">Les filières</h1>
+    <div class="m-5 d-flex flex-wrap justify-content-center">
+        {% if filieres|length != 0 %}
+            {% for filiere in filieres %}
+            <div class="m-5 card border-success mb-3 rounded" style="max-width: 30rem;">
+                <div class="card-header text-white bg-success"></div>
+                <div class="card-body">
+                    <h4 class="card-title"></h4>
+                    {% if notes == null and emploi == null and demandes == null and scolarite == null and paiment == null %}
+                        <p class="card-text m-4"><span class="text-muted">Nom:</span> {{ filiere.nom }}</p>
+                        <p class="card-text m-4"><span class="text-muted">Frais d'inscription:</span> {{ filiere.getFraisInscription }}</p>
+                    {% else %}
+                        <p class="card-text display-4 text-center">{{ filiere.nom }}</p>
+                    {% endif %}
+                </div>
+                <div class="card-footer form-inline my-2 my-lg-0 justify-content-center">
+                    <p class="card-text"><span class="text-muted">Plus de détails</span></p>
+                </div>
+                <div class="card-footer form-inline my-2 my-lg-0 justify-content-center">
+                    {% for niveau in niveaux %}
+                        {% if demandes != null %}
+                            {% set counter = 0 %}
+                            {% for etudiant in filiere.getEtudiants %}
+                                {% if etudiant.getAccepted == 0 and niveau == etudiant.getNiveau %}
+                                    {% set counter = counter + 1 %}
+                                {% endif %}
+                            {% endfor %}
+                            {% if counter != 0 %}
+                                <a class="nav-link text-success ml-2 my-sm-0" href="{{ path('responsable_demandes_inscription', {'idFil': filiere.id, 'idNiv': niveau.id}) }}">
+                                    {{ niveau.nom }}
+                                    <sup><span class="badge badge-pill badge-success">+{{ counter }}</span></sup>
+                                </a>
+                            {% else %}
+                                <a class="nav-link text-primary ml-2 my-sm-0" href="{{ path('responsable_demandes_inscription', {'idFil': filiere.id, 'idNiv': niveau.id}) }}">{{ niveau.nom }}</a>
+                            {% endif %}
+                        {% elseif paiment != null %}
+                            {% set counter = 0 %}
+                            {% for etudiant in filiere.getEtudiants %}
+                                {% if etudiant.getPayed == 0 and niveau == etudiant.getNiveau %}
+                                    {% set counter = counter + 1 %}
+                                {% endif %}
+                            {% endfor %}
+                            {% if counter != 0 %}
+                                <a class="nav-link text-success my-2 my-sm-0" href="{{ path('responsable_paiment_etudiant', {'idFil': filiere.id, 'idNiv': niveau.id}) }}">
+                                    {{ niveau.nom }}
+                                    <sup><span class="badge badge-pill badge-success">+{{ counter }}</span></sup>
+                                </a>
+                            {% else %}
+                                <a class="nav-link text-primary my-2 my-sm-0" href="{{ path('responsable_paiment_etudiant', {'idFil': filiere.id, 'idNiv': niveau.id}) }}">{{ niveau.nom }}</a>
+                            {% endif %}
+                        {% elseif scolarite != null %}
+                            {% set counter = 0 %}
+                            {% for etudiant in filiere.getEtudiants %}
+                                {% if etudiant.getCertificats != null and niveau == etudiant.getNiveau %}
+                                    {% set counter = counter + 1 %}
+                                {% endif %}
+                            {% endfor %}
+                            {% if counter != 0 %}
+                                <a class="nav-link text-success my-2 my-sm-0" href="{{ path('responsable_demandes_etudiant', {'idFil': filiere.id, 'idNiv': niveau.id}) }}">
+                                    {{ niveau.nom }}
+                                    <sup><span class="badge badge-pill badge-success">+{{ counter }}</span></sup>
+                                </a>
+                            {% else %}
+                                <a class="nav-link text-primary my-2 my-sm-0" href="{{ path('responsable_demandes_etudiant', {'idFil': filiere.id, 'idNiv': niveau.id}) }}">{{ niveau.nom }}</a>
+                            {% endif %}
+                        {% elseif notes != null %}
+                                <a class="nav-link text-success my-2 my-sm-0" href="{{ path('responsable_releves', {'idFil': filiere.id, 'idNiv': niveau.id}) }}">
+                                    {{ niveau.nom }}
+                                </a>
+                        {% elseif emploi != null %}
+                            <a class="nav-link text-success my-2 my-sm-0" href="{{ path('responsable_seances', {'idFil': filiere.id, 'idNiv': niveau.id}) }}">
+                                {{ niveau.nom }}
+                            </a>
+                        {% else  %}
+                            <a class="nav-link text-primary my-2 my-sm-0" href="{{ path('responsable_module', {'idFil': filiere.id, 'id': niveau.id}) }}">{{ niveau.nom }}</a>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+                {% if notes == null and emploi == null and demandes == null and scolarite == null and paiment == null %}
+                <div class="card-footer form-inline my-2 my-lg-0 justify-content-center">
+                    <a class="nav-link text-success my-2 my-sm-0" href="{{ path('responsable_modification_filiere', {'id': filiere.id}) }}">Modifier</a>
+                    <a class="nav-link text-danger my-2 my-sm-0" href="{{ path('responsable_suppression_filiere', {'id': filiere.id}) }}">Supprimer</a>
+                </div>
+                {% endif %}
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="jumbotron m-5">
+                <h3 class="display-5">Aucun <span class="text-success">filière</span> n'est ajouté pour le moment.</h3>
+                <hr class="my-4">
+                <p class="lead text-center">
+                    <a class="btn btn-success btn-lg" href="{{ path('responsable_ajout_enseignant') }}" role="button">Ajouter une filière</a>
+                </p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

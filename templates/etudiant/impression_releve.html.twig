@@ -1,0 +1,67 @@
+<html>
+
+   <head>
+      <title>Certificat</title>
+   </head>
+   <style>
+      .insea{
+         margin-left:45%;
+         display: inline;
+      }
+    table, th, td {
+        border: 1px solid black;
+        border-collapse: collapse;
+        width:100%;
+        text-align:center;
+    }   
+   </style>
+   <body>
+      <div class="insea">
+         <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/05/INSEA_logo.png/552px-INSEA_logo.png" height="80em" width="80em" alt ="insea" >
+      </div>
+      <div style="text-align:center ; font-family:Helvetica">
+         <p >INSTITUT NATIONAL DE STATISTIQUE ET D'ÉCONOMIE APPLIQUÉE</p>
+         <hr>
+         <h2>Relevé des notes</h2>
+            <br>
+        <p><strong>Mr.</strong> {{ etudiant.nom ~  ' ' ~ etudiant.prenom}}<p>
+        <p> <strong>Filiére: </strong>{{ etudiant.filiere.nom }}</p>
+        <p> <strong>Niveau: </strong>{{ etudiant.niveau.nom }}</p>
+        <br>
+
+
+        <table class="table">
+            <thead>
+                <tr>
+            <th >module</th>
+
+                <th >Élement</th>
+                <th >Note</th>
+                <th>Observations</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for note in notes %}
+                <tr>
+                <td>
+
+                    {{ note.element.module.getNom }}
+                                <td>
+                    {{ note.element.getNom }}
+
+                <td>
+                    {{ note.note }}
+                <td>
+                    {{ note.observations }}
+                </tr>
+                {% endfor %}
+
+            </tbody>
+        </table>
+        </div>
+        <div>
+            <img style="height:140px; width:140px;  display: block, float:right ; margin: 0px 600px" src="https://i.imgur.com/wZS4Cfq.png" alt ="cachet"><br>
+            <span style="float:right">Le {{ issuedAt| date('d/m/Y')}}</span>
+        </div>
+   </body>
+</html>
