@@ -76,7 +76,7 @@
                                     {{ niveau.nom }}
                                 </a>
                         {% elseif emploi != null %}
-                            <a class="nav-link text-success my-2 my-sm-0" href="{{ path('responsable_relve_notes', {'idFil': filiere.id, 'idNiv': niveau.id}) }}">
+                            <a class="nav-link text-success my-2 my-sm-0" href="{{ path('responsable_seances', {'idFil': filiere.id, 'idNiv': niveau.id}) }}">
                                 {{ niveau.nom }}
                             </a>
                         {% else  %}

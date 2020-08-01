@@ -38,25 +38,45 @@ class Emploi
 
     /**
      * @ORM\ManyToOne(targetEntity=Element::class, inversedBy="emplois")
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\JoinColumn(
+     *      name="element_id",
+     *      referencedColumnName="id",
+     *      onDelete="CASCADE",
+     *      nullable=false
+     * )
      */
     private $element;
 
     /**
      * @ORM\ManyToOne(targetEntity=Professeur::class, inversedBy="emplois")
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\JoinColumn(
+     *      name="professeur_id",
+     *      referencedColumnName="id",
+     *      onDelete="CASCADE",
+     *      nullable=false
+     * )
      */
     private $professeur;
 
     /**
      * @ORM\ManyToOne(targetEntity=Classe::class, inversedBy="emplois")
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\JoinColumn(
+     *      name="classe_id",
+     *      referencedColumnName="id",
+     *      onDelete="CASCADE",
+     *      nullable=false
+     * )
      */
     private $classe;
 
     /**
      * @ORM\ManyToOne(targetEntity=Filiere::class, inversedBy="emplois")
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\JoinColumn(
+     *      name="filiere_id",
+     *      referencedColumnName="id",
+     *      onDelete="CASCADE",
+     *      nullable=false
+     * )
      */
     private $filiere;
 

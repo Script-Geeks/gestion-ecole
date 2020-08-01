@@ -36,7 +36,6 @@
         {{ form_row(form_etudiant.cycle) }}
         {{ form_row(form_etudiant.filiere ,{'label': 'Filière'})}}
         {{ form_row(form_etudiant.niveau) }}
-        {% do form_etudiant.password.setRendered() %}
         <div class="form-group col text-center">
         {% if app.user == null %}
             <button type="submit" class="btn btn-outline-success rounded">Enregistrer</button>

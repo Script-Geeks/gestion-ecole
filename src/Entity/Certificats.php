@@ -39,7 +39,12 @@ class Certificats
 
     /**
      * @ORM\ManyToOne(targetEntity=Etudiant::class, inversedBy="certificats")
-     * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
+     * @ORM\JoinColumn(
+     *      name="etudiant_id",
+     *      referencedColumnName="id",
+     *      onDelete="CASCADE",
+     *      nullable=false
+     * )
      */
     private $etudiant;
 

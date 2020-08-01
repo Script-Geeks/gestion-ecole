@@ -56,7 +56,6 @@ class EtudiantType extends AbstractType
                 'class' => Niveau::class,
                 'choice_label' => 'nom'
             ])
-            ->add('password', PasswordType::class)
         ;
     }
 

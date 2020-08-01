@@ -122,11 +122,6 @@ class Etudiant
      * @Assert\Email(message="L'e-mail n'est pas valide !")
      */
     private $email;
-
-    /**
-     * @Assert\Length(min=8, minMessage="Cette valeur est trop courte. Il doit comporter 8 caractères ou plus !")
-     */
-    public $password;
     
     public function getId(): ?int
     {
