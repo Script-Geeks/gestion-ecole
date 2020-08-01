@@ -21,8 +21,9 @@ use App\Repository\ElementRepository;
 use App\Repository\EtudiantRepository;
 use App\Repository\ProfesseurRepository;
 use Doctrine\ORM\EntityManagerInterface;
-use App\Repository\PerofesseurRepository;
+use App\Repository\CertificatsRepository;
 
+use App\Repository\PerofesseurRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -94,7 +95,7 @@ class ProfesseurController extends AbstractController
      * @Route("/elements/modification/{idEl}/{idEt}/{id}/{idNote}", name="prof_elements_update_notes")
      * @Route("/elements/{idEl}/{idEt}/{id}", name="prof_elements_notes")
      */
-    public function notes(NotesRepository $repo_note , $idNote = null,EntityManagerInterface $manager,Request $request,Professeur $professeur,EtudiantRepository $repo_etudiant,ElementRepository $repo_element, $idEl, $idEt)
+    public function notes(NotesRepository $repo_note , $idNote = null, CertificatsRepository $repo_certificat, EntityManagerInterface $manager,Request $request,Professeur $professeur,EtudiantRepository $repo_etudiant,ElementRepository $repo_element, $idEl, $idEt)
     {
         
         $etudiant= $repo_etudiant->find($idEt);
@@ -114,22 +115,36 @@ class ProfesseurController extends AbstractController
 
            if( $note->getId()=== null){
 
-                    $note->setElement($element);
-                    $note->setEtudiant($etudiant);
-                    $note->setProfesseur($professeur);
-
+                $note->setElement($element);
+                $note->setEtudiant($etudiant);
+                $note->setProfesseur($professeur);
+                
+                $certificat = $repo_certificat->findOneBy(array('etudiant' => $idEt));
+                if($certificat == null){
+                    $certificat = new Certificats();
+                    $certificat->setEtudiant($etudiant)
+                               ->setRequestedAt(new \DateTime())
+                               ->setType('Relevé de notes')
+                               ->setAccepted(0)
+                               ->setRequestedAt();
+                }
             }
 
             $manager->persist($note);
             
             $manager->flush();
 
+            if($idNote == null){
+                $message = 'Note ajoutée';
+            }else{
+                $message = 'Note modifiée';
+            }
             return $this->redirectToRoute('prof_elements_etudiants', [
                
                 'idEl' => $idEl,
                 'element' => $element,
                 'id' => $professeur->getId(),
-                'message' => 'Note ajoutée',
+                'message' => $message,
                  ]);
         
             }

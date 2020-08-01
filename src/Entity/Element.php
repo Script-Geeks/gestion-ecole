@@ -63,13 +63,13 @@ class Element
     private $classe;
 
     /**
-     * @ORM\OneToMany(targetEntity=Emploi::class, mappedBy="element")
+     * @ORM\OneToMany(targetEntity=Notes::class, mappedBy="element")
      */
-    private $emplois;
+    private $notes;
 
     public function __construct()
     {
-        $this->emplois = new ArrayCollection();
+        $this->notes = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -138,30 +138,30 @@ class Element
     }
 
     /**
-     * @return Collection|Emploi[]
+     * @return Collection|Notes[]
      */
-    public function getEmplois(): Collection
+    public function getNotes(): Collection
     {
-        return $this->emplois;
+        return $this->notes;
     }
 
-    public function addEmploi(Emploi $emploi): self
+    public function addNote(Notes $note): self
     {
-        if (!$this->emplois->contains($emploi)) {
-            $this->emplois[] = $emploi;
-            $emploi->setElement($this);
+        if (!$this->notes->contains($note)) {
+            $this->notes[] = $note;
+            $note->setElement($this);
         }
 
         return $this;
     }
 
-    public function removeEmploi(Emploi $emploi): self
+    public function removeNote(Notes $note): self
     {
-        if ($this->emplois->contains($emploi)) {
-            $this->emplois->removeElement($emploi);
+        if ($this->notes->contains($note)) {
+            $this->notes->removeElement($note);
             // set the owning side to null (unless already changed)
-            if ($emploi->getElement() === $this) {
-                $emploi->setElement(null);
+            if ($note->getElement() === $this) {
+                $note->setElement(null);
             }
         }
 

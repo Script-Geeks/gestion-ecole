@@ -155,7 +155,10 @@ class EtudiantController extends AbstractController
 
 
         $dompdf->set_option('isHtml5ParserEnabled', true);
-
+        if($this->getUser()->getResponsable() !== null){
+            $certificat->setIssuedAt(new \DateTime());
+        }
+        $certificat->getIssuedAt();
         if ($certificat->getType()=='Certificat de scolarité'){
 
         $doc = $this->renderview('etudiant/impression.html.twig', [
@@ -171,7 +174,7 @@ class EtudiantController extends AbstractController
                 'demande' => $certificat,
                 'issuedAt' => $certificat->getIssuedAt()]);
         }   
-            $dompdf->loadHtml($doc);
+        $dompdf->loadHtml($doc);
 
         $dompdf->render();
 
