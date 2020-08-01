@@ -60,8 +60,12 @@ class EtudiantController extends AbstractController
     */
     public function change_user_password( $id, EtudiantRepository $repo_etudiant,EntityManagerInterface $manager, Request $request, UserPasswordEncoderInterface $encoder, UserRepository $repo_user, \Swift_Mailer $mailer)
     {
-        if($this->getUser()->getEtudiant() === null){
+        if($this->getUser() === null){
             return $this->redirectToRoute('home');
+        }else{
+            if($this->getUser()->getEtudiant() === null){
+                return $this->redirectToRoute('home');
+            }
         }
         $etudiant = $repo_etudiant->find($id);
 
@@ -162,6 +166,10 @@ class EtudiantController extends AbstractController
     {
         if($this->getUser() === null){
             return $this->redirectToRoute('home');
+        }else{
+            if($this->getUser()->getEtudiant() === null && $this->getUser()->getResponsable() === null){
+                return $this->redirectToRoute('home');
+            }
         }
         $note = $repo_note->findBy(array('etudiant' => $etudiant->getId()));
 

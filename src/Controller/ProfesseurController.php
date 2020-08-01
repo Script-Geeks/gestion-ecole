@@ -109,10 +109,13 @@ class ProfesseurController extends AbstractController
      */
     public function notes(NotesRepository $repo_note , $idNote = null, CertificatsRepository $repo_certificat, EntityManagerInterface $manager,Request $request,Professeur $professeur,EtudiantRepository $repo_etudiant,ElementRepository $repo_element, $idEl, $idEt)
     {
-        if($this->getUser()->getProfesseur() === null){
+        if($this->getUser() === null){
             return $this->redirectToRoute('home');
-        }
-        $etudiant= $repo_etudiant->find($idEt);
+        }else{
+            if($this->getUser()->getProfesseur() === null){
+                return $this->redirectToRoute('home');
+            }
+        }        $etudiant= $repo_etudiant->find($idEt);
         $element= $repo_element->find($idEl);
 
         if ($idNote == null){
@@ -179,8 +182,12 @@ class ProfesseurController extends AbstractController
      */
     public function professeur_emploi($id, EmploiRepository $repo_emploi, JoursRepository $repo_jour, ProfesseurRepository $repo_prof)
     {
-        if($this->getUser()->getProfesseur() === null){
+        if($this->getUser() === null){
             return $this->redirectToRoute('home');
+        }else{
+            if($this->getUser()->getProfesseur() === null){
+                return $this->redirectToRoute('home');
+            }
         }
         $jours = $repo_jour->findAll();
         $professeur = $repo_prof->find($id);
