@@ -36,6 +36,9 @@ class EtudiantController extends AbstractController
      */
     public function out()
     {
+        if($this->getUser() === null){
+            return $this->redirectToRoute('home');
+        }
         return $this->render('etudiant/deleted.html.twig');
     }
 
@@ -44,6 +47,9 @@ class EtudiantController extends AbstractController
      */
     public function compte(Etudiant $etudiant)
     {
+        if($this->getUser() === null){
+            return $this->redirectToRoute('home');
+        }
         return $this->render('etudiant/compte.html.twig', [
             'etudiant' => $etudiant,
              ]);
@@ -54,6 +60,9 @@ class EtudiantController extends AbstractController
     */
     public function change_user_password( $id, EtudiantRepository $repo_etudiant,EntityManagerInterface $manager, Request $request, UserPasswordEncoderInterface $encoder, UserRepository $repo_user, \Swift_Mailer $mailer)
     {
+        if($this->getUser()->getEtudiant() === null){
+            return $this->redirectToRoute('home');
+        }
         $etudiant = $repo_etudiant->find($id);
 
         dump($etudiant);
@@ -93,6 +102,9 @@ class EtudiantController extends AbstractController
      */
     public function home(Etudiant $etudiant)
     {
+        if($this->getUser() === null){
+            return $this->redirectToRoute('home');
+        }
         return $this->render('etudiant/accueil.html.twig', [
             'etudiant' => $etudiant ]);
     }
@@ -102,6 +114,9 @@ class EtudiantController extends AbstractController
      */
     public function doc(Etudiant $etudiant, $type, CertificatsRepository $repo_certificat, NotesRepository $repo_note)
     {
+        if($this->getUser() === null){
+            return $this->redirectToRoute('home');
+        }
         $certificat = $repo_certificat->findOneBy(array('etudiant' => $etudiant->getId(), 'type' => $type));
         $note = $repo_note->findBy(array('etudiant' => $etudiant->getId()));
 
@@ -126,6 +141,9 @@ class EtudiantController extends AbstractController
      */
     public function documents(Etudiant $etudiant, CertificatsRepository $certificat)
     {
+        if($this->getUser() === null){
+            return $this->redirectToRoute('home');
+        }
         $certificat = $this->getDoctrine()
             ->getRepository(Certificats::Class)
                 ->findBy(array('etudiant' => $etudiant->getId()));
@@ -142,6 +160,9 @@ class EtudiantController extends AbstractController
      */
     public function impression(Etudiant $etudiant, $type, CertificatsRepository $repo_certificat, NotesRepository $repo_note)
     {
+        if($this->getUser() === null){
+            return $this->redirectToRoute('home');
+        }
         $note = $repo_note->findBy(array('etudiant' => $etudiant->getId()));
 
         $certificat = $repo_certificat->findOneBy(array('type' => $type, 'etudiant' => $etudiant->getId()));
@@ -193,6 +214,9 @@ class EtudiantController extends AbstractController
      */
     public function profil(Etudiant $etudiant)
     {
+        if($this->getUser() === null){
+            return $this->redirectToRoute('home');
+        }
         return $this->render('etudiant/profil.html.twig', [
             'etudiant' => $etudiant , 'age' => date_diff(date_create($etudiant->getDateNaissAt()->format('d-m-Y')), date_create('today'))->y]);
     }
@@ -202,6 +226,9 @@ class EtudiantController extends AbstractController
      */
     public function update(Request $request, EntityManagerInterface $manager, Etudiant $etudiant)
     {
+        if($this->getUser() === null){
+            return $this->redirectToRoute('home');
+        }
         if($etudiant ->getId()){
 
             $form = $this->createForm(EtudiantType::class, $etudiant);
@@ -252,6 +279,9 @@ class EtudiantController extends AbstractController
      */
     public function demandecertificat(Request $request, EntityManagerInterface $manager, Etudiant $etudiant, CertificatsRepository $certificat)
     {
+        if($this->getUser() === null){
+            return $this->redirectToRoute('home');
+        }
         $demande = new Certificats();
 
         $form = $this->createForm(CertificatsType::class, $demande);
@@ -289,6 +319,9 @@ class EtudiantController extends AbstractController
      */
     public function supprimer(EntityManagerInterface $manager, Etudiant $etudiant)
     {
+        if($this->getUser() === null){
+            return $this->redirectToRoute('home');
+        }
         $manager->remove($etudiant);
         $manager->flush();
 
@@ -301,6 +334,9 @@ class EtudiantController extends AbstractController
      */
     public function etudiant_emploi($id, JoursRepository $repo_jour, EmploiRepository $repo_emploi, EtudiantRepository $repo_etudiant)
     {
+        if($this->getUser() === null){
+            return $this->redirectToRoute('home');
+        }
         $etudiant = $repo_etudiant->find($id);
         $jours = $repo_jour->findAll();
         $seances = $repo_emploi->findBy(array('filiere' => $etudiant->getFiliere(), 'niveau' => $etudiant->getNiveau()));

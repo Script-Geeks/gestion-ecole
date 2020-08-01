@@ -138,7 +138,9 @@ class SecurityController extends AbstractController
     public function login_redirect()
     {
         $user = $this->getUser();
-        if($user !== null){
+        if($user === null){
+            return $this->redirectToRoute('home');
+        }else{
             if($user->getResponsable() !== null && $user->getResponsable()->getId() !== null){
                 return $this->redirectToRoute('responsable_accueil');
             }elseif($user->getEtudiant() !== null && $user->getEtudiant()->getId() !== null){

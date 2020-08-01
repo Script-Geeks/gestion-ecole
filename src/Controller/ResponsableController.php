@@ -43,6 +43,13 @@ class ResponsableController extends AbstractController
      */
     public function index()
     {
+        if($this->getUser() === null){
+            return $this->redirectToRoute('home');
+        }else{
+            if($this->getUser()->getResponsable() === null){
+                return $this->redirectToRoute('home');
+            }
+        }
         return $this->render('responsable/accueil.html.twig');
     }
 
@@ -51,6 +58,13 @@ class ResponsableController extends AbstractController
      */
     public function responsable_profil(ResponsableRepository $repo_responsable)
     {
+        if($this->getUser() === null){
+            return $this->redirectToRoute('home');
+        }else{
+            if($this->getUser()->getResponsable() === null){
+                return $this->redirectToRoute('home');
+            }
+        }
         $responsable = $repo_responsable->find($this->getUser()->getResponsable()->getId());
         return $this->render('responsable/profil.html.twig', [
             'responsable' => $responsable
@@ -63,6 +77,13 @@ class ResponsableController extends AbstractController
      */
     public function ajout_responsable(Connection $connection, $id = null, UserRepository $repo_user, ResponsableRepository $repo_responsable, Request $request, EntityManagerInterface $manager, UserPasswordEncoderInterface $encoder, \Swift_Mailer $mailer)
     {
+        if($this->getUser() === null){
+            return $this->redirectToRoute('home');
+        }else{
+            if($this->getUser()->getResponsable() === null){
+                return $this->redirectToRoute('home');
+            }
+        }
         if($id == null){
             $responsable = new Responsable();
             $user = new User();
@@ -153,6 +174,13 @@ class ResponsableController extends AbstractController
      */
     public function gestion_etudiant($id = null, $idFil = null, FiliereRepository $repo_filiere, NiveauRepository $repo_niveau, EtudiantRepository $repo_etudiant)
     {
+        if($this->getUser() === null){
+            return $this->redirectToRoute('home');
+        }else{
+            if($this->getUser()->getResponsable() === null){
+                return $this->redirectToRoute('home');
+            }
+        }
         $niveau = $repo_niveau->find($id);
         $filiere = $repo_filiere->find($idFil);
         $etudiants = $repo_etudiant->findBy(array('accepted'=>1, 'niveau'=>$niveau, 'filiere'=>$filiere));
@@ -162,12 +190,15 @@ class ResponsableController extends AbstractController
             'filiere' => $filiere
         ]);
     }   
-    
+
     /**
      * @Route("/responsable/etudiant/suppression/{id}", name="responsable_suppression_etudiant")
      */
     public function delete_etudiant(Connection $connection, $id, EtudiantRepository $repo_etudiant, UserRepository $repo_user, EntityManagerInterface $manager)
     {
+        if($this->getUser() === null){
+            return $this->redirectToRoute('home');
+        }
         $etudiant = $repo_etudiant->find($id);
         $idfil = $etudiant->getFiliere()->getId();
         $idniv = $etudiant->getNiveau()->getId();
@@ -187,6 +218,13 @@ class ResponsableController extends AbstractController
      */
     public function gestion_niveau($type = null, NiveauRepository $repo_niveau)
     {
+        if($this->getUser() === null){
+            return $this->redirectToRoute('home');
+        }else{
+            if($this->getUser()->getResponsable() === null){
+                return $this->redirectToRoute('home');
+            }
+        }
         $niveaux = $repo_niveau->findAll();
         if($type == 'etudiants'){
             $header = 'Les étudiants';
@@ -205,6 +243,13 @@ class ResponsableController extends AbstractController
      */
     public function niveau_filiere($type = null, $id = null, NiveauRepository $repo_niveau, FiliereRepository $repo_filiere)
     {
+        if($this->getUser() === null){
+            return $this->redirectToRoute('home');
+        }else{
+            if($this->getUser()->getResponsable() === null){
+                return $this->redirectToRoute('home');
+            }
+        }
         $filieres = $repo_filiere->findAll();
         if($type == 'etudiants'){
             $path = 'responsable_etudiant';
@@ -227,6 +272,13 @@ class ResponsableController extends AbstractController
      */
     public function releve_note($idFil, $idNiv, FiliereRepository $repo_filiere, NiveauRepository $repo_niveau, EtudiantRepository $repo_etudiant)
     {
+        if($this->getUser() === null){
+            return $this->redirectToRoute('home');
+        }else{
+            if($this->getUser()->getResponsable() === null){
+                return $this->redirectToRoute('home');
+            }
+        }
         $etudiants = $repo_etudiant->findBy(array('niveau'=>$idNiv, 'filiere'=>$idFil));
         $niveau = $repo_niveau->find($idNiv);
         $filiere = $repo_filiere->find($idFil);
@@ -247,6 +299,15 @@ class ResponsableController extends AbstractController
      */
     public function gestion_filiere( $notes = null, $emploi = null,$scolarite = null, $paiment = null, $demandes = null, NiveauRepository $repo_niveau, FiliereRepository $repo_filiere)
     {
+        if($emploi !== null){
+            if($this->getUser() === null ){
+                return $this->redirectToRoute('home');
+            }
+        }else{
+            if($this->getUser()->getResponsable() === null){
+                return $this->redirectToRoute('home');
+            }
+        }
         $filieres = $repo_filiere->findAll();
         $niveaux = $repo_niveau->findAll();
         return $this->render('responsable/filieres.html.twig', [
@@ -265,6 +326,13 @@ class ResponsableController extends AbstractController
      */
     public function demandes_scolarite( $idFil, $idNiv, NiveauRepository $repo_niveau, FiliereRepository $repo_filiere, CertificatsRepository $repo_certificats)
     {
+        if($this->getUser() === null){
+            return $this->redirectToRoute('home');
+        }else{
+            if($this->getUser()->getResponsable() === null){
+                return $this->redirectToRoute('home');
+            }
+        }
         $filiere = $repo_filiere->find($idFil);
         $niveau = $repo_niveau->find($idNiv);
         $etudiants_certificats = $repo_certificats->findBy(array('accepted'=> 0));
@@ -281,6 +349,13 @@ class ResponsableController extends AbstractController
      */
     public function accepter_demandes_scolarite( $id, $idFil, $idNiv, CertificatsRepository $repo_certificats, EntityManagerInterface $manager)
     {
+        if($this->getUser() === null){
+            return $this->redirectToRoute('home');
+        }else{
+            if($this->getUser()->getResponsable() === null){
+                return $this->redirectToRoute('home');
+            }
+        }
         $certificat_array = $repo_certificats->findBy(array('etudiant' => $id, 'accepted' => 0));
         $certificat = $repo_certificats->find($certificat_array[0]->getId());
         $certificat->setAccepted(1)
@@ -296,6 +371,13 @@ class ResponsableController extends AbstractController
      */
     public function suppression_demande_scolarite( $id, $idFil, $idNiv, CertificatsRepository $repo_certificat, EntityManagerInterface $manager)
     {
+        if($this->getUser() === null){
+            return $this->redirectToRoute('home');
+        }else{
+            if($this->getUser()->getResponsable() === null){
+                return $this->redirectToRoute('home');
+            }
+        }
         $certificat = $repo_certificat->find($id);
         $manager->remove($certificat);
         $manager->flush();
@@ -307,6 +389,13 @@ class ResponsableController extends AbstractController
      */
     public function demandes_inscription( $idFil, $idNiv, FiliereRepository $repo_filiere, NiveauRepository $repo_niveau, EtudiantRepository $repo_etudiant)
     {
+        if($this->getUser() === null){
+            return $this->redirectToRoute('home');
+        }else{
+            if($this->getUser()->getResponsable() === null){
+                return $this->redirectToRoute('home');
+            }
+        }
         $filiere = $repo_filiere->find($idFil);
         $niveau = $repo_niveau->find($idNiv);
         $etudiants_non_acceptes = $repo_etudiant->findBy(array('accepted'=> 0, 'filiere'=> $idFil, 'niveau'=> $idNiv));
@@ -322,6 +411,13 @@ class ResponsableController extends AbstractController
      */
     public function accepter_etudiant( $id, $idFil, $idNiv, EtudiantRepository $repo_etudiant, EntityManagerInterface $manager)
     {
+        if($this->getUser() === null){
+            return $this->redirectToRoute('home');
+        }else{
+            if($this->getUser()->getResponsable() === null){
+                return $this->redirectToRoute('home');
+            }
+        }
         $etudiant = $repo_etudiant->find($id);
         $etudiant->setAccepted(1);
         $manager->persist($etudiant);
@@ -335,6 +431,13 @@ class ResponsableController extends AbstractController
      */
     public function demandes_paiment( $idFil, $idNiv, FiliereRepository $repo_filiere, NiveauRepository $repo_niveau, EtudiantRepository $repo_etudiant)
     {
+        if($this->getUser() === null){
+            return $this->redirectToRoute('home');
+        }else{
+            if($this->getUser()->getResponsable() === null){
+                return $this->redirectToRoute('home');
+            }
+        }
         $filiere = $repo_filiere->find($idFil);
         $niveau = $repo_niveau->find($idNiv);
         $etudiants_non_payes = $repo_etudiant->findBy(array('payed'=> 0, 'filiere'=> $idFil, 'niveau'=> $idNiv));
@@ -350,6 +453,13 @@ class ResponsableController extends AbstractController
      */
     public function payer_etudiant( $id, $idFil, $idNiv, EtudiantRepository $repo_etudiant, EntityManagerInterface $manager)
     {
+        if($this->getUser() === null){
+            return $this->redirectToRoute('home');
+        }else{
+            if($this->getUser()->getResponsable() === null){
+                return $this->redirectToRoute('home');
+            }
+        }
         $etudiant = $repo_etudiant->find($id);
         $etudiant->setPayed(1);
         $manager->persist($etudiant);
@@ -363,6 +473,13 @@ class ResponsableController extends AbstractController
      */
     public function gestion_enseignant(ProfesseurRepository $repo_enseignant)
     {
+        if($this->getUser() === null){
+            return $this->redirectToRoute('home');
+        }else{
+            if($this->getUser()->getResponsable() === null){
+                return $this->redirectToRoute('home');
+            }
+        }
         $enseignants = $repo_enseignant->findAll();
         return $this->render('responsable/enseignants.html.twig', [
             'enseignants' => $enseignants
@@ -375,6 +492,19 @@ class ResponsableController extends AbstractController
      */
     public function ajout_enseignant(Connection $connection, $id = null, UserRepository $repo_user, ProfesseurRepository $repo_enseignant, Request $request, EntityManagerInterface $manager, UserPasswordEncoderInterface $encoder, \Swift_Mailer $mailer)
     {
+        if($this->getUser() === null){
+            return $this->redirectToRoute('home');
+        }else{
+            if($id !== null){
+                if($this->getUser()->getResponsable() === null && $this->getUser()->getProfesseur() === null  ){
+                    return $this->redirectToRoute('home');
+                }
+            }else{
+                if($this->getUser()->getResponsable() === null){
+                    return $this->redirectToRoute('home');
+                }
+            }
+        }
         if($id == null){
             $enseignant = new Professeur();
             $mail_title = 'Profil ajouté avec succès';
@@ -467,6 +597,13 @@ class ResponsableController extends AbstractController
      */
     public function delete_enseignant(Connection $connection, $id, ProfesseurRepository $repo_enseignant, UserRepository $repo_user, EntityManagerInterface $manager)
     {
+        if($this->getUser() === null){
+            return $this->redirectToRoute('home');
+        }else{
+            if($this->getUser()->getResponsable() === null && $this->getUser()->getProfesseur() === null  ){
+                return $this->redirectToRoute('home');
+            }   
+        }
         $enseignant = $repo_enseignant->find($id);
         $user_array = $connection->fetchAll("SELECT * FROM user WHERE professeur_id = $id");
         $user = $repo_user->find($user_array[0]['id']);
@@ -484,6 +621,13 @@ class ResponsableController extends AbstractController
      */
     public function ajout_filiere($id = null, FiliereRepository $repo_filiere, Request $request, EntityManagerInterface $manager)
     {
+        if($this->getUser() === null){
+            return $this->redirectToRoute('home');
+        }else{
+            if($this->getUser()->getResponsable() === null){
+                return $this->redirectToRoute('home');
+            }
+        }
         if($id == null){
             $filiere = new Filiere();
         }else{
@@ -521,6 +665,13 @@ class ResponsableController extends AbstractController
      */
     public function delete_filiere($id, FiliereRepository $repo_filiere, EntityManagerInterface $manager)
     {
+        if($this->getUser() === null){
+            return $this->redirectToRoute('home');
+        }else{
+            if($this->getUser()->getResponsable() === null){
+                return $this->redirectToRoute('home');
+            }
+        }
         $filiere = $repo_filiere->find($id);
 
         $manager->remove($filiere);
@@ -535,6 +686,13 @@ class ResponsableController extends AbstractController
      */
     public function gestion_module($id = null, $idFil = null, NiveauRepository $repo_niveau, FiliereRepository $repo_filiere, ModuleRepository $repo_module)
     {
+        if($this->getUser() === null){
+            return $this->redirectToRoute('home');
+        }else{
+            if($this->getUser()->getResponsable() === null){
+                return $this->redirectToRoute('home');
+            }
+        }
         if($id !== null){
             $niveau = $repo_niveau->find($id);
             $filiere = $repo_filiere->find($idFil);
@@ -562,6 +720,13 @@ class ResponsableController extends AbstractController
      */
     public function ajout_module($id = null, FiliereRepository $repo_filiere, NiveauRepository $repo_niveau, ModuleRepository $repo_module, Request $request, EntityManagerInterface $manager)
     {
+        if($this->getUser() === null){
+            return $this->redirectToRoute('home');
+        }else{
+            if($this->getUser()->getResponsable() === null){
+                return $this->redirectToRoute('home');
+            }
+        }
         $niveaux = $repo_niveau->findAll();
         $filieres = $repo_filiere->findAll();
         if($niveaux == null || $filieres == null){
@@ -609,6 +774,13 @@ class ResponsableController extends AbstractController
      */
     public function delete_module($id = null, $idniv, $idfil, ModuleRepository $repo_module, EntityManagerInterface $manager)
     {
+        if($this->getUser() === null){
+            return $this->redirectToRoute('home');
+        }else{
+            if($this->getUser()->getResponsable() === null){
+                return $this->redirectToRoute('home');
+            }
+        }
         $module = $repo_module->find($id);
 
         $manager->remove($module);
@@ -622,6 +794,13 @@ class ResponsableController extends AbstractController
      */
     public function gestion_classe(ClasseRepository $repo_classe)
     {
+        if($this->getUser() === null){
+            return $this->redirectToRoute('home');
+        }else{
+            if($this->getUser()->getResponsable() === null){
+                return $this->redirectToRoute('home');
+            }
+        }
         $classes = $repo_classe->findAll();
         return $this->render('responsable/classes.html.twig', [
             'classes' => $classes
@@ -634,6 +813,13 @@ class ResponsableController extends AbstractController
      */
     public function ajout_classe($id = null, ClasseRepository $repo_classe, Request $request, EntityManagerInterface $manager)
     {
+        if($this->getUser() === null){
+            return $this->redirectToRoute('home');
+        }else{
+            if($this->getUser()->getResponsable() === null){
+                return $this->redirectToRoute('home');
+            }
+        }
         if($id == null){
             $classe = new Classe();
         }else{
@@ -673,6 +859,13 @@ class ResponsableController extends AbstractController
      */
     public function delete_classe($id = null, ClasseRepository $repo_classe, EntityManagerInterface $manager)
     {
+        if($this->getUser() === null){
+            return $this->redirectToRoute('home');
+        }else{
+            if($this->getUser()->getResponsable() === null){
+                return $this->redirectToRoute('home');
+            }
+        }
         $classe = $repo_classe->find($id);
        
         $manager->remove($classe);
@@ -687,6 +880,13 @@ class ResponsableController extends AbstractController
      */
     public function gestion_element($id = null, ModuleRepository $repo_module, ElementRepository $repo_element)
     {
+        if($this->getUser() === null){
+            return $this->redirectToRoute('home');
+        }else{
+            if($this->getUser()->getResponsable() === null){
+                return $this->redirectToRoute('home');
+            }
+        }
         if($id == null){
             $elements = $repo_element->findAll();
             return $this->render('responsable/elements.html.twig', [
@@ -708,6 +908,13 @@ class ResponsableController extends AbstractController
      */
     public function ajout_element($id = null, ModuleRepository $repo_module, ClasseRepository $repo_classe, ProfesseurRepository $repo_professeur, ElementRepository $repo_element, Request $request, EntityManagerInterface $manager)
     {
+        if($this->getUser() === null){
+            return $this->redirectToRoute('home');
+        }else{
+            if($this->getUser()->getResponsable() === null){
+                return $this->redirectToRoute('home');
+            }
+        }
         $classes = $repo_classe->findAll();
         $modules = $repo_module->findAll();
         $professeurs = $repo_professeur->findAll();
@@ -756,6 +963,13 @@ class ResponsableController extends AbstractController
      */
     public function delete_element($id = null, ElementRepository $repo_element, EntityManagerInterface $manager)
     {
+        if($this->getUser() === null){
+            return $this->redirectToRoute('home');
+        }else{
+            if($this->getUser()->getResponsable() === null){
+                return $this->redirectToRoute('home');
+            }
+        }
         $element = $repo_element->find($id);
         $id_module = $element->getModule()->getId();
 
@@ -771,6 +985,13 @@ class ResponsableController extends AbstractController
      */
     public function ajout_seance($id = null, ElementRepository $repo_element, ClasseRepository $repo_classe, ProfesseurRepository $repo_professeur, EmploiRepository $repo_emploi, Request $request, EntityManagerInterface $manager)
     {
+        if($this->getUser() === null){
+            return $this->redirectToRoute('home');
+        }else{
+            if($this->getUser()->getResponsable() === null){
+                return $this->redirectToRoute('home');
+            }
+        }
         $classes = $repo_classe->findAll();
         $elements = $repo_element->findAll();
         $professeurs = $repo_professeur->findAll();
@@ -832,6 +1053,13 @@ class ResponsableController extends AbstractController
      */
     public function seance_supprimer( $id, EmploiRepository $repo_emploi, EntityManagerInterface $manager)
     {
+        if($this->getUser() === null){
+            return $this->redirectToRoute('home');
+        }else{
+            if($this->getUser()->getResponsable() === null){
+                return $this->redirectToRoute('home');
+            }
+        }
         $seance = $repo_emploi->find($id);
         $idFil = $seance->getElement()->getModule()->getNiveau()->getId(); 
         $idNiv = $seance->getElement()->getModule()->getFiliere()->getId();
@@ -849,6 +1077,9 @@ class ResponsableController extends AbstractController
      */
     public function affichage_seance($id, EmploiRepository $repo_emploi)
     {
+        if($this->getUser() === null){
+            return $this->redirectToRoute('home');
+        }
         $seance = $repo_emploi->find($id);
         return $this->render('responsable/seance.html.twig', [
             'seance' => $seance
@@ -860,6 +1091,9 @@ class ResponsableController extends AbstractController
      */
     public function affichage_emploi($idFil, $idNiv, JoursRepository $repo_jour, EmploiRepository $repo_emploi, FiliereRepository $repo_filiere, NiveauRepository $repo_niveau)
     {
+        if($this->getUser() === null){
+            return $this->redirectToRoute('home');
+        }
         $filiere = $repo_filiere->find($idFil);
         $niveau = $repo_niveau->find($idNiv);
         $jours = $repo_jour->findAll();

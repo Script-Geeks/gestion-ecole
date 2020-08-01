@@ -39,6 +39,9 @@ class ProfesseurController extends AbstractController
      */
     public function home(Professeur $professeur)
     {
+        if($this->getUser() === null){
+            return $this->redirectToRoute('home');
+        }
         return $this->render('professeur/accueil.html.twig', [
             'professeur' => $professeur ]);
     }
@@ -48,6 +51,9 @@ class ProfesseurController extends AbstractController
      */
     public function profil(Professeur $professeur)
     {
+        if($this->getUser() === null){
+            return $this->redirectToRoute('home');
+        }
         return
          $this->render('professeur/profil.html.twig', [
             'professeur' => $professeur ]);
@@ -58,6 +64,9 @@ class ProfesseurController extends AbstractController
      */
     public function elements(Professeur $professeur, ElementRepository $element)
     {
+        if($this->getUser() === null){
+            return $this->redirectToRoute('home');
+        }
         $element = $this->getDoctrine()
             ->getRepository(Element::Class)
                 ->findBy(array('professeur' => $professeur->getId()));
@@ -74,6 +83,9 @@ class ProfesseurController extends AbstractController
      */
     public function etudiants(Professeur $professeur, $idEl, ElementRepository $repo_element, EtudiantRepository $repo_etudiant, ModuleRepository $module,NotesRepository $repo_note)
     {
+        if($this->getUser() === null){
+            return $this->redirectToRoute('home');
+        }
         $element= $repo_element->find($idEl);
         $module =  $element->getModule();
         $filiere = $module->getFiliere();
@@ -97,7 +109,9 @@ class ProfesseurController extends AbstractController
      */
     public function notes(NotesRepository $repo_note , $idNote = null, CertificatsRepository $repo_certificat, EntityManagerInterface $manager,Request $request,Professeur $professeur,EtudiantRepository $repo_etudiant,ElementRepository $repo_element, $idEl, $idEt)
     {
-        
+        if($this->getUser()->getProfesseur() === null){
+            return $this->redirectToRoute('home');
+        }
         $etudiant= $repo_etudiant->find($idEt);
         $element= $repo_element->find($idEl);
 
@@ -165,6 +179,9 @@ class ProfesseurController extends AbstractController
      */
     public function professeur_emploi($id, EmploiRepository $repo_emploi, JoursRepository $repo_jour, ProfesseurRepository $repo_prof)
     {
+        if($this->getUser()->getProfesseur() === null){
+            return $this->redirectToRoute('home');
+        }
         $jours = $repo_jour->findAll();
         $professeur = $repo_prof->find($id);
         $seances = $repo_emploi->findBy(array('professeur' => $id));

@@ -59,9 +59,11 @@
                         {% elseif scolarite != null %}
                             {% set counter = 0 %}
                             {% for etudiant in filiere.getEtudiants %}
-                                {% if etudiant.getCertificats != null and niveau == etudiant.getNiveau %}
-                                    {% set counter = counter + 1 %}
-                                {% endif %}
+                                {% for certificat in etudiant.getCertificats %}
+                                    {% if  certificat.getType != 'Relevé de notes' and certificat.getAccepted == 0 and niveau == etudiant.getNiveau and etudiant.getAccepted == 1 %}
+                                        {% set counter = counter + 1 %}
+                                    {% endif %}
+                                {% endfor %}
                             {% endfor %}
                             {% if counter != 0 %}
                                 <a class="nav-link text-success my-2 my-sm-0" href="{{ path('responsable_demandes_etudiant', {'idFil': filiere.id, 'idNiv': niveau.id}) }}">
