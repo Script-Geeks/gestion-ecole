@@ -1,0 +1,32 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Enseignant{% endblock %}
+
+{% block body %}
+
+    <a class="btn btn-primary" href="{{ path('responsable_releve_notes', {'notes': 'notes'}) }}">Retour</a>
+
+    <h1 id="nav-breadcrumbs" class="display-5 text-center text-success">
+        Les relevés de notes des étudiants de la <span class="text-primary">{{niveau.nom}}</span>, <span class="text-primary">{{filiere.nom}} </span>
+    </h1>
+    
+    <table class="m-5 table text-center table-hover mt-5">
+    <thead>
+        <thead>
+            <tr>
+                <th scope="col">Étudiant</th>
+                <th scope="col">Action</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for etudiant in etudiants %}
+            <tr>
+                <th class="table-secondary text-success">{{ etudiant.nom ~ ' ' ~ etudiant.prenom}}</th>
+                <td>
+                    <a class="m-3 btn btn-success" href="{{ path('etudiant_impression', {'type': 'Relevé de notes', 'id': etudiant.id} ) }}">Télecharger</a>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table> 
+{% endblock %}

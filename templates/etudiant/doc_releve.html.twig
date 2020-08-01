@@ -1,0 +1,56 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Relevé des notes{% endblock %}
+
+{% block body %}
+
+
+  <a class="m-3 btn btn-primary" href="{{ path('etudiant_documents' , { 'id': etudiant.id}) }}">Retour</a>
+
+{% if demandes is null %}
+  <div class="alert alert-dismissible alert-warning text-center m-5 mx-auto" style="width: 40rem">
+    <h4 class="alert-heading ">Aucune demande envoyée</h4>
+  </div>
+{% elseif demandes.accepted == 1  %}
+
+  <a class="m-3 btn btn-success" href="{{ path('etudiant_impression', {'type':demandes.getType, 'id': etudiant.id} ) }}">Télecharger</a>
+
+  <img style="height:110px; width:110px;  display: block;margin-left: auto;
+            margin-right: auto;" src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/05/INSEA_logo.png/552px-INSEA_logo.png">
+
+  <p class="m-3 text-center">INSTITUT NATIONAL DE STATISTIQUE ET D'ÉCONOMIE APPLIQUÉE</p>
+  <hr class="m-7">
+  <h3 class="text-center">Relevé des notes</h3>
+  <div class="m-5">
+  <table class="table table-bordered text-center">
+  <thead>
+    <tr>
+    <th scope="col">Module</th>
+      <th scope="col">Élement</th>
+      <th scope="col">Note</th>
+      <th scope="col">Observations</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for note in notes %}
+    <tr>
+    <td>
+
+        {{ note.element.module.getNom }}
+    
+    <td>
+
+        {{ note.element.getNom }}
+    <td>
+        {{ note.note }}
+    <td>
+        {{ note.observations }}
+    </tr>
+    {% endfor %}
+
+  </tbody>
+</table>
+      <div> <p><img style="height:140px; width:140px;  display: block, float:left ; margin: 0px 1000px" src="https://i.imgur.com/wZS4Cfq.png"><p>
+
+{% endif %}
+{% endblock %}

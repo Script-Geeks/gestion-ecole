@@ -2,12 +2,17 @@
 
 namespace App\Entity;
 
+use Doctrine\ORM\Mapping as ORM;
 use App\Repository\ResponsableRepository;
 use Symfony\Component\Validator\Constraints as Assert;
-use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
  * @ORM\Entity(repositoryClass=ResponsableRepository::class)
+ * @UniqueEntity(
+ *  fields={"email"},
+ *  message="Cet e-mail est déjà pris !"
+ * )
  */
 class Responsable
 {

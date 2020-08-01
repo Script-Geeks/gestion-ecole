@@ -65,6 +65,11 @@ class User implements UserInterface
      */
     private $responsable;
 
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $confirmation;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -146,6 +151,18 @@ class User implements UserInterface
     public function setResponsable(?Responsable $responsable): self
     {
         $this->responsable = $responsable;
+
+        return $this;
+    }
+
+    public function getConfirmation(): ?string
+    {
+        return $this->confirmation;
+    }
+
+    public function setConfirmation(?string $confirmation): self
+    {
+        $this->confirmation = $confirmation;
 
         return $this;
     }

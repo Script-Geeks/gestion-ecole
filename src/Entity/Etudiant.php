@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Symfony\Component\Validator\Constraints as Assert;
 use Doctrine\ORM\Mapping as ORM;
 use App\Repository\EtudiantRepository;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
@@ -15,12 +16,12 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
  *  message="Ce code est déjà pris !"
  * )
  * @UniqueEntity(
- *  fields={"cne"},
- *  message="Ce code est déjà pris !"
+ *  fields={"email"},
+ *  message="Cet e-mail est déjà pris !"
  * )
  * @UniqueEntity(
- *  fields={"tel_pere"},
- *  message="Ce numero est déjà pris !"
+ *  fields={"cne"},
+ *  message="Ce code est déjà pris !"
  * )
  */
 class Etudiant
@@ -44,6 +45,7 @@ class Etudiant
 
     /**
      * @ORM\Column(type="datetime")
+     * @Assert\DateTime(message="Ce champ est obligatoire !")
      */
     private $dateNaissAt;
 
@@ -64,6 +66,7 @@ class Etudiant
 
     /**
      * @ORM\Column(type="integer")
+     * @Assert\Regex("/^212[0-9]{9}$/", message="Le numéro doit être la forme 212xxxxxxxx !")
      */
     private $tel_pere;
 
@@ -93,7 +96,6 @@ class Etudiant
      */
     private $user;
 
-
     /**
      * @ORM\Column(type="string",options={"default":"PersonPlaceholder.png"})
      */
@@ -115,6 +117,16 @@ class Etudiant
      */
     private $accepted;
 
+    /**
+     * @ORM\Column(type="string", length=255)
+     * @Assert\Email(message="L'e-mail n'est pas valide !")
+     */
+    private $email;
+
+    /**
+     * @Assert\Length(min=8, minMessage="Cette valeur est trop courte. Il doit comporter 8 caractères ou plus !")
+     */
+    public $password;
     
     public function getId(): ?int
     {
@@ -311,6 +323,18 @@ class Etudiant
     public function setAccepted(?bool $accepted): self
     {
         $this->accepted = $accepted;
+
+        return $this;
+    }
+
+    public function getEmail(): ?string
+    {
+        return $this->email;
+    }
+
+    public function setEmail(string $email): self
+    {
+        $this->email = $email;
 
         return $this;
     }

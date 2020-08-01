@@ -123,7 +123,9 @@ class ResponsableController extends AbstractController
             if($id !== null){
                 return $this->redirectToRoute('responsable_profil');
             }else{
-                return $this->redirectToRoute('responsable_accueil');
+                return $this->render('responsable/accueil.html.twig', [
+                    'success' => 1
+                ]);
             }
         }
 
@@ -221,13 +223,29 @@ class ResponsableController extends AbstractController
     }
     
     /**
+     * @Route("/responsable/releve/notes/{idFil}/{idNiv}", name="responsable_releves")
+     */
+    public function releve_note($idFil, $idNiv, FiliereRepository $repo_filiere, NiveauRepository $repo_niveau, EtudiantRepository $repo_etudiant)
+    {
+        $etudiants = $repo_etudiant->findBy(array('niveau'=>$idNiv, 'filiere'=>$idFil));
+        $niveau = $repo_niveau->find($idNiv);
+        $filiere = $repo_filiere->find($idFil);
+        return $this->render('responsable/releve_notes.html.twig', [
+            'etudiants' => $etudiants,
+            'filiere' => $filiere,
+            'niveau' => $niveau
+        ]);
+    }
+
+    /**
      * @Route("/responsable/filieres", name="responsable_filiere")
      * @Route("/responsable/filieres/d/{demandes}", name="responsable_filiere_demandes")
      * @Route("/responsable/filieres/p/{paiment}", name="responsable_filiere_paiment")
      * @Route("/responsable/filieres/s/{scolarite}", name="responsable_filiere_scolarite")
      * @Route("/responsable/filieres/e/{emploi}", name="responsable_emploi")
+     * @Route("/responsable/filieres/n/{notes}", name="responsable_releve_notes")
      */
-    public function gestion_filiere( $emploi = null,$scolarite = null, $paiment = null, $demandes = null, NiveauRepository $repo_niveau, FiliereRepository $repo_filiere)
+    public function gestion_filiere( $notes = null, $emploi = null,$scolarite = null, $paiment = null, $demandes = null, NiveauRepository $repo_niveau, FiliereRepository $repo_filiere)
     {
         $filieres = $repo_filiere->findAll();
         $niveaux = $repo_niveau->findAll();
@@ -237,7 +255,8 @@ class ResponsableController extends AbstractController
             'demandes' => $demandes,
             'paiment' => $paiment,
             'scolarite' => $scolarite,
-            'emploi' => $emploi
+            'emploi' => $emploi,
+            'notes' => $notes
         ]);
     }
 
@@ -408,16 +427,16 @@ class ResponsableController extends AbstractController
             $manager->flush();
 
             $user_now = $this->getUser();
+            $message = (new \Swift_Message($mail_title))
+            ->setFrom('insea.inscription@gmail.com')
+            ->setTo($enseignant->getEmail())
+            ->setBody(
+                $body,
+                'text/plain'
+            );
+            $mailer->send($message);
+            
             if($user_now->getResponsable() != null ){
-                $message = (new \Swift_Message($mail_title))
-                    ->setFrom('insea.inscription@gmail.com')
-                    ->setTo($enseignant->getEmail())
-                    ->setBody(
-                        $body,
-                        'text/plain'
-                    );
-                $mailer->send($message);
-                
                 return $this->redirectToRoute('responsable_enseignant');
             }else{
                 return $this->redirectToRoute('prof_accueil', ['id'=> $user->getProfesseur()->getId()]);
@@ -546,7 +565,9 @@ class ResponsableController extends AbstractController
         $niveaux = $repo_niveau->findAll();
         $filieres = $repo_filiere->findAll();
         if($niveaux == null || $filieres == null){
-            return $this->redirectToRoute('responsable_accueil');
+            return $this->render('responsable/accueil.html.twig', [
+                'error' => 1
+            ]);
         }
 
         if($id == null){
@@ -691,7 +712,9 @@ class ResponsableController extends AbstractController
         $modules = $repo_module->findAll();
         $professeurs = $repo_professeur->findAll();
         if($classes == null || $modules == null || $professeurs == null){
-            return $this->redirectToRoute('responsable_accueil');
+            return $this->render('responsable/accueil.html.twig', [
+                'error' => 1
+            ]);
         }
 
         if($id == null){
@@ -752,7 +775,9 @@ class ResponsableController extends AbstractController
         $elements = $repo_element->findAll();
         $professeurs = $repo_professeur->findAll();
         if($classes == null || $elements == null || $professeurs == null){
-            return $this->redirectToRoute('responsable_accueil');
+            return $this->render('responsable/accueil.html.twig', [
+                'error' => 1
+            ]);
         }
 
         if($id == null){
@@ -769,7 +794,8 @@ class ResponsableController extends AbstractController
             // 'element' => $seance->getElement(), 'professeur' => $seance->getProfesseur(), 
             if($seance->getId() == null){
                 $seances_array = $repo_emploi->findBy(array('filiere' => $seance->getElement()->getModule()->getFiliere(), 'jour' => $seance->getJour()->getId(), 'heure_debut' => $seance->getHeureDebut(), 'heure_fin' => $seance->getHeureFin()));
-                if($seances_array !== null){
+                $seances_prof = $repo_emploi->findBy(array('professeur' => $seance->getProfesseur(), 'jour' => $seance->getJour()->getId(), 'heure_debut' => $seance->getHeureDebut(), 'heure_fin' => $seance->getHeureFin()));
+                if($seances_array !== null || $seance_prof !== null){
                     return $this->redirectToRoute('responsable_seance_ajout', [
                         'error' => 0
                     ]);

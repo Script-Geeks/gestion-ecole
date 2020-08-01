@@ -2,28 +2,31 @@
 
 namespace App\Controller;
 
-use App\Entity\User;
 use Dompdf\Dompdf;
 use Dompdf\Options;
-use App\Entity\Certificats;
-use App\Form\CertificatsType;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use App\Entity\User;
 use App\Form\UserType;
+use App\Entity\Filiere;
 use App\Entity\Etudiant;
 use App\Form\EtudiantType;
-use App\Entity\Filiere;
+use App\Entity\Certificats;
+use App\Form\CertificatsType;
 use App\Repository\UserRepository;
-use App\Repository\CertificatsRepository;
+use App\Repository\JoursRepository;
+use App\Repository\NotesRepository;
+use App\Repository\EmploiRepository;
+use Doctrine\DBAL\Driver\Connection;
 use App\Controller\SecurityController;
 use App\Repository\EtudiantRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use App\Repository\CertificatsRepository;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
-use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Response;
-use Doctrine\DBAL\Driver\Connection;
+use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
+use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
 class EtudiantController extends AbstractController
 {
@@ -49,51 +52,40 @@ class EtudiantController extends AbstractController
     /**
     * @Route("/updatepassword/{id}", name="etudiant_updatepwd"))
     */
-    public function change_user_password(Connection $connection, EtudiantRepository $repo_etudiant,EntityManagerInterface $manager, Request $request, UserPasswordEncoderInterface $encoder, Etudiant $etudiant, UserRepository $user ) {
+    public function change_user_password( $id, EtudiantRepository $repo_etudiant,EntityManagerInterface $manager, Request $request, UserPasswordEncoderInterface $encoder, UserRepository $repo_user, \Swift_Mailer $mailer)
+    {
+        $etudiant = $repo_etudiant->find($id);
 
+        dump($etudiant);
+        if($_POST !== null && count($_POST) === 1){
+            $pwd = $_POST['password'];
+            $user = $repo_user->findOneBy(array('etudiant' => $etudiant->getId()));
+            $user->setPassword($pwd);
+            $hash = $encoder->encodePassword($user, $user->getPassword());
+            $user->setPassword($hash);
 
-                 $etudiant = $repo_etudiant->find($etudiant ->getId());
-                 $id=$etudiant ->getId();
-                 $user_array = $connection->fetchAll("SELECT * FROM user WHERE etudiant_id = $id");
-                 dump($user_array);
-                 $user = $user->find($user_array[0]['id']);
+            $manager->persist($user);
+            $manager->flush();
 
+            $body = strtoupper($etudiant->getNom())." ".$etudiant->getPrenom().",\nVous pouvez vous authentifier en utilisant les informations ci-dessous.\n
+                    E-mail: ".$etudiant->getEmail()."\n
+                    Mot de passe: ".$pwd;
+            $message = (new \Swift_Message('Changement du mot de passe'))
+                    ->setFrom('insea.inscription@gmail.com')
+                    ->setTo($etudiant->getEmail())
+                    ->setBody(
+                        $body,
+                        'text/plain'
+                    );
+            $mailer->send($message);
 
-                $form = $this->createForm(UserType::class, $user);
-
-                $form->handleRequest($request);
-                $pwd = $user->getPassword();
-
-                if($form->isSubmitted() && $form->isValid()){
-                    if($user){
-                        $opwd = $form->get('oldpassword')->getData();
-                       if( md5($opwd) == $pwd)
-                        {
-
-                            $hash = $encoder->encodePassword($user, $user->getPassword());
-                            $user->setPassword($hash);
-
-                            $manager->persist($user);
-
-                            $manager->flush();
-
-                            return $this->render('etudiant/accueil.html.twig', [
-                                'etudiant' => $etudiant,
-                                'message' => 'Mot de passe changé avec succés' ]);
-                        }
-                            else{ return new Response(
-                            '<html><body> mot de passe incorrect, veuillez reéssayer </body></html>'  );
-
-                                }
-                     }  
-                   }
-
-               return $this->render('etudiant/updatepassword.html.twig', [
-                 'form_authentication' => $form->createView(),
-                  'etudiant' => $etudiant,
-
-    ]);
-
+            return $this->render('etudiant/accueil.html.twig', [
+                'etudiant' => $etudiant,
+                'message' => 'Mot de passe changé avec succés' ]);
+        }
+        return $this->render('etudiant/updatepassword.html.twig', [
+            'etudiant' => $etudiant
+        ]);
     }
 
     /**
@@ -106,41 +98,82 @@ class EtudiantController extends AbstractController
     }
 
     /**
-     * @Route("/demande/document/{id}", name="etudiant_document")
+     * @Route("/demande/document/{type}/{id}", name="etudiant_document")
      */
-    public function doc(Etudiant $etudiant, CertificatsRepository $repo_certificat)
+    public function doc(Etudiant $etudiant, $type, CertificatsRepository $repo_certificat, NotesRepository $repo_note)
     {
-        $certificat = $repo_certificat->findOneBy(array('etudiant' => $etudiant->getId()));
+        $certificat = $repo_certificat->findOneBy(array('etudiant' => $etudiant->getId(), 'type' => $type));
+        $note = $repo_note->findBy(array('etudiant' => $etudiant->getId()));
 
+        if ($certificat->getType()=='Certificat de scolarité'){
         return $this->render('etudiant/doc.html.twig', [
             'etudiant' => $etudiant ,
-            'certificat' => $certificat
-        ]);
+            'demandes' => $certificat,
+            'type' => $type
+            ]);
+        }
+        else{
+            return $this->render('etudiant/doc_releve.html.twig', [
+                'notes' => $note ,
+                'demandes' => $certificat,
+                'etudiant' => $etudiant ,
+            ]);
+        }
     }
+    
     /**
-     * @Route("/demande/document/impression/{id}", name="etudiant_impression")
+     * @Route("/demande/documents/{id}", name="etudiant_documents")
      */
-    public function impression(Etudiant $etudiant, CertificatsRepository $certificat)
+    public function documents(Etudiant $etudiant, CertificatsRepository $certificat)
     {
         $certificat = $this->getDoctrine()
-        ->getRepository(Certificats::Class)
-            ->findOneBy(array('etudiant' => $etudiant->getId()));
-
-            $options = new Options();
-            $options->setIsRemoteEnabled(true);
-
-            $options->set('defaultFont', 'Courier');
-            $dompdf = new Dompdf($options);
+            ->getRepository(Certificats::Class)
+                ->findBy(array('etudiant' => $etudiant->getId()));
 
 
-            $dompdf->set_option('isHtml5ParserEnabled', true);
+        return $this->render('etudiant/documents.html.twig', [
+            'etudiant' => $etudiant ,
+            'demandes' => $certificat
+        ]);
+    }
+    
+    /**
+     * @Route("/demande/document/{type}/impression/{id}", name="etudiant_impression")
+     */
+    public function impression(Etudiant $etudiant, $type, CertificatsRepository $repo_certificat, NotesRepository $repo_note)
+    {
+        $note = $repo_note->findBy(array('etudiant' => $etudiant->getId()));
 
-            $doc = $this->renderview('etudiant/impression.html.twig', [
+        $certificat = $repo_certificat->findOneBy(array('type' => $type, 'etudiant' => $etudiant->getId()));
+
+        dump($certificat);
+        $options = new Options();
+        $options->setIsRemoteEnabled(true);
+
+        $options->set('defaultFont', 'Courier');
+        $dompdf = new Dompdf($options);
+
+
+        $dompdf->set_option('isHtml5ParserEnabled', true);
+
+        if ($certificat->getType()=='Certificat de scolarité'){
+
+        $doc = $this->renderview('etudiant/impression.html.twig', [
+            'etudiant' => $etudiant ,
+            'demande' => $certificat,
+            'issuedAt' => $certificat->getIssuedAt()
+            ]);
+        }
+        else{
+            $doc = $this->renderview('etudiant/impression_releve.html.twig', [
+                'notes' => $note ,
                 'etudiant' => $etudiant ,
-                'certificat' => $certificat]);
-                $dompdf->loadHtml($doc);
+                'demande' => $certificat,
+                'issuedAt' => $certificat->getIssuedAt()]);
+        }   
+            $dompdf->loadHtml($doc);
 
-            $dompdf->render();
+        $dompdf->render();
 
         // (Optional) Setup the paper size and orientation
         $dompdf->setPaper('A4', 'portrait');
@@ -149,9 +182,9 @@ class EtudiantController extends AbstractController
         // Render the HTML as PDF
         $dompdf->loadHtml( 'doc');
 
-        $dompdf->stream('Certificat_de_scolarité_'.$etudiant->getNom().'_'.$etudiant->getPrenom());
-
+        $dompdf->stream($type.'_'.$etudiant->getNom().'_'.$etudiant->getPrenom());
     }
+
     /**
      * @Route("/profil/{id}" ,name="etudiant_profil")
      */
@@ -229,8 +262,8 @@ class EtudiantController extends AbstractController
                 $manager->remove($c);
             }
 
-            $demande->setRequestedAt(new \DateTime());
-            $demande->setEtudiant($etudiant)
+            $demande->setRequestedAt(new \DateTime())
+                    ->setEtudiant($etudiant)
                     ->setAccepted(0);
 
             $manager->persist($demande);
@@ -244,8 +277,7 @@ class EtudiantController extends AbstractController
 
         return $this->render('etudiant/demande.html.twig' , [
             'formDemande' => $form->createView(),
-            'etudiant' => $etudiant,         
-
+            'etudiant' => $etudiant
         ]);
     }
 
@@ -260,5 +292,20 @@ class EtudiantController extends AbstractController
     return $this->render('etudiant/deleted.html.twig');
 
     }
-
+     
+    /**
+     * @Route("/etudiant/emploi/{id}", name="etudiant_seances")
+     */
+    public function etudiant_emploi($id, JoursRepository $repo_jour, EmploiRepository $repo_emploi, EtudiantRepository $repo_etudiant)
+    {
+        $etudiant = $repo_etudiant->find($id);
+        $jours = $repo_jour->findAll();
+        $seances = $repo_emploi->findBy(array('filiere' => $etudiant->getFiliere(), 'niveau' => $etudiant->getNiveau()));
+        return $this->render('responsable/seances.html.twig', [
+            'seances' => $seances,
+            'jours' => $jours,
+            'filiere' => $etudiant->getFiliere(),
+            'niveau' => $etudiant->getNiveau()
+        ]);
+    }
 }

@@ -14,7 +14,7 @@
                 <div class="card-header text-white bg-success"></div>
                 <div class="card-body">
                     <h4 class="card-title"></h4>
-                    {% if emploi == null and demandes == null and scolarite == null and paiment == null %}
+                    {% if notes == null and emploi == null and demandes == null and scolarite == null and paiment == null %}
                         <p class="card-text m-4"><span class="text-muted">Nom:</span> {{ filiere.nom }}</p>
                         <p class="card-text m-4"><span class="text-muted">Frais d'inscription:</span> {{ filiere.getFraisInscription }}</p>
                     {% else %}
@@ -71,8 +71,12 @@
                             {% else %}
                                 <a class="nav-link text-primary my-2 my-sm-0" href="{{ path('responsable_demandes_etudiant', {'idFil': filiere.id, 'idNiv': niveau.id}) }}">{{ niveau.nom }}</a>
                             {% endif %}
+                        {% elseif notes != null %}
+                                <a class="nav-link text-success my-2 my-sm-0" href="{{ path('responsable_releves', {'idFil': filiere.id, 'idNiv': niveau.id}) }}">
+                                    {{ niveau.nom }}
+                                </a>
                         {% elseif emploi != null %}
-                            <a class="nav-link text-success my-2 my-sm-0" href="{{ path('responsable_seances', {'idFil': filiere.id, 'idNiv': niveau.id}) }}">
+                            <a class="nav-link text-success my-2 my-sm-0" href="{{ path('responsable_relve_notes', {'idFil': filiere.id, 'idNiv': niveau.id}) }}">
                                 {{ niveau.nom }}
                             </a>
                         {% else  %}
@@ -80,7 +84,7 @@
                         {% endif %}
                     {% endfor %}
                 </div>
-                {% if emploi == null and demandes == null and scolarite == null and paiment == null %}
+                {% if notes == null and emploi == null and demandes == null and scolarite == null and paiment == null %}
                 <div class="card-footer form-inline my-2 my-lg-0 justify-content-center">
                     <a class="nav-link text-success my-2 my-sm-0" href="{{ path('responsable_modification_filiere', {'id': filiere.id}) }}">Modifier</a>
                     <a class="nav-link text-danger my-2 my-sm-0" href="{{ path('responsable_suppression_filiere', {'id': filiere.id}) }}">Supprimer</a>

@@ -5,8 +5,8 @@
 {% block body %}
 
 {% if msg is defined %}
-    <div class="m-0 d-flex flex-wrap justify-content-center">
-        <div class="alert alert-dismissible alert-success m-0 text-center justify-content-center " style="max-width: 40rem;">
+    <div class="mt-3 d-flex flex-wrap justify-content-center">
+        <div class="alert alert-dismissible alert-success m-0 text-center justify-content-center " style="width: 40rem;">
             <button type="button" class="close" data-dismiss="alert">&times;</button>
             {{ msg }}
         </div>
@@ -14,20 +14,15 @@
 {% endif %}
 
 {% if message is defined %}
-    <div class="m-0 d-flex flex-wrap justify-content-center">
-        <div class="alert alert-dismissible alert-success m-0 text-center justify-content-center " style="max-width: 40rem;">
+    <div class="mt-3 d-flex flex-wrap justify-content-center">
+        <div class="alert alert-dismissible alert-success m-0 text-center justify-content-center " style="width: 40rem;">
             <button type="button" class="close" data-dismiss="alert">&times;</button>
             {{ message }}
         </div>
     </div>
 {% endif %}
 
-  <div class="m-5 d-flex flex-wrap justify-content-center">
-        {% if etudiant.getAccepted != 1 %}
-        <div class="alert alert-dismissible alert-warning text-center mt-5 mx-auto" style="width: 40rem">
-            <h4 class="alert-heading ">Votre demande d'inscription est en cours de traitement</h4>
-        </div>
-        {% endif %}
+  <div class="mx-auto d-flex flex-wrap justify-content-center">
         <div class="m-5 card border-success mb-3 rounded  " style="width: 40rem;">
             <div class="card-header text-white bg-success text-center">Fiche Étudiant</div>
             <div class="card-body">
@@ -40,22 +35,17 @@
                 <p class="card-text text-center">Filiere : {{ etudiant.filiere.nom}}</p>
                 <p class="card-text text-center">Niveau : {{ etudiant.niveau.nom}}</p>
             
-            {% if etudiant.getAccepted == 1 %}
                 <a class="nav-link text-info my-2 my-sm-0 text-center" href="{{ path('etudiant_profil' , { 'id': etudiant.id}) }}">Plus de détails</a>
             </div>
-
             <div class="card-footer form-inline my-2 my-lg-0 justify-content-center">
-                <a class="nav-link text-primary my-2 my-sm-0" href="#">Emploi</a>
-            </div>
-            <div class="card-footer form-inline my-2 my-lg-0 justify-content-center">
-                <a class="nav-link text-secondary" href="{{ path('etudiant_certificat' , { 'id': etudiant.id}) }}}">Scolarité</a>
+                <a class="nav-link text-primary my-2 my-sm-0" href="{{ path('etudiant_seances', {'id': app.user.getEtudiant.getId}) }}">Emploi</a>
             </div>
             <div class="card-footer form-inline my-2 my-lg-0 justify-content-center">
-                <a class="nav-link text-secondary" href="{{ path('etudiant_compte' , { 'id': etudiant.id}) }}}">Compte</a>
+                <a class="nav-link text-secondary" href="{{ path('etudiant_documents' , { 'id': etudiant.id}) }}">Scolarité</a>
             </div>
-            {% else %}
+            <div class="card-footer form-inline my-2 my-lg-0 justify-content-center">
+                <a class="nav-link text-secondary" href="{{ path('etudiant_compte' , { 'id': etudiant.id}) }}">Compte</a>
             </div>
-            {% endif %}
         </div>
     </div>
 {% endblock %}

@@ -4,7 +4,7 @@
 
 {% block body %}
 
-<a class="m-3 btn btn-primary" href="/">Retour</a>
+<a class="btn btn-primary" href="/">Retour</a>
 <div class="card rounded border-success m-1 mx-auto" style="max-width: 55rem">
     {% if app.user == null %}
     <h1 class="text-center text-success m-5">Inscription</h1>
@@ -24,24 +24,25 @@
         {{ form_row(form_etudiant.image,  {'attr': {'placeholder': 'Sélectionner une image'}}) }}    
         {{ form_row(form_etudiant.nom, {'attr': {'placeholder': 'Entrer votre nom ...', 'autofocus': ''}}) }}    
         {{ form_row(form_etudiant.prenom, {'attr': {'placeholder': 'Entrer votre prénom ...'}}) }}    
+        {{ form_row(form_etudiant.email, {'attr': {'placeholder': 'Entrer votre adresse e-mail ...'}}) }}    
         {{ form_row(form_etudiant.dateNaissAt,  {'label': 'Date de naissance'})}}    
         {{ form_row(form_etudiant.cne, {'label': 'Code national d\'étudiant', 'attr': {'placeholder': 'Entrer votre CNE ...'}}) }}    
         {{ form_row(form_etudiant.cin, {'label': 'Code d\'identité national', 'attr': {'placeholder': 'Entrer votre CIN ...'}}) }}    
         {{ form_row(form_etudiant.nomComplet_pere, {'label': 'Nom complet du père', 'attr': {'placeholder': 'Entrer le nom de votre père ...'}}) }}    
-        {{ form_row(form_etudiant.tel_pere, {'label': 'Numéro de téléphone du père', 'attr': {'placeholder': 'Entrer le numéro de téléphone de votre père ...'}}) }}
+        {{ form_row(form_etudiant.tel_pere, {'label': 'Numéro de téléphone du père', 'attr': {'placeholder': 'ex : 212xxxxxxxxx'}}) }}
         <hr class="my-4"> 
         <p class="lead text-dark">Informations académiques</p>
         <hr class="my-4"> 
         {{ form_row(form_etudiant.cycle) }}
         {{ form_row(form_etudiant.filiere ,{'label': 'Filière'})}}
         {{ form_row(form_etudiant.niveau) }}
+        {% do form_etudiant.password.setRendered() %}
         <div class="form-group col text-center">
         {% if app.user == null %}
             <button type="submit" class="btn btn-outline-success rounded">Enregistrer</button>
         {% else %}
             <button type="submit" class="btn btn-outline-success rounded">Ajouter</button>
         {% endif %}
-        <button type="cancel" class="btn btn-outline-danger rounded">Annuler</button>
         </div>
 
     {{ form_end(form_etudiant) }}
