@@ -13,9 +13,12 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 
+use Symfony\Component\Form\Extension\Core\Type\EmailType;
+use Symfony\Component\Form\Extension\Core\Type\NumberType;
+use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 
 class EtudiantType extends AbstractType
@@ -31,11 +34,14 @@ class EtudiantType extends AbstractType
             ])
             ->add('nom', TextType::class)
             ->add('prenom', TextType::class)
-            ->add('dateNaissAt', DateType::class)
+            ->add('email', EmailType::class)
+            ->add('dateNaissAt', DateType::class, [
+                'widget' => 'single_text'
+            ])
             ->add('cne', TextType::class)
             ->add('cin', TextType::class)
             ->add('nomComplet_pere', TextType::class)
-            ->add('tel_pere', TextType::class)
+            ->add('tel_pere', NumberType::class)
             ->add('cycle', EntityType::class, [
                 'class' => Cycle::class,
                 'choice_label' => 'nom'
@@ -44,9 +50,6 @@ class EtudiantType extends AbstractType
                 'class' => Filiere::class,
                 'choice_label' => function (Filiere $filiere) {
                     return $filiere->getNom();
-            
-                    // or better, move this logic to Customer, and return:
-                    // return $customer->getFullname();
                 },
             ])
             ->add('niveau', EntityType::class, [

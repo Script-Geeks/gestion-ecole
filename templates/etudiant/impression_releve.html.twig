@@ -8,9 +8,6 @@
          margin-left:45%;
          display: inline;
       }
-      body{
-         padding-top: 15%;
-      }
     table, th, td {
         border: 1px solid black;
         border-collapse: collapse;
@@ -34,36 +31,37 @@
 
 
         <table class="table">
-        <thead>
-            <tr>
-           <th >module</th>
+            <thead>
+                <tr>
+            <th >module</th>
 
-            <th >Élement</th>
-            <th >Note</th>
-            <th>Observations</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for note in notes %}
-            <tr>
-            <td>
+                <th >Élement</th>
+                <th >Note</th>
+                <th>Observations</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for note in notes %}
+                <tr>
+                <td>
 
-                {{ note.element.module.getNom }}
-                            <td>
-                {{ note.element.getNom }}
+                    {{ note.element.module.getNom }}
+                                <td>
+                    {{ note.element.getNom }}
 
-            <td>
-                {{ note.note }}
-            <td>
-                {{ note.observations }}
-            </tr>
-            {% endfor %}
+                <td>
+                    {{ note.note }}
+                <td>
+                    {{ note.observations }}
+                </tr>
+                {% endfor %}
 
-        </tbody>
+            </tbody>
         </table>
-            <p>
-            <img style="height:140px; width:140px;  display: block, float:center ; margin: 0px 600px" src="https://i.imgur.com/wZS4Cfq.png" alt ="cachet"><br>
+        </div>
+        <div>
+            <img style="height:140px; width:140px;  display: block, float:right ; margin: 0px 600px" src="https://i.imgur.com/wZS4Cfq.png" alt ="cachet"><br>
             <span style="float:right">Le {{ issuedAt| date('d/m/Y')}}</span>
-            <p>
+        </div>
    </body>
 </html>

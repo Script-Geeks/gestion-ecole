@@ -4,17 +4,23 @@ namespace App\Controller;
 
 use App\Entity\User;
 use App\Entity\Classe;
+use App\Entity\Emploi;
 use App\Entity\Module;
 use App\Entity\Element;
 use App\Entity\Filiere;
 use App\Form\ClassType;
+use App\Form\EmploiType;
 use App\Form\ModuleType;
 use App\Form\ElementType;
 use App\Form\FiliereType;
 use App\Entity\Professeur;
+use App\Entity\Responsable;
 use App\Form\EnseignantType;
+use App\Form\ResponsableType;
 use App\Repository\UserRepository;
+use App\Repository\JoursRepository;
 use App\Repository\ClasseRepository;
+use App\Repository\EmploiRepository;
 use App\Repository\ModuleRepository;
 use App\Repository\NiveauRepository;
 use Doctrine\DBAL\Driver\Connection;
@@ -24,6 +30,7 @@ use App\Repository\EtudiantRepository;
 use App\Repository\ProfesseurRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Repository\CertificatsRepository;
+use App\Repository\ResponsableRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -37,6 +44,108 @@ class ResponsableController extends AbstractController
     public function index()
     {
         return $this->render('responsable/accueil.html.twig');
+    }
+
+    /**
+     * @Route("responsable/profil", name="responsable_profil")
+     */
+    public function responsable_profil(ResponsableRepository $repo_responsable)
+    {
+        $responsable = $repo_responsable->find($this->getUser()->getResponsable()->getId());
+        return $this->render('responsable/profil.html.twig', [
+            'responsable' => $responsable
+        ]);
+    }
+ 
+    /**
+     * @Route("/responsable/ajout", name="responsable_ajout")
+     * @Route("/responsable/modification/{id}", name="responsable_modification")
+     */
+    public function ajout_responsable(Connection $connection, $id = null, UserRepository $repo_user, ResponsableRepository $repo_responsable, Request $request, EntityManagerInterface $manager, UserPasswordEncoderInterface $encoder, \Swift_Mailer $mailer)
+    {
+        if($id == null){
+            $responsable = new Responsable();
+            $user = new User();
+            $mail_title = 'Profil ajouté avec succès';
+        }else{
+            $responsable = $repo_responsable->find($id);
+            $user_array = $connection->fetchAll("SELECT * FROM user WHERE responsable_id = $id");
+            $user = $repo_user->find($user_array[0]['id']);
+            $mail_title = 'Profil modifié avec succès';
+        }
+        $form = $this->createForm(ResponsableType::class, $responsable);
+
+        $form->handleRequest($request);
+
+        if($form->isSubmitted() && $form->isValid())
+        {
+            $manager->persist($responsable);
+
+            $manager->flush();
+
+            $pwd = '';
+            if($id == null){
+                $x = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+                for($i = 0; $i < 6; $i++){
+                    $pwd .= $x[rand(0, strlen($x)-1)];
+                }
+            }else{
+                $pwd = $responsable->password;
+            }
+
+            if($user->getPassword() !== $pwd){
+                $hash = $encoder->encodePassword($user, $pwd);
+                $user->setPassword($hash);
+                $body = strtoupper($responsable->getNom())." ".$responsable->getPrenom().",\nVous pouvez vous authentifier en utilisant les informations ci-dessous.\n
+                    E-mail: ".$responsable->getEmail()."\n
+                    Mot de passe: ".$pwd;
+            }else{
+                $body = strtoupper($responsable->getNom())." ".$responsable->getPrenom().",\nVotre profil a été modifié avec succès.";
+            }
+            $user->setUsername($responsable->getNom())
+                 ->setEmail($responsable->getEmail())
+                 ->setResponsable($responsable);
+            
+            $manager->persist($user);
+            
+            $manager->flush();
+
+            $user_now = $this->getUser();
+            $message = (new \Swift_Message($mail_title))
+                ->setFrom('insea.inscription@gmail.com')
+                ->setTo($responsable->getEmail())
+                ->setBody(
+                    $body,
+                    'text/plain'
+                );
+            $mailer->send($message);
+            
+            if($id !== null){
+                return $this->redirectToRoute('responsable_profil');
+            }else{
+                return $this->render('responsable/accueil.html.twig', [
+                    'success' => 1
+                ]);
+            }
+        }
+
+        if($id == null){
+            return $this->render('responsable/responsable_ajout.html.twig', [
+                'form_responsable' => $form->createView(),
+                'pwd' => 0,
+                'title' => 'L\'ajout d\'un enseignat',
+                'button' => 'Ajouter'
+            ]);
+        }else{
+            return $this->render('responsable/responsable_ajout.html.twig', [
+                'form_responsable' => $form->createView(),
+                'pwd' => 1,
+                'title' => "La modification des informations de :\n",
+                'nomComplet' => $responsable->getNom()." ".$responsable->getPrenom(),
+                'password' => $user_array[0]['password'],
+                'button' => 'Modifier'
+            ]);
+        }
     }
 
     /**
@@ -114,12 +223,29 @@ class ResponsableController extends AbstractController
     }
     
     /**
+     * @Route("/responsable/releve/notes/{idFil}/{idNiv}", name="responsable_releves")
+     */
+    public function releve_note($idFil, $idNiv, FiliereRepository $repo_filiere, NiveauRepository $repo_niveau, EtudiantRepository $repo_etudiant)
+    {
+        $etudiants = $repo_etudiant->findBy(array('niveau'=>$idNiv, 'filiere'=>$idFil));
+        $niveau = $repo_niveau->find($idNiv);
+        $filiere = $repo_filiere->find($idFil);
+        return $this->render('responsable/releve_notes.html.twig', [
+            'etudiants' => $etudiants,
+            'filiere' => $filiere,
+            'niveau' => $niveau
+        ]);
+    }
+
+    /**
      * @Route("/responsable/filieres", name="responsable_filiere")
      * @Route("/responsable/filieres/d/{demandes}", name="responsable_filiere_demandes")
      * @Route("/responsable/filieres/p/{paiment}", name="responsable_filiere_paiment")
      * @Route("/responsable/filieres/s/{scolarite}", name="responsable_filiere_scolarite")
+     * @Route("/responsable/filieres/e/{emploi}", name="responsable_emploi")
+     * @Route("/responsable/filieres/n/{notes}", name="responsable_releve_notes")
      */
-    public function gestion_filiere( $scolarite = null, $paiment = null, $demandes = null, NiveauRepository $repo_niveau, FiliereRepository $repo_filiere)
+    public function gestion_filiere( $notes = null, $emploi = null,$scolarite = null, $paiment = null, $demandes = null, NiveauRepository $repo_niveau, FiliereRepository $repo_filiere)
     {
         $filieres = $repo_filiere->findAll();
         $niveaux = $repo_niveau->findAll();
@@ -128,7 +254,9 @@ class ResponsableController extends AbstractController
             'niveaux' => $niveaux,
             'demandes' => $demandes,
             'paiment' => $paiment,
-            'scolarite' => $scolarite
+            'scolarite' => $scolarite,
+            'emploi' => $emploi,
+            'notes' => $notes
         ]);
     }
 
@@ -218,7 +346,7 @@ class ResponsableController extends AbstractController
     }
 
     /**
-     * @Route("/responsable/etudiant/{id}/{idFil}/{idNiv}/payer", name="responsable_etudiant_accepter")
+     * @Route("/responsable/etudiant/{id}/{idFil}/{idNiv}/payer", name="responsable_etudiant_payer")
      */
     public function payer_etudiant( $id, $idFil, $idNiv, EtudiantRepository $repo_etudiant, EntityManagerInterface $manager)
     {
@@ -297,17 +425,22 @@ class ResponsableController extends AbstractController
             $manager->persist($user);
             
             $manager->flush();
-            
+
+            $user_now = $this->getUser();
             $message = (new \Swift_Message($mail_title))
-                ->setFrom('insea.inscription@gmail.com')
-                ->setTo($enseignant->getEmail())
-                ->setBody(
-                    $body,
-                    'text/plain'
-                );
+            ->setFrom('insea.inscription@gmail.com')
+            ->setTo($enseignant->getEmail())
+            ->setBody(
+                $body,
+                'text/plain'
+            );
             $mailer->send($message);
             
-            return $this->redirectToRoute('responsable_enseignant');
+            if($user_now->getResponsable() != null ){
+                return $this->redirectToRoute('responsable_enseignant');
+            }else{
+                return $this->redirectToRoute('prof_accueil', ['id'=> $user->getProfesseur()->getId()]);
+            }
         }
         
         if($id == null){
@@ -427,8 +560,16 @@ class ResponsableController extends AbstractController
      * @Route("/responsable/modules/ajout", name="responsable_ajout_module")
      * @Route("/responsable/modules/modification/{id}", name="responsable_modification_module")
      */
-    public function ajout_module($id = null, ModuleRepository $repo_module, Request $request, EntityManagerInterface $manager)
+    public function ajout_module($id = null, FiliereRepository $repo_filiere, NiveauRepository $repo_niveau, ModuleRepository $repo_module, Request $request, EntityManagerInterface $manager)
     {
+        $niveaux = $repo_niveau->findAll();
+        $filieres = $repo_filiere->findAll();
+        if($niveaux == null || $filieres == null){
+            return $this->render('responsable/accueil.html.twig', [
+                'error' => 1
+            ]);
+        }
+
         if($id == null){
             $module = new Module();
         }else{
@@ -565,8 +706,17 @@ class ResponsableController extends AbstractController
      * @Route("/responsable/element/ajout", name="responsable_ajout_element")
      * @Route("/responsable/element/modification/{id}", name="responsable_modification_element")
      */
-    public function ajout_element($id = null, ElementRepository $repo_element, Request $request, EntityManagerInterface $manager)
+    public function ajout_element($id = null, ModuleRepository $repo_module, ClasseRepository $repo_classe, ProfesseurRepository $repo_professeur, ElementRepository $repo_element, Request $request, EntityManagerInterface $manager)
     {
+        $classes = $repo_classe->findAll();
+        $modules = $repo_module->findAll();
+        $professeurs = $repo_professeur->findAll();
+        if($classes == null || $modules == null || $professeurs == null){
+            return $this->render('responsable/accueil.html.twig', [
+                'error' => 1
+            ]);
+        }
+
         if($id == null){
             $element = new Element();
         }else{
@@ -613,5 +763,112 @@ class ResponsableController extends AbstractController
         $manager->flush();
 
         return $this->redirectToRoute('responsable_module_elements', ['id' => $id_module]);
+    }
+
+    /**
+     * @Route("/responsable/seance/ajout", name="responsable_seance_ajout")
+     * @Route("/responsable/seance/modification/{id}", name="responsable_seance_modification")
+     */
+    public function ajout_seance($id = null, ElementRepository $repo_element, ClasseRepository $repo_classe, ProfesseurRepository $repo_professeur, EmploiRepository $repo_emploi, Request $request, EntityManagerInterface $manager)
+    {
+        $classes = $repo_classe->findAll();
+        $elements = $repo_element->findAll();
+        $professeurs = $repo_professeur->findAll();
+        if($classes == null || $elements == null || $professeurs == null){
+            return $this->render('responsable/accueil.html.twig', [
+                'error' => 1
+            ]);
+        }
+
+        if($id == null){
+            $seance = new Emploi();
+        }else{
+            $seance = $repo_emploi->find($id);
+        }
+
+        $form = $this->createForm(EmploiType::class, $seance);
+
+        $form->handleRequest($request);
+
+        if($form->isSubmitted() && $form->isValid()){
+            // 'element' => $seance->getElement(), 'professeur' => $seance->getProfesseur(), 
+            if($seance->getId() == null){
+                $seances_array = $repo_emploi->findBy(array('filiere' => $seance->getElement()->getModule()->getFiliere(), 'jour' => $seance->getJour()->getId(), 'heure_debut' => $seance->getHeureDebut(), 'heure_fin' => $seance->getHeureFin()));
+                $seances_prof = $repo_emploi->findBy(array('professeur' => $seance->getProfesseur(), 'jour' => $seance->getJour()->getId(), 'heure_debut' => $seance->getHeureDebut(), 'heure_fin' => $seance->getHeureFin()));
+                if($seances_array !== null || $seance_prof !== null){
+                    return $this->redirectToRoute('responsable_seance_ajout', [
+                        'error' => 0
+                    ]);
+                }
+            }
+
+            $seance->setFiliere($seance->getElement()->getModule()->getFiliere())
+                   ->setNiveau($seance->getElement()->getModule()->getNiveau());
+
+            $manager->persist($seance);
+            
+            $manager->flush();
+
+            return $this->redirectToRoute('responsable_seance', ['id' => $seance->getId()]);
+        }
+
+        if($id == null){
+            return $this->render('responsable/seance_ajout.html.twig', [
+                'form_seance' => $form->createView(),
+                'button' => 'Ajouter',
+                'title' => 'L\'ajout d\'une séance'
+            ]);
+        }else{
+            return $this->render('responsable/seance_ajout.html.twig', [
+                'form_seance' => $form->createView(),
+                'button' => 'Modifer',
+                'title' => 'La modification d\'une séance'
+            ]);
+        }
+    }
+
+    /**
+     * @Route("responsable/seance/suppression/{id}", name="responsable_seance_suppression")
+     */
+    public function seance_supprimer( $id, EmploiRepository $repo_emploi, EntityManagerInterface $manager)
+    {
+        $seance = $repo_emploi->find($id);
+        $idFil = $seance->getElement()->getModule()->getNiveau()->getId(); 
+        $idNiv = $seance->getElement()->getModule()->getFiliere()->getId();
+        $manager->remove($seance);
+        $manager->flush();
+
+        return $this->redirectToRoute('responsable_seances', [
+            'idFil' => $idFil,
+            'idNiv' => $idNiv
+        ]);
+    }
+
+    /**
+     * @Route("/responsable/seance/{id}", name="responsable_seance")
+     */
+    public function affichage_seance($id, EmploiRepository $repo_emploi)
+    {
+        $seance = $repo_emploi->find($id);
+        return $this->render('responsable/seance.html.twig', [
+            'seance' => $seance
+        ]);
+    }
+    
+    /**
+     * @Route("/responsable/emploi/{idFil}/{idNiv}", name="responsable_seances")
+     */
+    public function affichage_emploi($idFil, $idNiv, JoursRepository $repo_jour, EmploiRepository $repo_emploi, FiliereRepository $repo_filiere, NiveauRepository $repo_niveau)
+    {
+        $filiere = $repo_filiere->find($idFil);
+        $niveau = $repo_niveau->find($idNiv);
+        $jours = $repo_jour->findAll();
+        $seances = $repo_emploi->findBy(array('filiere' => $filiere->getId(), 'niveau' => $niveau->getId()));
+        return $this->render('responsable/seances.html.twig', [
+            'seances' => $seances,
+            'jours' => $jours,
+            'filiere' => $filiere,
+            'niveau' => $niveau
+        ]);
     }
 }

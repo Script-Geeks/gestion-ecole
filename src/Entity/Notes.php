@@ -29,19 +29,34 @@ class Notes
 
     /**
      * @ORM\ManyToOne(targetEntity=Element::class, inversedBy="notes")
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\JoinColumn(
+     *      name="element_id",
+     *      referencedColumnName="id",
+     *      onDelete="CASCADE",
+     *      nullable=false
+     * )
      */
     private $element;
 
     /**
      * @ORM\ManyToOne(targetEntity=Etudiant::class, inversedBy="notes")
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\JoinColumn(
+     *      name="etudiant_id",
+     *      referencedColumnName="id",
+     *      onDelete="CASCADE",
+     *      nullable=false
+     * )
      */
     private $etudiant;
 
     /**
      * @ORM\ManyToOne(targetEntity=Professeur::class, inversedBy="notes")
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\JoinColumn(
+     *      name="professeur_id",
+     *      referencedColumnName="id",
+     *      onDelete="CASCADE",
+     *      nullable=false
+     * )
      */
     private $professeur;
 

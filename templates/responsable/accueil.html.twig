@@ -3,19 +3,49 @@
 {% block title %}Responsable{% endblock %}
 
 {% block body %}
-    <div class="m-5 d-flex flex-wrap justify-content-center">
+    {% if error is defined %}
+        <div class="mt-2 alert text-center alert-dismissible alert-danger mx-auto" style="max-width: 72rem">
+            <button type="button" class="close" data-dismiss="alert">&times;</button>
+            Impossible de générer le <strong>formulaire</strong>.
+        </div>
+    {% elseif success is defined %}
+        <div class="mt-5 alert text-center alert-dismissible alert-success mx-auto" style="max-width: 72rem">
+            <button type="button" class="close" data-dismiss="alert">&times;</button>
+            Opération effectuée avec <strong>succées</strong>.
+        </div>
+    {% endif %}
+    <div class="d-flex flex-wrap justify-content-center">
+        
         <div class="m-5 card border-success mb-3 rounded" style="width: 20rem;">
-            <div class="card-header text-white text-center bg-success">Enseignants</div>
-            <div class="card-footer form-inline my-2 my-lg-0 justify-content-center">
-                <a class="nav-link text-success my-2 my-sm-0" href="{{ path('responsable_enseignant') }}">Afficher</a>
-                <a class="nav-link text-success my-2 my-sm-0" href="{{ path('responsable_ajout_enseignant') }}">Ajouter</a>
-            </div>
+            <img class="mx-auto my-auto" src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/05/INSEA_logo.png/552px-INSEA_logo.png" height="120em" width="120em" alt ="insea" >
         </div>
         <div class="m-5 card border-success mb-3 rounded" style="width: 20rem;">
             <div class="card-header text-white text-center bg-success">Étudiants</div>
             <div class="card-footer form-inline my-2 my-lg-0 justify-content-center">
                 <a class="nav-link text-success my-2 my-sm-0" href="{{ path('responsable_niveau', {'type': 'etudiants'}) }}">Afficher</a>
                 <a class="nav-link text-success my-2 my-sm-0" href="{{ path('responsable_registration') }}">Ajouter</a>
+            </div>
+            <div class="card-footer form-inline my-2 my-lg-0 justify-content-center">
+                <a class="nav-link text-success my-2 my-sm-0" href="{{ path('responsable_releve_notes', {'notes': 'notes'}) }}">Relevés de notes</a>
+            </div>
+            <div class="card-footer form-inline my-2 my-lg-0 justify-content-center">
+                <a class="nav-link text-success my-2 my-sm-0" href="{{ path('responsable_filiere_paiment', {'paiment': 'paiment'}) }}">Gérer les paiements</a>
+            </div>
+            <div class="card-footer form-inline my-2 my-lg-0 justify-content-center">
+                <a class="nav-link text-success my-2 my-sm-0" href="{{ path('responsable_filiere_demandes', {'demandes': 'demandes'}) }}">Demandes d'inscription</a>
+            </div>
+            <div class="card-footer form-inline my-2 my-lg-0 justify-content-center">
+                <a class="nav-link text-success my-2 my-sm-0" href="{{ path('responsable_filiere_scolarite', {'scolarite': 'scolarite'}) }}"><small>Demandes des certificats de scolarié</small></a>
+            </div>
+        </div>
+        <div class="m-5 card border-success mb-3 rounded" style="width: 20rem;">
+            <img class="mx-auto my-auto" src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/05/INSEA_logo.png/552px-INSEA_logo.png" height="120em" width="120em" alt ="insea" >
+        </div>
+        <div class="m-5 card border-success mb-3 rounded" style="width: 20rem;">
+            <div class="card-header text-white text-center bg-success">Enseignants</div>
+            <div class="card-footer form-inline my-2 my-lg-0 justify-content-center">
+                <a class="nav-link text-success my-2 my-sm-0" href="{{ path('responsable_enseignant') }}">Afficher</a>
+                <a class="nav-link text-success my-2 my-sm-0" href="{{ path('responsable_ajout_enseignant') }}">Ajouter</a>
             </div>
         </div>
         <div class="m-5 card border-success mb-3 rounded" style="width: 20rem;">
@@ -42,8 +72,8 @@
         <div class="m-5 card border-success mb-3 rounded" style="width: 20rem;">
             <div class="card-header text-white text-center bg-success">Séances</div>
             <div class="card-footer form-inline my-2 my-lg-0 justify-content-center">
-                <a class="nav-link text-success my-2 my-sm-0" href="#">Afficher</a>
-                <a class="nav-link text-success my-2 my-sm-0" href="#">Ajouter</a>
+                <a class="nav-link text-success my-2 my-sm-0" href="{{ path('responsable_emploi', {'emploi': 'emploi'}) }}">Afficher</a>
+                <a class="nav-link text-success my-2 my-sm-0" href="{{ path('responsable_seance_ajout') }}">Ajouter</a>
             </div>
         </div>
     </div>

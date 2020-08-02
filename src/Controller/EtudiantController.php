@@ -12,7 +12,9 @@ use App\Form\EtudiantType;
 use App\Entity\Certificats;
 use App\Form\CertificatsType;
 use App\Repository\UserRepository;
+use App\Repository\JoursRepository;
 use App\Repository\NotesRepository;
+use App\Repository\EmploiRepository;
 use Doctrine\DBAL\Driver\Connection;
 use App\Controller\SecurityController;
 use App\Repository\EtudiantRepository;
@@ -50,51 +52,40 @@ class EtudiantController extends AbstractController
     /**
     * @Route("/updatepassword/{id}", name="etudiant_updatepwd"))
     */
-    public function change_user_password(Connection $connection, EtudiantRepository $repo_etudiant,EntityManagerInterface $manager, Request $request, UserPasswordEncoderInterface $encoder, Etudiant $etudiant, UserRepository $user ) {
+    public function change_user_password( $id, EtudiantRepository $repo_etudiant,EntityManagerInterface $manager, Request $request, UserPasswordEncoderInterface $encoder, UserRepository $repo_user, \Swift_Mailer $mailer)
+    {
+        $etudiant = $repo_etudiant->find($id);
 
+        dump($etudiant);
+        if($_POST !== null && count($_POST) === 1){
+            $pwd = $_POST['password'];
+            $user = $repo_user->findOneBy(array('etudiant' => $etudiant->getId()));
+            $user->setPassword($pwd);
+            $hash = $encoder->encodePassword($user, $user->getPassword());
+            $user->setPassword($hash);
 
-                 $etudiant = $repo_etudiant->find($etudiant ->getId());
-                 $id=$etudiant ->getId();
-                 $user_array = $connection->fetchAll("SELECT * FROM user WHERE etudiant_id = $id");
-                 dump($user_array);
-                 $user = $user->find($user_array[0]['id']);
+            $manager->persist($user);
+            $manager->flush();
 
+            $body = strtoupper($etudiant->getNom())." ".$etudiant->getPrenom().",\nVous pouvez vous authentifier en utilisant les informations ci-dessous.\n
+                    E-mail: ".$etudiant->getEmail()."\n
+                    Mot de passe: ".$pwd;
+            $message = (new \Swift_Message('Changement du mot de passe'))
+                    ->setFrom('insea.inscription@gmail.com')
+                    ->setTo($etudiant->getEmail())
+                    ->setBody(
+                        $body,
+                        'text/plain'
+                    );
+            $mailer->send($message);
 
-                $form = $this->createForm(UserType::class, $user);
-
-                $form->handleRequest($request);
-                $pwd = $user->getPassword();
-
-                if($form->isSubmitted() && $form->isValid()){
-                    if($user){
-                        $opwd = $form->get('oldpassword')->getData();
-                       if( md5($opwd) == $pwd)
-                        {
-
-                            $hash = $encoder->encodePassword($user, $user->getPassword());
-                            $user->setPassword($hash);
-
-                            $manager->persist($user);
-
-                            $manager->flush();
-
-                            return $this->render('etudiant/accueil.html.twig', [
-                                'etudiant' => $etudiant,
-                                'message' => 'Mot de passe changé avec succés' ]);
-                        }
-                            else{ return new Response(
-                            '<html><body> mot de passe incorrect, veuillez reéssayer </body></html>'  );
-
-                                }
-                     }  
-                   }
-
-               return $this->render('etudiant/updatepassword.html.twig', [
-                 'form_authentication' => $form->createView(),
-                  'etudiant' => $etudiant,
-
-    ]);
-
+            return $this->render('etudiant/accueil.html.twig', [
+                'etudiant' => $etudiant,
+                'message' => 'Mot de passe changé avec succés' ]);
+        }
+        return $this->render('etudiant/updatepassword.html.twig', [
+            'etudiant' => $etudiant
+        ]);
     }
 
     /**
@@ -164,7 +155,10 @@ class EtudiantController extends AbstractController
 
 
         $dompdf->set_option('isHtml5ParserEnabled', true);
-
+        if($this->getUser()->getResponsable() !== null){
+            $certificat->setIssuedAt(new \DateTime());
+        }
+        $certificat->getIssuedAt();
         if ($certificat->getType()=='Certificat de scolarité'){
 
         $doc = $this->renderview('etudiant/impression.html.twig', [
@@ -180,7 +174,7 @@ class EtudiantController extends AbstractController
                 'demande' => $certificat,
                 'issuedAt' => $certificat->getIssuedAt()]);
         }   
-            $dompdf->loadHtml($doc);
+        $dompdf->loadHtml($doc);
 
         $dompdf->render();
 
@@ -301,5 +295,20 @@ class EtudiantController extends AbstractController
     return $this->render('etudiant/deleted.html.twig');
 
     }
-
+     
+    /**
+     * @Route("/etudiant/emploi/{id}", name="etudiant_seances")
+     */
+    public function etudiant_emploi($id, JoursRepository $repo_jour, EmploiRepository $repo_emploi, EtudiantRepository $repo_etudiant)
+    {
+        $etudiant = $repo_etudiant->find($id);
+        $jours = $repo_jour->findAll();
+        $seances = $repo_emploi->findBy(array('filiere' => $etudiant->getFiliere(), 'niveau' => $etudiant->getNiveau()));
+        return $this->render('responsable/seances.html.twig', [
+            'seances' => $seances,
+            'jours' => $jours,
+            'filiere' => $etudiant->getFiliere(),
+            'niveau' => $etudiant->getNiveau()
+        ]);
+    }
 }

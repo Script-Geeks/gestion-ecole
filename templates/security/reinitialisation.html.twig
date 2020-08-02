@@ -1,0 +1,36 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Réinitialisation du mot de passe{% endblock %}
+
+{% block body %}
+
+    <a class="btn btn-primary" href="/">Retour</a>
+    {% if error is defined %}
+        <div class="card text-center rounded border-danger m-1 mx-auto" style="max-width: 30rem">
+            <div class="card-body m-2">
+                <h5 class="text-danger ">Réinitialisation du mot de passe</h5>
+                <hr class="my-7">
+            <div class="ml-5 text-center alert alert-dismissible alert-danger mx-auto rounded" style="width: 24rem">
+                <small>Code de confirmation incorrect.</small>
+            </div>
+    {% else %}
+        <div class="card text-center rounded border-success m-4 mx-auto" style="max-width: 30rem">
+            <div class="card-body m-2">
+                <h5 class="text-success ">Réinitialisation du mot de passe</h5>
+                <hr class="my-7">
+    {% endif %}
+            <form action="{{ path('reinitialisation', {'id': user.id}) }}" method="post" class="m-4">
+                <div class="input-group form-group">
+                    <input type="text" name="code_confirmation" class="form-control rounded" placeholder="Entrer le code de confirmation" required autofocus>
+                </div>
+                <div class="input-group form-group">            
+                    <input type="password" name="password" class="form-control rounded" placeholder="Nouveau mot de passe" required>
+                </div>
+                <div class="mt-4 form-group col text-center">
+                    <button type="submit" class="btn btn-outline-success rounded">Modifier</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+{% endblock %}

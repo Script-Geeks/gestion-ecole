@@ -14,7 +14,7 @@
                 <p class="card-text text-center"><span class="text-muted">E-mail :</span> {{ professeur.email  }}</p>
             </div>
             <div class="card-footer form-inline my-2 my-lg-0 justify-content-center">
-                <a class="nav-link text-primary mr-3 my-2 my-sm-0" href="#">Emploi</a>
+                <a class="nav-link text-primary mr-3 my-2 my-sm-0" href="{{ path('professeur_seances', {'id': app.user.getProfesseur.getId}) }}">Emploi</a>
                 <a class="nav-link text-primary ml-3 my-2 my-sm-0" href="{{ path('prof_elements', {'id': professeur.id}) }}">Notes</a>
             </div>
             <div class="card-footer form-inline my-2 my-lg-0 justify-content-center">

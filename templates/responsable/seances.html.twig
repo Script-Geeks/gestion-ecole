@@ -1,0 +1,76 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Enseignant{% endblock %}
+
+{% block body %}
+
+    <a class="btn btn-primary" href="{{ path('responsable_emploi', {'emploi': 'emploi'}) }}">Retour</a>
+    {% if app.user.getProfesseur != null %}
+        <h1 id="nav-breadcrumbs" class="display-5 text-center text-success">
+            L'emploi du temps du professeur <span class="text-primary">{{professeur.nom}}</span>
+        </h1>
+    {% else %}
+        <h1 id="nav-breadcrumbs" class="display-5 text-center text-success">
+            L'emploi du temps de la <span class="text-primary">{{filiere.nom}}</span>, <span class="text-primary">{{niveau.nom}} </span>
+        </h1>
+    {% endif %}
+    
+    <table class="table table-hover mt-5">
+    <thead>
+        <thead>
+            <tr>
+                <th scope="col"></th>
+                <th scope="col"> 8H - 10H</th>
+                <th scope="col"> 10H - 12H</th>
+                <th scope="col"></th>
+                <th scope="col"> 2H - 4H</th>
+                <th scope="col"> 4H - 6H</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for jour in jours %}
+            <tr>
+                <th class="table-secondary">{{ jour.nom }}</th>
+            {% set td1, td2, td3, td4 = null, null, null, null %}
+            {% for seance in seances %}
+                {% if seance.getJour == jour %}
+                    {% if seance.getHeureDebut == 8 and seance.getHeureFin == 10 %}
+                        {% set td1 = seance %}
+                    {% endif %}
+                    {% if seance.getHeureDebut == 10 and seance.getHeureFin == 12 %}
+                        {% set td2 = seance %}
+                    {% endif %}
+                    {% if seance.getHeureDebut == 2 and seance.getHeureFin == 4 %}
+                        {% set td3 = seance %}
+                    {% endif %}
+                    {% if seance.getHeureDebut == 4 and seance.getHeureFin == 6 %}
+                        {% set td4 = seance %}
+                    {% endif %}
+                {% endif %}
+            {% endfor %}
+            {% if td1 != null %}
+                <td class="table-success"><a href="{{ path('responsable_seance', {'id': td1.id}) }}">{{ td1.getElement.getNom }}</a><br><small>{{ 'professeur: ' ~ td1.getProfesseur.getNom }}<br>{{ 'Classe: ' ~ td1.getClasse.getNom ~ '(' ~ td1.getClasse.getType.getNom ~ ')' }}</small></td>
+            {% else %}
+                <td></td>
+            {% endif %}
+            {% if td2 != null %}
+                <td class="table-success"><a href="{{ path('responsable_seance', {'id': td2.id}) }}">{{ td2.getElement.getNom }}</a><br><small>{{ 'professeur: ' ~ td2.getProfesseur.getNom }}<br>{{ 'Classe: ' ~ td2.getClasse.getNom ~ '(' ~ td2.getClasse.getType.getNom ~ ')' }}</small></td>
+            {% else %}
+                <td></td>
+            {% endif %}
+            <td></td>
+            {% if td3 != null %}
+                <td class="table-success"><a href="{{ path('responsable_seance', {'id': td3.id}) }}">{{ td3.getElement.getNom }}</a><br><small>{{ 'professeur: ' ~ td3.getProfesseur.getNom }}<br>{{ 'Classe: ' ~ td3.getClasse.getNom ~ '(' ~ td3.getClasse.getType.getNom ~ ')' }}</small></td>
+            {% else %}
+                <td></td>
+            {% endif %}
+            {% if td4 != null %}
+                <td class="table-success"><a href="{{ path('responsable_seance', {'id': td4.id}) }}">{{ td4.getElement.getNom }}</a><br><small>{{ 'professeur: ' ~ td4.getProfesseur.getNom }}<br>{{ 'Classe: ' ~ td4.getClasse.getNom ~ '(' ~ td4.getClasse.getType.getNom ~ ')' }}</small></td>
+            {% else %}
+                <td></td>
+            {% endif %}
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table> 
+{% endblock %}

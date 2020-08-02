@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Symfony\Component\Validator\Constraints as Assert;
 use Doctrine\ORM\Mapping as ORM;
 use App\Repository\EtudiantRepository;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
@@ -15,12 +16,12 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
  *  message="Ce code est déjà pris !"
  * )
  * @UniqueEntity(
- *  fields={"cne"},
- *  message="Ce code est déjà pris !"
+ *  fields={"email"},
+ *  message="Cet e-mail est déjà pris !"
  * )
  * @UniqueEntity(
- *  fields={"tel_pere"},
- *  message="Ce numero est déjà pris !"
+ *  fields={"cne"},
+ *  message="Ce code est déjà pris !"
  * )
  */
 class Etudiant
@@ -44,6 +45,7 @@ class Etudiant
 
     /**
      * @ORM\Column(type="datetime")
+     * @Assert\DateTime(message="Ce champ est obligatoire !")
      */
     private $dateNaissAt;
 
@@ -64,6 +66,7 @@ class Etudiant
 
     /**
      * @ORM\Column(type="integer")
+     * @Assert\Regex("/^212[0-9]{9}$/", message="Le numéro doit être la forme 212xxxxxxxx !")
      */
     private $tel_pere;
 
@@ -93,7 +96,6 @@ class Etudiant
      */
     private $user;
 
-
     /**
      * @ORM\Column(type="string",options={"default":"PersonPlaceholder.png"})
      */
@@ -116,15 +118,10 @@ class Etudiant
     private $accepted;
 
     /**
-     * @ORM\OneToMany(targetEntity=Notes::class, mappedBy="etudiant")
+     * @ORM\Column(type="string", length=255)
+     * @Assert\Email(message="L'e-mail n'est pas valide !")
      */
-    private $notes;
-
-    public function __construct()
-    {
-        $this->notes = new ArrayCollection();
-    }
-
+    private $email;
     
     public function getId(): ?int
     {
@@ -325,33 +322,14 @@ class Etudiant
         return $this;
     }
 
-    /**
-     * @return Collection|Notes[]
-     */
-    public function getNotes(): Collection
+    public function getEmail(): ?string
     {
-        return $this->notes;
+        return $this->email;
     }
 
-    public function addNote(Notes $note): self
+    public function setEmail(string $email): self
     {
-        if (!$this->notes->contains($note)) {
-            $this->notes[] = $note;
-            $note->setEtudiant($this);
-        }
-
-        return $this;
-    }
-
-    public function removeNote(Notes $note): self
-    {
-        if ($this->notes->contains($note)) {
-            $this->notes->removeElement($note);
-            // set the owning side to null (unless already changed)
-            if ($note->getEtudiant() === $this) {
-                $note->setEtudiant(null);
-            }
-        }
+        $this->email = $email;
 
         return $this;
     }

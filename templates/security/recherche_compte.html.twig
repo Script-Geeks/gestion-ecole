@@ -1,0 +1,47 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Retrouver votre compte{% endblock %}
+
+{% block body %}
+    <a class="btn btn-primary" href="{{ path('security_login') }}">Retour</a>
+    {% if error is defined %}
+        <div class="alert text-center alert-dismissible alert-danger mx-auto" style="max-width: 34rem">
+            <button type="button" class="close" data-dismiss="alert">&times;</button>
+            Adresse <strong>e-mail</strong> inexistante.
+        </div>
+        <div class="card text-center rounded border-danger m-4 mx-auto" style="max-width: 34rem">
+            <div class="card-body m-2">
+                <h3 class="text-danger">Retrouver votre compte</h3>
+                <hr class="my-7">
+            <div class="text-center alert alert-dismissible alert-danger mx-auto rounded" style="width: 28rem">
+                <small class="ml-5">Veuillez saisir votre adresse e-mail pour recevoir un mail contenant le code de confirmation.</small>
+            </div>
+    {% else %}
+    <div class="card text-center rounded border-success m-4 mx-auto" style="max-width: 34rem">
+        <div class="card-body m-2">
+            <h3 class="text-success">Retrouver votre compte</h3>
+            <hr class="my-7">
+            <div class="text-center alert alert-dismissible alert-success mx-auto rounded" style="width: 28rem">
+                <small class="ml-5">Veuillez saisir votre adresse e-mail pour recevoir un mail contenant le code de confirmation.</small>
+            </div>
+    {% endif %}
+            <form action="{{ path('recherche_compte') }}" method="post" class="m-4">
+                <div class="input-group form-group">
+                    <input type="text" name="email" class="form-control rounded" placeholder="Adresse e-mail" required autofocus>
+                </div>
+                <div class="form-group">
+                    <select class="form-control" name="type_user" id="type_user" required>
+                        <option valus="" selected disabled hidden>Type de l'utilisateur</option>
+                        <option value="responsable">Responsable</option>
+                        <option value="professeur">Professeur</option>
+                        <option value="etudiant">Étudiant</option>
+                    </select>
+                </div>
+                <div class="mt-4 form-group col text-center">
+                    <button type="submit" class="btn btn-outline-success rounded">Rechercher</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+{% endblock %}

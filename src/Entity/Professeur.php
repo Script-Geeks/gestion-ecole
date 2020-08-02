@@ -2,13 +2,19 @@
 
 namespace App\Entity;
 
-use App\Repository\ProfesseurRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\ProfesseurRepository;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
  * @ORM\Entity(repositoryClass=ProfesseurRepository::class)
+ * @UniqueEntity(
+ *  fields={"email"},
+ *  message="Cet e-mail est déjà pris !"
+ * )
  */
 class Professeur
 {
@@ -46,20 +52,24 @@ class Professeur
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Assert\Email(message="L'e-mail n'est pas valide !")
      */
     private $email;
 
+    /**
+     * @Assert\Length(min=8, minMessage="Cette valeur est trop courte. Il doit comporter 8 caractères ou plus !")
+     */
     public $password;
 
     /**
-     * @ORM\OneToMany(targetEntity=Notes::class, mappedBy="professeur")
+     * @ORM\OneToMany(targetEntity=Emploi::class, mappedBy="professeur", orphanRemoval=true)
      */
-    private $notes;
+    private $emplois;
 
     public function __construct()
     {
         $this->elements = new ArrayCollection();
-        $this->notes = new ArrayCollection();
+        $this->emplois = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -165,30 +175,30 @@ class Professeur
     }
 
     /**
-     * @return Collection|Notes[]
+     * @return Collection|Emploi[]
      */
-    public function getNotes(): Collection
+    public function getEmplois(): Collection
     {
-        return $this->notes;
+        return $this->emplois;
     }
 
-    public function addNote(Notes $note): self
+    public function addEmploi(Emploi $emploi): self
     {
-        if (!$this->notes->contains($note)) {
-            $this->notes[] = $note;
-            $note->setProfesseur($this);
+        if (!$this->emplois->contains($emploi)) {
+            $this->emplois[] = $emploi;
+            $emploi->setProfesseur($this);
         }
 
         return $this;
     }
 
-    public function removeNote(Notes $note): self
+    public function removeEmploi(Emploi $emploi): self
     {
-        if ($this->notes->contains($note)) {
-            $this->notes->removeElement($note);
+        if ($this->emplois->contains($emploi)) {
+            $this->emplois->removeElement($emploi);
             // set the owning side to null (unless already changed)
-            if ($note->getProfesseur() === $this) {
-                $note->setProfesseur(null);
+            if ($emploi->getProfesseur() === $this) {
+                $emploi->setProfesseur(null);
             }
         }
 

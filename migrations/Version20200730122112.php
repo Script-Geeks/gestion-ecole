@@ -19,8 +19,7 @@ final class Version20200730122112 extends AbstractMigration
 
     public function up(Schema $schema) : void
     {
-        // this up() migration is auto-generated, please modify it to your needs
-        $this->addSql('DROP TABLE notes');
+        
     }
 
     public function down(Schema $schema) : void

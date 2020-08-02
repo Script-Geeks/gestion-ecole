@@ -27,9 +27,9 @@
             <tr class="table-warning">
                 <th scope="row">
                     <a class=" text-success text-center" href="{{ path('etudiant_profil', {'id': etudiant.id}) }}">{{ etudiant.nom ~ ' ' ~ etudiant.prenom}}</a>
-                    </th>
+                </th>
                 <td>
-                    <a class=" text-success text-center" href="{{ path('responsable_etudiant_accepter', {'id': etudiant.id,'idFil': etudiant.getFiliere.getId,'idNiv': etudiant.getNiveau.getId}) }}">Valider le paiment</a>
+                    <a class=" text-success text-center" href="{{ path('responsable_etudiant_payer', {'id': etudiant.id,'idFil': etudiant.getFiliere.getId,'idNiv': etudiant.getNiveau.getId}) }}">Valider le paiment</a>
                 </td>
             </tr>
         {% endfor %}
