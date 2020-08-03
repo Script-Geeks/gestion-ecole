@@ -66,7 +66,6 @@ class Etudiant
 
     /**
      * @ORM\Column(type="integer")
-     * @Assert\Regex("/^212[0-9]{9}$/", message="Le numéro doit être la forme 212xxxxxxxx !")
      */
     private $tel_pere;
 

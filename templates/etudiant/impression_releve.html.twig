@@ -4,31 +4,30 @@
       <title>Certificat</title>
    </head>
    <style>
-      .insea{
-         margin-left:45%;
-         display: inline;
-      }
-    table, th, td {
-        border: 1px solid black;
-        border-collapse: collapse;
-        width:100%;
-        text-align:center;
-    }   
+        .insea{
+            margin-left:45%;
+            display: inline;
+        }
+        table, th, td {
+            border: 1px solid black;
+            border-collapse: collapse;
+            width:100%;
+            text-align:center;
+        }
    </style>
    <body>
       <div class="insea">
          <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/05/INSEA_logo.png/552px-INSEA_logo.png" height="80em" width="80em" alt ="insea" >
       </div>
       <div style="text-align:center ; font-family:Helvetica">
-         <p >INSTITUT NATIONAL DE STATISTIQUE ET D'ÉCONOMIE APPLIQUÉE</p>
-         <hr>
-         <h2>Relevé des notes</h2>
-            <br>
+        <p >INSTITUT NATIONAL DE STATISTIQUE ET D'ÉCONOMIE APPLIQUÉE</p>
+        <hr>
+        <h2>Relevé des notes</h2>
+        <br>
         <p><strong>Mr.</strong> {{ etudiant.nom ~  ' ' ~ etudiant.prenom}}<p>
         <p> <strong>Filiére: </strong>{{ etudiant.filiere.nom }}</p>
         <p> <strong>Niveau: </strong>{{ etudiant.niveau.nom }}</p>
         <br>
-
 
         <table class="table">
             <thead>
@@ -55,7 +54,6 @@
                     {{ note.observations }}
                 </tr>
                 {% endfor %}
-
             </tbody>
         </table>
         </div>

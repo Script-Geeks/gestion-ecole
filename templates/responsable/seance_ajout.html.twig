@@ -5,7 +5,7 @@
 {% block body %}
 
 <a class="m-3 btn btn-dark" href="{{ path('responsable_accueil') }}">Retour</a>
-{% if app.request.query.get("error") is defined and app.request.query.get("error") == 0 %}
+{% if error is defined %}
     <div class="alert text-center alert-dismissible alert-danger mx-auto" style="max-width: 55rem">
         <button type="button" class="close" data-dismiss="alert">&times;</button>
         La <strong>date</strong> renseignée pour la séance est déjà prise.

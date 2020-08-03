@@ -1014,11 +1014,13 @@ class ResponsableController extends AbstractController
         if($form->isSubmitted() && $form->isValid()){
             // 'element' => $seance->getElement(), 'professeur' => $seance->getProfesseur(), 
             if($seance->getId() == null){
-                $seances_array = $repo_emploi->findBy(array('filiere' => $seance->getElement()->getModule()->getFiliere(), 'jour' => $seance->getJour()->getId(), 'heure_debut' => $seance->getHeureDebut(), 'heure_fin' => $seance->getHeureFin()));
-                $seances_prof = $repo_emploi->findBy(array('professeur' => $seance->getProfesseur(), 'jour' => $seance->getJour()->getId(), 'heure_debut' => $seance->getHeureDebut(), 'heure_fin' => $seance->getHeureFin()));
-                if($seances_array !== null || $seance_prof !== null){
+                $seances_array = $repo_emploi->findOneBy(array('filiere' => $seance->getElement()->getModule()->getFiliere(), 'jour' => $seance->getJour()->getId(), 'heure_debut' => $seance->getHeureDebut(), 'heure_fin' => $seance->getHeureFin()));
+                $seances_prof = $repo_emploi->findOneBy(array('professeur' => $seance->getProfesseur(), 'jour' => $seance->getJour()->getId(), 'heure_debut' => $seance->getHeureDebut(), 'heure_fin' => $seance->getHeureFin()));
+                dump($seances_prof);
+                dump($seances_array);
+                if($seances_array !== null || $seances_prof !== null){
                     return $this->redirectToRoute('responsable_seance_ajout', [
-                        'error' => 0
+                        'error' => 1
                     ]);
                 }
             }

@@ -12,6 +12,7 @@ use App\Entity\Etudiant;
 use App\Entity\Professeur;
 
 use App\Form\EtudiantType;
+use App\Entity\Certificats;
 use App\Repository\UserRepository;
 use App\Repository\JoursRepository;
 use App\Repository\NotesRepository;
@@ -21,8 +22,8 @@ use App\Repository\ElementRepository;
 use App\Repository\EtudiantRepository;
 use App\Repository\ProfesseurRepository;
 use Doctrine\ORM\EntityManagerInterface;
-use App\Repository\CertificatsRepository;
 
+use App\Repository\CertificatsRepository;
 use App\Repository\PerofesseurRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -137,13 +138,15 @@ class ProfesseurController extends AbstractController
                 $note->setProfesseur($professeur);
                 
                 $certificat = $repo_certificat->findOneBy(array('etudiant' => $idEt));
-                if($certificat == null){
+                if($certificat === null){
                     $certificat = new Certificats();
                     $certificat->setEtudiant($etudiant)
                                ->setRequestedAt(new \DateTime())
                                ->setType('Relevé de notes')
                                ->setAccepted(0)
-                               ->setRequestedAt();
+                               ->setMotif('');
+                    $manager->persist($certificat);
+                    $manager->flush();
                 }
             }
 

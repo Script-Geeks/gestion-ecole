@@ -10,7 +10,7 @@
     {{ form_start(form_module, {'attr': {'class': 'text-success m-5'}}) }}
         <hr class="my-4">
         {{ form_row(form_module.nom, {'label': 'Nom du module', 'attr': {'placeholder': 'Entrer le nom du module ...', 'autofocus': ''}}) }}    
-        {{ form_row(form_module.nbr_element, {'label': 'Le nombre des éléments', 'attr': {'placeholder': 'Entrer le nombre des éléments ...'}}) }}    
+        {{ form_row(form_module.nbr_element, {'typr': 'number', 'label': 'Le nombre des éléments', 'attr': {'placeholder': 'Entrer le nombre des éléments ...'}}) }}    
         {{ form_row(form_module.filiere) }}
         {{ form_row(form_module.niveau) }}
         <div class="form-group col text-center">

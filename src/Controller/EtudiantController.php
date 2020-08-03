@@ -184,9 +184,9 @@ class EtudiantController extends AbstractController
 
 
         $dompdf->set_option('isHtml5ParserEnabled', true);
-        if($this->getUser()->getResponsable() !== null){
-            $certificat->setIssuedAt(new \DateTime());
-        }
+        // if($this->getUser()->getResponsable() !== null){
+        //     $certificat->setIssuedAt(new \DateTime());
+        // }
         $certificat->getIssuedAt();
         if ($certificat->getType()=='Certificat de scolarité'){
 
